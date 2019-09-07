@@ -1,11 +1,21 @@
 version: '3.7'
 
+# To Join any other app setup using another network, change name and set external = true
 networks:
   default:
     name: elastic
+    external: false
 
+# will contain all elasticsearch data.
 volumes:
   elasticsearch_data:
+  elasticsearch_config:
+
+secrets:
+  elasticsearch.keystore:
+    file: ./elasticsearch/keystore/elasticsearch.keystore
+    name: /usr/share/elasticsearch/config/elasticsearch.keystore
+
 
 services:
   elasticsearch:
@@ -15,12 +25,16 @@ services:
         ELK_VERSION: ${ELK_VERSION}
     restart: unless-stopped
     environment:
+      ELASTIC_USERNAME: ${ELASTIC_USERNAME}
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
       ES_JAVA_OPTS: -Xmx${ELASTICSEARCH_HEAP} -Xms${ELASTICSEARCH_HEAP} -Des.enforce.bootstrap.checks=true
-      ELASTIC_PASSWORD: ${ELASTICSEARCH_PASSWORD}
       bootstrap.memory_lock: "true"
     volumes:
-      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
       - elasticsearch_data:/usr/share/elasticsearch/data
+      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    secrets:
+      - source: elasticsearch.keystore
+        target: /usr/share/elasticsearch/config/elasticsearch.keystore
     ports:
       - "9200:9200"
       - "9300:9300"
@@ -31,3 +45,20 @@ services:
       nofile:
         soft: 200000
         hard: 200000
+
+  kibana:
+    build:
+      context: kibana/
+      args:
+        ELK_VERSION: $ELK_VERSION
+    restart: always
+    volumes:
+      - ./kibana/config/:/usr/share/kibana/config:ro
+    environment:
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+      ELASTICSEARCH_USERNAME: ${ELASTIC_USERNAME}
+      ELASTICSEARCH_PASSWORD: ${ELASTIC_PASSWORD}
+    ports:
+      - "80:5601"
+    depends_on:
+      - elasticsearch

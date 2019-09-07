@@ -1,0 +1,21 @@
+version: '3.7'
+
+
+services:
+  create_keystore:
+    build:
+      context: elasticsearch/
+      args:
+        ELK_VERSION: ${ELK_VERSION}
+    command: bash scripts/setup.sh
+    user: "0"
+    working_dir: /usr/share/elasticsearch
+    volumes:
+        - ./elasticsearch/keystore:/usr/share/elasticsearch/keystore
+        - ./elasticsearch/scripts:/usr/share/elasticsearch/scripts
+    environment:
+      ELASTIC_USERNAME: ${ELASTIC_USERNAME}
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+      # Add keystore env variables here
+      AWS_ACCESS_KEY_ID:      ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY:  ${AWS_SECRET_ACCESS_KEY}
