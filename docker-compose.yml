@@ -9,13 +9,11 @@ networks:
 # will contain all elasticsearch data.
 volumes:
   elasticsearch_data:
-  elasticsearch_config:
 
 secrets:
   elasticsearch.keystore:
     file: ./elasticsearch/keystore/elasticsearch.keystore
     name: /usr/share/elasticsearch/config/elasticsearch.keystore
-
 
 services:
   elasticsearch:
@@ -47,6 +45,22 @@ services:
         soft: 200000
         hard: 200000
 
+  logstash:
+    build:
+      context: logstash/
+      args:
+        ELK_VERSION: $ELK_VERSION
+    restart: always
+    volumes:
+      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
+      - ./logstash/config/pipelines.yml:/usr/share/logstash/config/pipelines.yml:ro
+      - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
+    environment:
+      ELASTIC_USERNAME: ${ELASTIC_USERNAME}
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+      ELASTICSEARCH_HOST: ${ELASTICSEARCH_HOST}
+      LS_JAVA_OPTS: "-Xmx${LOGSTASH_HEAP} -Xms${LOGSTASH_HEAP}"
+
   kibana:
     build:
       context: kibana/
@@ -56,10 +70,8 @@ services:
     volumes:
       - ./kibana/config/:/usr/share/kibana/config:ro
     environment:
-      KIBANA_USERNAME: ${KIBANA_USERNAME}
-      KIBANA_PASSWORD: ${KIBANA_PASSWORD}
-      ELASTICSEARCH_HOSTS: ${KIBANA_ES_HOSTS}
+      ELASTIC_USERNAME: ${ELASTIC_USERNAME}
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+      ELASTICSEARCH_HOST: ${ELASTICSEARCH_HOST}
     ports:
       - "80:5601"
-    depends_on:
-      - elasticsearch

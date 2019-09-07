@@ -5,12 +5,12 @@
 server.name: kibana
 server.host: "0"
 
-elasticsearch.hosts: [ "${ELASTICSEARCH_HOSTS}" ]
+elasticsearch.hosts: [ "http://${ELASTICSEARCH_HOST}" ]
 
 ## X-Pack security credentials
 #
-elasticsearch.username: ${KIBANA_USERNAME}
-elasticsearch.password: ${KIBANA_PASSWORD}
+elasticsearch.username: ${ELASTIC_USERNAME}
+elasticsearch.password: ${ELASTIC_PASSWORD}
 
 ## ElastAlert Plugin
 #elastalert-kibana-plugin.serverHost: elastalert

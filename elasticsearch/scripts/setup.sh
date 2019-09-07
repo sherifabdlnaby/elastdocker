@@ -22,3 +22,4 @@ sh scripts/keystore.sh
 
 echo "Saving new keystore..."
 mv config/elasticsearch.keystore keystore/elasticsearch.keystore
+chmod 0644 keystore/elasticsearch.keystore

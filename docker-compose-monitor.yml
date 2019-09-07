@@ -1,0 +1,44 @@
+version: '3.7'
+
+services:
+
+  filebeat_cluster_logs:
+    build:
+      context: filebeat/
+      args:
+        ELK_VERSION: $ELK_VERSION
+    # -e flag to log to stderr and disable syslog/file output
+    command: -e --strict.perms=false
+    user: root
+    environment:
+      ELASTIC_USERNAME: ${ELASTIC_USERNAME}
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+      ELASTICSEARCH_HOST: ${ELASTICSEARCH_HOST}
+    volumes:
+      - ./filebeat/config/monitor/filebeat_cluster_logs.yml:/usr/share/filebeat/filebeat.yml:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+
+  # ------------------------------
+
+  elasticsearch_exporter:
+    image: justwatch/elasticsearch_exporter:1.1.0
+    restart: always
+    command: ["--es.uri", "http://${ELASTIC_USERNAME}:${ELASTIC_PASSWORD}@${ELASTICSEARCH_HOST}"]
+    ports:
+      - "9114:9114"
+
+  logstash_exporter:
+    image: alxrem/prometheus-logstash-exporter
+    restart: always
+    ports:
+      - "9304:9304"
+    command: ["-logstash.host", "logstash"]
+
+  filebeat_cluster_logs_exporter:
+    image: trustpilot/beat-exporter:0.1.2
+    restart: always
+    command: ["-beat.uri", "http://filebeat_cluster_logs:5066"]
+    ports:
+      - "9479:9479"
