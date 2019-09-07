@@ -9,8 +9,8 @@ elasticsearch.hosts: [ "${ELASTICSEARCH_HOSTS}" ]
 
 ## X-Pack security credentials
 #
-elasticsearch.username: ${ELASTIC_USERNAME}
-elasticsearch.password: ${ELASTIC_PASSWORD}
+elasticsearch.username: ${KIBANA_USERNAME}
+elasticsearch.password: ${KIBANA_PASSWORD}
 
 ## ElastAlert Plugin
 #elastalert-kibana-plugin.serverHost: elastalert

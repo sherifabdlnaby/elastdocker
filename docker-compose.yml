@@ -56,9 +56,9 @@ services:
     volumes:
       - ./kibana/config/:/usr/share/kibana/config:ro
     environment:
-      ELASTIC_USERNAME: ${ELASTIC_USERNAME}
-      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
-      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+      KIBANA_USERNAME: ${KIBANA_USERNAME}
+      KIBANA_PASSWORD: ${KIBANA_PASSWORD}
+      ELASTICSEARCH_HOSTS: ${KIBANA_ES_HOSTS}
     ports:
       - "80:5601"
     depends_on:
