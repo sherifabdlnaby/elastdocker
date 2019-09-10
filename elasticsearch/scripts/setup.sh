@@ -1,7 +1,7 @@
 # Exit on Error
 set -e
 
-echo "=== CREATE Keystore ==="
+echo "=== Creating Elasticsearch Keystore ==="
 # Replace current Keystore
 if [ -f "keystore/elasticsearch.keystore" ]; then
     echo "Remove old elasticsearch.keystore"

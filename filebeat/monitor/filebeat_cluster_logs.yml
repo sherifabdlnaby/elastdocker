@@ -1,3 +1,7 @@
+#================================== Description ========================================
+# Filebeat Config to send Elasticsearch/Logstash/Kibana in a docker host to Elasticsea-
+# sh cluster.
+
 name: filebeat-elasticsearch-logs-shipper
 
 filebeat.config:

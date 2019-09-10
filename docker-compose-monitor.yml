@@ -2,26 +2,7 @@ version: '3.7'
 
 services:
 
-  filebeat_cluster_logs:
-    build:
-      context: filebeat/
-      args:
-        ELK_VERSION: $ELK_VERSION
-    # -e flag to log to stderr and disable syslog/file output
-    command: -e --strict.perms=false
-    user: root
-    environment:
-      ELASTIC_USERNAME: ${ELASTIC_USERNAME}
-      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
-      ELASTICSEARCH_HOST: ${ELASTICSEARCH_HOST}
-    volumes:
-      - ./filebeat/config/monitor/filebeat_cluster_logs.yml:/usr/share/filebeat/filebeat.yml:ro
-      - /var/lib/docker/containers:/var/lib/docker/containers:ro
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-
-
-  # ------------------------------
-
+  # Prometheus Exporters ------------------------------
   elasticsearch_exporter:
     image: justwatch/elasticsearch_exporter:1.1.0
     restart: always
@@ -42,3 +23,32 @@ services:
     command: ["-beat.uri", "http://filebeat_cluster_logs:5066"]
     ports:
       - "9479:9479"
+
+  # Containers Exporter --------------------------------
+  cadvisor-exporter:
+    image: google/cadvisor:latest
+    ports:
+    - 8080:8080
+    volumes:
+    - /:/rootfs:ro
+    - /var/run:/var/run:rw
+    - /sys:/sys:ro
+    - /var/lib/docker/:/var/lib/docker:ro
+
+  # Cluster Logs Shipper ------------------------------
+  filebeat_cluster_logs:
+    build:
+      context: filebeat/
+      args:
+        ELK_VERSION: $ELK_VERSION
+    # -e flag to log to stderr and disable syslog/file output
+    command: -e --strict.perms=false
+    user: root
+    environment:
+      ELASTIC_USERNAME: ${ELASTIC_USERNAME}
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+      ELASTICSEARCH_HOST: ${ELASTICSEARCH_HOST}
+    volumes:
+      - ./filebeat/monitor/filebeat_cluster_logs.yml:/usr/share/filebeat/filebeat.yml:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
