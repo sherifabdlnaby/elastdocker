@@ -27,6 +27,8 @@ services:
   # Containers Exporter --------------------------------
   cadvisor-exporter:
     image: google/cadvisor:latest
+    privileged: true
+    command: -logtostderr -docker_only
     ports:
     - 8080:8080
     volumes:
@@ -34,6 +36,7 @@ services:
     - /var/run:/var/run:rw
     - /sys:/sys:ro
     - /var/lib/docker/:/var/lib/docker:ro
+    - /dev/disk/:/dev/disk:ro
 
   # Cluster Logs Shipper ------------------------------
   filebeat_cluster_logs:
