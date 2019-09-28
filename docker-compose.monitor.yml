@@ -19,7 +19,7 @@ services:
 
 
   # Containers Exporter --------------------------------
-  cadvisor-exporter:
+  cadvisor_exporter:
     image: google/cadvisor:latest
     privileged: true
     command: -logtostderr -docker_only
