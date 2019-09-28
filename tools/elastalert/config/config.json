@@ -1,0 +1,22 @@
+{
+  "appName": "elastalert-server",
+  "port": 3030,
+  "wsport": 3333,
+  "elastalertPath": "/opt/elastalert",
+  "verbose": false,
+  "es_debug": false,
+  "debug": false,
+  "rulesPath": {
+    "relative": true,
+    "path": "/rules"
+  },
+  "templatesPath": {
+    "relative": true,
+    "path": "/rule_templates"
+  },
+  "es_host": "${ELASTICSEARCH_HOST}",
+  "es_port": "${ELASTICSEARCH_PORT}",
+  "es_username": "${ELASTIC_USERNAME}",
+  "es_password": "${ELASTIC_PASSWORD}",
+  "writeback_index": "elastalert_status"
+}

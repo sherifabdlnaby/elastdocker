@@ -74,7 +74,7 @@ processors:
 
 # Output to ES directly.
 output.elasticsearch:
-  hosts: '${ELASTICSEARCH_HOST}'
+  hosts: '${ELASTICSEARCH_HOST_PORT}'
   username: '${ELASTIC_USERNAME}'
   password: '${ELASTIC_PASSWORD}'
 
@@ -84,7 +84,7 @@ output.elasticsearch:
 # This requires a Kibana endpoint configuration.
 setup:
   kibana:
-    host: '${KIBANA_HOST}'
+    host: '${KIBANA_HOST_PORT}'
     username: '${ELASTIC_USERNAME}'
     password: '${ELASTIC_PASSWORD}'
 
@@ -101,7 +101,7 @@ xpack.monitoring.enabled: true
 #monitoring:
 #  enabled: true
 #  elasticsearch:
-#    hosts: '${ELASTICSEARCH_HOST}'
+#    hosts: '${ELASTICSEARCH_HOST_PORT}'
 #    username: '${ELASTIC_USERNAME}'
 #    password: '${ELASTIC_PASSWORD}'
 

@@ -1,0 +1,59 @@
+# Alert when there are 500 discovery detection events coming from the same ip, userAgent within 30 seconds.
+
+# Rule name, must be unique
+name: Attack threshold exceeded
+
+# Type of alert.
+type: percentage_match
+
+# Alert when this many documents matching the query occur within a timeframe
+max_percentage: 10
+
+# num_events must occur within this amount of time to trigger an alert
+timeframe:
+  seconds: 60
+
+# Index to search, wildcard supported
+index: bitsensor
+timestamp_field: endpoint.localtime
+
+query_key:
+  - context.ip
+
+# A list of elasticsearch filters used for find events
+# These filters are joined with AND and nested in a filtered query
+# For more info: http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl.html
+match_bucket_filter: 
+- query:
+    query_string:
+      query: "_exists_:detections"
+
+include:
+  - endpoint.location
+  - endpoint.name
+  - context.http.userAgent
+  - context.ip
+  - context.php.session.sessionId
+  - detections.type
+  - detections.name
+  - meta.user
+  - errors
+
+alert_subject: "Attack threshold exceeded by {}"
+alert_subject_args:
+  - context.ip
+
+alert_text_type: alert_text_only
+alert_text: "Time: {}\nIP: {} \nUser-Agent: {}\n\nID: {}\nUser: {}"
+alert_text_args:
+  - endpoint.localtime
+  - context.ip
+  - context.http.userAgent
+  - _id
+  - meta.user
+
+# The alert is use when a match is found
+alert:
+  - slack
+slack_webhook_url: "https://hooks.slack.com/services/"
+slack_username_override: "ElastAlert"

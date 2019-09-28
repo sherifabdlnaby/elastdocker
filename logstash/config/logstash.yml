@@ -1,6 +1,6 @@
 ---
 http.host: "0.0.0.0"
-xpack.monitoring.elasticsearch.hosts: ${ELASTICSEARCH_HOST}
+xpack.monitoring.elasticsearch.hosts: ${ELASTICSEARCH_HOST_PORT}
 
 ## X-Pack security credentials
 xpack.monitoring.enabled: true

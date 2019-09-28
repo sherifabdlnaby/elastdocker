@@ -5,7 +5,7 @@
 server.name: kibana
 server.host: "0"
 
-elasticsearch.hosts: [ "http://${ELASTICSEARCH_HOST}" ]
+elasticsearch.hosts: [ "http://${ELASTICSEARCH_HOST_PORT}" ]
 
 ## X-Pack security credentials
 #

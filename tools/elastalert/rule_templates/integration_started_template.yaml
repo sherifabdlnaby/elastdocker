@@ -1,0 +1,54 @@
+# Rule name, must be unique
+name: Integration Started
+
+# Alert on x events in y seconds
+type: frequency
+
+# Alert when this many documents matching the query occur within a timeframe
+num_events: 1
+
+# num_events must occur within this amount of time to trigger an alert
+timeframe:
+  hours: 1
+
+# When the attacker continues, send a new alert after x minutes
+realert:
+  days: 7
+
+query_key:
+  - meta.provider
+  - endpoint.name
+  
+include:
+  - meta.provider
+  - endpoint.name
+
+alert_subject: "Integration started on <{}> | <{}|Show Dashboard>"
+alert_subject_args:
+  - endpoint.name
+  - kibana_link
+
+alert_text: |-
+  Integration on {} has started with plugin {}.
+
+alert_text_args:
+  - endpoint.name
+  - meta.provider
+
+# The alert when a match is found
+alert:
+  - slack
+
+slack_webhook_url: "https://hooks.slack.com/services/"
+slack_username_override: "ElastAlert"
+
+# Alert body only cointains a title and text
+alert_text_type: alert_text_only
+
+# Link to BitSensor Kibana Dashboard
+use_kibana4_dashboard: "https://kibana.dashboard.io/app/kibana#/dashboard"
+
+# Index to search, wildcard supported
+index: bitsensor
+timestamp_field: endpoint.localtime
+doc_type: datapoint

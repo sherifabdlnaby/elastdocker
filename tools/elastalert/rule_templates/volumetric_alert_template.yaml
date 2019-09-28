@@ -1,0 +1,70 @@
+# Rule name, must be unique
+name: Bad/Bot Behaviour
+
+# Alert on x events in y seconds
+type: frequency
+
+# Alert when this many documents matching the query occur within a timeframe
+num_events: 20
+
+# num_events must occur within this amount of time to trigger an alert
+timeframe:
+  seconds: 30
+
+# A list of elasticsearch filters used for find events
+# These filters are joined with AND and nested in a filtered query
+# For more info: http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl.html
+filter: 
+- query:
+    query_string:
+      query: "detections.reason:BEHAVIOUR"
+
+# Index to search, wildcard supported
+index: bitsensor-detections-*
+timestamp_field: endpoint.localtime
+doc_type: datapoint
+
+# When the attacker continues, send a new alert after x minutes
+realert:
+  minutes: 1
+
+query_key:
+  - context.ip
+  - context.http.userAgent
+  
+include:
+  - endpoint.location
+  - endpoint.name
+  - context.http.userAgent
+  - context.ip
+  - context.php.session.sessionId
+
+alert_subject: "Bad/Bot behaviour on <{}> | <{}|Show Dashboard>"
+alert_subject_args:
+  - endpoint.name
+  - kibana_link
+
+alert_text: |-
+  An attack on {} is detected.
+
+  The attacker looks like:
+  IP: {}
+  Tool: {}
+
+alert_text_args:
+  - endpoint.name
+  - context.ip
+  - context.http.userAgent
+
+# The alert is use when a match is found
+alert:
+  - slack
+
+slack_webhook_url: "https://hooks.slack.com/services/"
+slack_username_override: "ElastAlert"
+
+# Alert body only cointains a title and text
+alert_text_type: alert_text_only
+
+# Link to BitSensor Kibana Dashboard
+use_kibana4_dashboard: "https://kibana.dashboard.io/app/kibana#/dashboard"

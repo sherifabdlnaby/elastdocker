@@ -1,0 +1,79 @@
+# Index to search, wildcard supported
+name: Known Attacks
+
+# Alert on each event
+type: any
+
+# A list of elasticsearch filters used for find events
+# These filters are joined with AND and nested in a filtered query
+# For more info: http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl.html
+filter:
+- query:
+    query_string:
+      query: "detections.reason:KNOWN_ATTACK"
+
+index: bitsensor-detections-*
+timestamp_field: endpoint.localtime
+
+# Key per profile
+query_key:
+  - context.ip
+  - context.http.userAgent
+
+# When the attacker continues, send a new alert after x minutes
+realert:
+  minutes: 10
+  
+# Index to search, wildcard supported
+include:
+  - endpoint.location
+  - endpoint.name
+  - context.http.userAgent
+  - context.ip
+  - context.php.session.sessionId
+  - detections
+
+alert_subject: "Attack on <{}> of type {} | <{}|Show Dashboard>"
+alert_subject_args:
+  - endpoint.name
+  - detections_parsed.type
+  - kibana_link
+
+alert_text: |-
+  An attack on {} is detected.
+  Detection name: {}
+  Detection type: {}
+
+  The attacker looks like:
+  IP: {}
+  User-Agent: {}
+
+alert_text_args:
+  - endpoint.name
+  - detections_parsed.name
+  - detections_parsed.type
+  - context.ip
+  - context.http.userAgent
+
+# Specify your services here
+alert:
+  - slack
+
+# How To Generate your API:
+# Click on your Workspace name (upper left corner)
+# Go to "Manage Apps", then "Custom Integrations", "Incoming Webhooks"
+# Press "Add Configuration", and choose your channel. Now paste it here:
+slack_webhook_url: "https://hooks.slack.com/services/"
+slack_username_override: "BitSensor Alerting"
+
+# Alert body only cointains a title and text
+alert_text_type: alert_text_only
+
+# Link to BitSensor Kibana Dashboard
+use_kibana4_dashboard: "https://kibana.dashboard.io/app/kibana#/dashboard"
+
+# Enhancement for converting 'detections' array into object, ex. get merged detection type by  
+# 'detections_parsed.type' or get first detection type by 'detection_parsed.0.type' 
+match_enhancements:   
+- "elastalert_modules.bitsensor_enhancement.AlertTextEnhancement"   
+run_enhancements_first: true

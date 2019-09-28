@@ -1,0 +1,34 @@
+# Rule name, must be unique
+name: Spike in attacks on server
+
+# Type of alert.
+type: spike
+
+# num_events must occur within this amount of time to trigger an alert
+timeframe: 
+  seconds: 60
+spike_height: 10
+spike_type: up
+
+# Index to search, wildcard supported
+index: bitsensor
+timestamp_field: endpoint.localtime
+
+query_key:
+  - endpoint.name
+
+alert_subject: "Surge in attacks on {}"
+alert_subject_args:
+  - endpoint.name
+
+alert_text_type: alert_text_only
+alert_text: "Surge in attacks on {}"
+alert_text_args:
+  - endpoint.name
+
+# The alert is use when a match is found
+alert:
+  - slack
+slack_webhook_url: "https://hooks.slack.com/services/"
+slack_username_override: "ElastAlert"
+

@@ -1,0 +1,56 @@
+# Rule name, must be unique
+name: Alert on any detection
+
+# Index to search, wildcard supported
+index: bitsensor
+timestamp_field: endpoint.localtime
+
+# Type of alert.
+type: any
+realert: 
+  seconds: 0
+
+# A list of elasticsearch filters used for find events
+# These filters are joined with AND and nested in a filtered query
+# For more info: http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl.html
+filter: 
+- query:
+    query_string:
+      query: "_exists_:detections"
+
+include:
+  - endpoint.location
+  - endpoint.name
+  - context.http.userAgent
+  - context.ip
+  - context.php.session.sessionId
+  - detections
+  - meta.user
+
+
+# Enhancement for converting 'detections' array into object, ex. get merged detection type by  
+# 'detections_parsed.type' or get first detection type by 'detection_parsed.0.type' 
+match_enhancements:   
+- "elastalert_modules.bitsensor_enhancement.AlertTextEnhancement"   
+run_enhancements_first: true 
+
+
+alert_subject: ":exclamation: Detection on {}"
+alert_subject_args:
+  - endpoint.name
+
+alert_text_type: alert_text_only
+alert_text: "Triggered at _{}_\n\n*Attacker:*\nIP: {} \nUser-Agent: {}\nDetection: `{}`\n\n:Id: {}\nUser: {}"
+alert_text_args:
+  - endpoint.localtime
+  - context.ip
+  - context.http.userAgent
+  - detections_parsed.type
+  - _id
+  - meta.user
+
+# The alert is use when a match is found
+alert:
+  - slack
+slack_webhook_url: "https://hooks.slack.com/services/"
+slack_username_override: "ElastAlert"

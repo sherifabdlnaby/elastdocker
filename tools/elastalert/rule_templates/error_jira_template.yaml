@@ -1,0 +1,62 @@
+# Rule name, must be unique
+name: Alert on any error
+
+# Index to search, wildcard supported
+index: bitsensor
+timestamp_field: endpoint.localtime
+
+# Type of alert.
+type: any
+realert: 
+  seconds: 0
+
+# A list of elasticsearch filters used for find events
+# These filters are joined with AND and nested in a filtered query
+# For more info: http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl.html
+filter: 
+- query:
+    query_string:
+      query: "_exists_:errors"
+
+include:
+  - endpoint.location
+  - endpoint.name
+  - context.http.userAgent
+  - context.ip
+  - errors
+  - meta.user
+
+
+# Enhancement for converting 'detections' array into object, ex. get merged detection type by  
+# 'detections_parsed.type' or get first detection type by 'detection_parsed.0.type' 
+match_enhancements:   
+- "elastalert_modules.bitsensor_enhancement.AlertTextEnhancement"   
+run_enhancements_first: true 
+
+
+alert_subject: "Error on {}"
+alert_subject_args:
+  - endpoint.name
+
+alert_text_type: alert_text_only
+alert_text: "Triggered at _{}_\n\n*Attacker:*\nIP: {} \nUser-Agent: {}\nError: *{}*\n\nId: {}\nUser: {}"
+alert_text_args:
+  - endpoint.localtime
+  - context.ip
+  - context.http.userAgent
+  - errors_parsed.type
+  - _id
+  - meta.user
+
+# The alert is use when a match is found
+alert:
+  - jira
+
+jira_server: https://bitsensor.atlassian.net
+jira_project: SA
+jira_issuetype: Story
+jira_labels: error
+
+# Add jira_acct.txt to rules folder
+# The file is yaml formatted and must contain fields: 'user', 'password'
+jira_account_file: "rules/jira_acct.txt"

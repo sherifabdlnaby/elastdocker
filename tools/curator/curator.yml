@@ -1,0 +1,18 @@
+---
+# Remember, leave a key empty if there is no value. None will be a string,
+# not a Python "NoneType"
+
+# This are Environment Variables INSIDE the container, and should be set by the Docker-Compose File
+client:
+  hosts:
+    - ${ELASTICSEARCH_HOST_PORT}
+  http_auth: ${ELASTICSEARCH_HTTP_AUTH}
+  port: 9200
+  use_ssl: False
+  ssl_no_validate: False
+  timeout: 30
+  master_only: False
+
+logging:
+  loglevel: INFO
+  logformat: default

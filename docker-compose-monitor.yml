@@ -6,7 +6,7 @@ services:
   elasticsearch_exporter:
     image: justwatch/elasticsearch_exporter:1.1.0
     restart: always
-    command: ["--es.uri", "http://${ELASTIC_USERNAME}:${ELASTIC_PASSWORD}@${ELASTICSEARCH_HOST}"]
+    command: ["--es.uri", "http://${ELASTIC_USERNAME}:${ELASTIC_PASSWORD}@${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT}"]
     ports:
       - "9114:9114"
 
@@ -15,14 +15,8 @@ services:
     restart: always
     ports:
       - "9304:9304"
-    command: ["-logstash.host", "logstash"]
+    command: ["-logstash.host", "${LOGSTASH_HOST}"]
 
-  filebeat_cluster_logs_exporter:
-    image: trustpilot/beat-exporter:0.1.2
-    restart: always
-    command: ["-beat.uri", "http://filebeat_cluster_logs:5066"]
-    ports:
-      - "9479:9479"
 
   # Containers Exporter --------------------------------
   cadvisor-exporter:
@@ -41,7 +35,7 @@ services:
   # Cluster Logs Shipper ------------------------------
   filebeat_cluster_logs:
     build:
-      context: filebeat/
+      context: tools/filebeat/
       args:
         ELK_VERSION: $ELK_VERSION
     # -e flag to log to stderr and disable syslog/file output
@@ -50,8 +44,9 @@ services:
     environment:
       ELASTIC_USERNAME: ${ELASTIC_USERNAME}
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
-      ELASTICSEARCH_HOST: ${ELASTICSEARCH_HOST}
+      KIBANA_HOST_PORT: ${KIBANA_HOST}:${KIBANA_PORT}
+      ELASTICSEARCH_HOST_PORT: ${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT}
     volumes:
-      - ./filebeat/monitor/filebeat_cluster_logs.yml:/usr/share/filebeat/filebeat.yml:ro
+      - ./tools/filebeat/monitor/filebeat_cluster_logs.yml:/usr/share/filebeat/filebeat.yml:ro
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro

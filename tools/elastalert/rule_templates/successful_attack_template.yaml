@@ -1,0 +1,50 @@
+# Rule name, must be unique
+name: Alert on Successful Attack
+
+# Type of alert.
+type: any
+
+realert: 
+  seconds: 0
+
+# Index to search, wildcard supported
+index: bitsensor
+timestamp_field: endpoint.localtime
+
+# A list of elasticsearch filters used for find events
+# These filters are joined with AND and nested in a filtered query
+# For more info: http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl.html
+filter: 
+- query:
+    query_string:
+      query: "detections.successful:true"
+
+include:
+  - endpoint.location
+  - endpoint.name
+  - context.http.userAgent
+  - context.ip
+  - context.php.session.sessionId
+  - detections.type
+  - detections.name
+  - meta.user
+  - errors
+
+alert_subject: "Successful attack on {}"
+alert_subject_args:
+  - endpoint.name
+
+alert_text_type: alert_text_only
+alert_text: "Detection triggered at {}\nIP: {} \nUser-Agent: {}\n\nID: {}\nUser: {}"
+alert_text_args:
+  - endpoint.localtime
+  - context.ip
+  - context.http.userAgent
+  - _id
+  - meta.user
+
+# The alert is use when a match is found
+alert:
+  - slack
+slack_webhook_url: "https://hooks.slack.com/services/"
+slack_username_override: "ElastAlert"

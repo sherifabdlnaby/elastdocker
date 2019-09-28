@@ -1,0 +1,38 @@
+# Alert when no data has been received for more then 30 seconds.
+
+# Rule name, must be unique
+name: No Data
+
+# Type of alert.
+type: flatline
+
+# Alert when this many documents matching the query occur within a timeframe
+threshold: 1
+use_terms: true
+
+# num_events must occur within this amount of time to trigger an alert
+timeframe:
+  seconds: 30
+
+realert: 
+  minutes: 10
+  
+exponential_realert: 
+  hours: 1
+
+doc_type: datapoint
+
+# Index to search, wildcard supported
+index: bitsensor
+timestamp_field: endpoint.localtime
+  
+alert_subject: "No data on dashboard"
+
+alert_text_type: alert_text_only
+alert_text: "The stack receives no data. It might be down :("
+
+# The alert is use when a match is found
+alert:
+  - slack
+slack_webhook_url: "https://hooks.slack.com/services/"
+slack_username_override: "ElastAlert"
