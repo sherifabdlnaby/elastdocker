@@ -10,10 +10,17 @@ ELK_TOOLS  := curator elastalert
 ELK_ALL_SERVICES := ${ELK_SERVICES} ${ELK_MONITORING} ${ELK_TOOLS}
 # --------------------------
 
-.PHONY: setup all elk monitoring tools build down stop restart rm logs
+.PHONY: setup keystore certs all elk monitoring tools build down stop restart rm logs
 
-setup:		    ## Setup Elasticsearch Keystore, by initializing passwords, and add credentials defined in `keystore.sh`.
-	${COMPOSE_PREFIX_CMD} docker-compose -f docker-compose.setup.yml run --rm create_keystore
+keystore:		## Setup Elasticsearch Keystore, by initializing passwords, and add credentials defined in `keystore.sh`.
+	@${COMPOSE_PREFIX_CMD} docker-compose -f docker-compose.setup.yml run --rm keystore
+
+certs:		    ## Generate Elasticsearch SSL Certs.
+	@${COMPOSE_PREFIX_CMD} docker-compose -f docker-compose.setup.yml run --rm certs
+
+setup:		    ## Generate Elasticsearch SSL Certs.
+	@make certs
+	@make keystore
 
 all:		    ## Start Elk and all its component (ELK, Monitoring, and Tools).
 	${COMPOSE_PREFIX_CMD} docker-compose ${COMPOSE_ALL_FILES} up -d ${ELK_ALL_SERVICES}

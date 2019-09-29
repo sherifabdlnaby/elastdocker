@@ -1,20 +1,29 @@
 version: '3.7'
 
 services:
-  create_keystore:
+  keystore:
     build:
       context: elasticsearch/
       args:
         ELK_VERSION: ${ELK_VERSION}
-    command: bash /setup/setup.sh
+    command: bash /setup/setup-keystore.sh
     user: "0"
-    working_dir: /usr/share/elasticsearch/bin
     volumes:
-        - ./keystore:/keystore
+        - ./secrets:/secrets
         - ./setup/:/setup/
     environment:
-      ELASTIC_USERNAME: ${ELASTIC_USERNAME}
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
       # Add keystore values used in `keystore.sh` here. (e.g AMAZON S3 Repo Creds)
       AWS_ACCESS_KEY_ID:      ${AWS_ACCESS_KEY_ID}
       AWS_SECRET_ACCESS_KEY:  ${AWS_SECRET_ACCESS_KEY}
+
+  certs:
+    build:
+      context: elasticsearch/
+      args:
+        ELK_VERSION: ${ELK_VERSION}
+    command: bash /setup/setup-certs.sh
+    user: "0"
+    volumes:
+      - ./secrets:/secrets
+      - ./setup/:/setup/
