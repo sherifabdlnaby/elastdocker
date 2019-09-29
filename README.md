@@ -5,13 +5,13 @@
 <h4 align="center">Comes with tools like Curator, ElastAlert for Alerting.</h4>
 <p align="center">
    <a>
+      <img src="https://img.shields.io/badge/Elastic%20Stack->=7.0.0-blue?style=flat&logo=elasticsearch" alt="Elastic Stack Version 7^^">
+   </a>
+   <a>
       <img src="https://img.shields.io/github/v/tag/sherifabdlnaby/elastdocker?label=release&amp;sort=semver">
     </a>
    <a>
       <img src="https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat" alt="contributions welcome">
-   </a>
-   <a>
-      <img src="https://img.shields.io/badge/Elastic%20Stack-7%5E-blue?style=flat&logo=elasticsearch" alt="Elastic Stack Version 7^^">
    </a>
    <a href="https://github.com/sherifabdlnaby/elastdocker/network">
       <img src="https://img.shields.io/github/forks/sherifabdlnaby/elastdocker.svg" alt="GitHub forks">
@@ -93,11 +93,18 @@ $ make nodes
 
 - Adding Two Extra Nodes to the cluster will make the cluster depending on them and won't start without them again.
 
-* Makefile is a wrapper around `Docker-Compose` commands, use `make help` to know every command.
+- Makefile is a wrapper around `Docker-Compose` commands, use `make help` to know every command.
 
 - Elasticsearch will save its data to a volume named `elasticsearch-data`
 
 - Elasticsearch Keystore (that contains passwords and credentials) and SSL Certificate are generated in the `./secrets` directory by the setup command.
+
+- Linux Users must set the following configuration as `root`
+```
+sysctl -w vm.max_map_count=262144
+```
+By default, Virtual Memory [is not enough](https://www.elastic.co/guide/en/elasticsearch/reference/current/vm-max-map-count.html).
+
 
 # Configuration
 
