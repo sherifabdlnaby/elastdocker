@@ -22,7 +22,7 @@ services:
       context: elasticsearch/
       args:
         ELK_VERSION: ${ELK_VERSION}
-#    restart: unless-stopped
+    restart: unless-stopped
     environment:
       ELASTIC_USERNAME: ${ELASTIC_USERNAME}
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
@@ -57,7 +57,7 @@ services:
       context: logstash/
       args:
         ELK_VERSION: $ELK_VERSION
-    restart: always
+    restart: unless-stopped
     volumes:
       - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
       - ./logstash/config/pipelines.yml:/usr/share/logstash/config/pipelines.yml:ro
@@ -73,7 +73,7 @@ services:
       context: kibana/
       args:
         ELK_VERSION: $ELK_VERSION
-    restart: always
+    restart: unless-stopped
     volumes:
       - ./kibana/config/:/usr/share/kibana/config:ro
     environment:
@@ -81,4 +81,4 @@ services:
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
       ELASTICSEARCH_HOST_PORT: ${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT}
     ports:
-      - "80:5601"
+      - "5601:5601"

@@ -20,7 +20,7 @@ keystore:		## Setup Elasticsearch Keystore, by initializing passwords, and add c
 certs:		    ## Generate Elasticsearch SSL Certs.
 	@${COMPOSE_PREFIX_CMD} docker-compose -f docker-compose.setup.yml run --rm certs
 
-setup:		    ## Generate Elasticsearch SSL Certs.
+setup:		    ## Generate Elasticsearch SSL Certs and Keystore.
 	@make certs
 	@make keystore
 
