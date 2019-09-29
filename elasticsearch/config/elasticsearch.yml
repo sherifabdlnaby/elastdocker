@@ -1,13 +1,14 @@
 ## Default Elasticsearch configuration from Elasticsearch base image.
 ## https://github.com/elastic/elasticsearch/blob/master/distribution/docker/src/docker/config/elasticsearch.yml
 #
-cluster.name: elastdocker
-node.name:    elastdocker-node-0
+cluster.name: ${ELASTIC_CLUSTER_NAME}
+node.name:    ${ELASTIC_NODE_NAME}
 network.host: 0.0.0.0
 transport.host: 0.0.0.0
 
-## Set Initial Master Node
-cluster.initial_master_nodes: elastdocker-node-0
+## Cluster Settings
+discovery.seed_hosts: ${ELASTIC_DISCOVERY_SEEDS}
+cluster.initial_master_nodes: ${ELASTIC_INIT_MASTER_NODE}
 
 ## License
 xpack.license.self_generated.type: basic

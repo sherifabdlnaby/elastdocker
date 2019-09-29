@@ -3,16 +3,17 @@ version: '3.7'
 services:
 
   # Prometheus Exporters ------------------------------
-  elasticsearch_exporter:
+  elasticsearch-exporter:
     image: justwatch/elasticsearch_exporter:1.1.0
     restart: always
     command: ["--es.uri", "http://${ELASTIC_USERNAME}:${ELASTIC_PASSWORD}@${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT}",
+              "--es.all",
               "--es.snapshots",
               "--es.indices"]
     ports:
       - "9114:9114"
 
-  logstash_exporter:
+  logstash-exporter:
     image: alxrem/prometheus-logstash-exporter
     restart: always
     ports:
@@ -21,7 +22,7 @@ services:
 
 
   # Containers Exporter --------------------------------
-  cadvisor_exporter:
+  cadvisor-exporter:
     image: google/cadvisor:latest
     privileged: true
     command: ["--logtostderr", "--docker_only"]
@@ -35,7 +36,7 @@ services:
     - /dev/disk/:/dev/disk:ro
 
   # Cluster Logs Shipper ------------------------------
-  filebeat_cluster_logs:
+  filebeat-cluster-logs:
     build:
       context: tools/filebeat/
       args:

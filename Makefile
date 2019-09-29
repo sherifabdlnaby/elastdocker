@@ -3,11 +3,13 @@
 # This for future release of Compose that will use Docker Buildkit, which is much efficient.
 COMPOSE_PREFIX_CMD := COMPOSE_DOCKER_CLI_BUILD=1
 
-COMPOSE_ALL_FILES := -f docker-compose.yml -f docker-compose.monitor.yml -f docker-compose.tools.yml
+COMPOSE_ALL_FILES := -f docker-compose.yml -f docker-compose.monitor.yml -f docker-compose.tools.yml -f docker-compose.nodes.yml
 ELK_SERVICES   := elasticsearch logstash kibana
-ELK_MONITORING := elasticsearch_exporter logstash_exporter cadvisor_exporter filebeat_cluster_logs
+ELK_MONITORING := elasticsearch-exporter logstash-exporter cadvisor-exporter filebeat-cluster-logs
 ELK_TOOLS  := curator elastalert
-ELK_ALL_SERVICES := ${ELK_SERVICES} ${ELK_MONITORING} ${ELK_TOOLS}
+ELK_NODES := elasticsearch-1 elasticsearch-2
+ELK_MAIN_SERVICES := ${ELK_SERVICES} ${ELK_MONITORING} ${ELK_TOOLS}
+ELK_ALL_SERVICES := ${ELK_MAIN_SERVICES} ${ELK_NODES}
 # --------------------------
 
 .PHONY: setup keystore certs all elk monitoring tools build down stop restart rm logs
@@ -23,16 +25,19 @@ setup:		    ## Generate Elasticsearch SSL Certs.
 	@make keystore
 
 all:		    ## Start Elk and all its component (ELK, Monitoring, and Tools).
-	${COMPOSE_PREFIX_CMD} docker-compose ${COMPOSE_ALL_FILES} up -d ${ELK_ALL_SERVICES}
+	${COMPOSE_PREFIX_CMD} docker-compose ${COMPOSE_ALL_FILES} up -d ${ELK_MAIN_SERVICES}
 
 elk:		    ## Start ELK.
 	${COMPOSE_PREFIX_CMD} docker-compose ${COMPOSE_ALL_FILES} up -d ${ELK_SERVICES}
 
-monitoring:		## Start ELK Monitoring.
+monitoring:		## Start ELK Prometheus Monitoring.
 	${COMPOSE_PREFIX_CMD} docker-compose ${COMPOSE_ALL_FILES} up -d ${ELK_MONITORING}
 
-tools:		    ## Start ELK Tools.
+tools:		    ## Start ELK Tools (ElastAlert, Curator).
 	${COMPOSE_PREFIX_CMD} docker-compose ${COMPOSE_ALL_FILES} up -d ${ELK_TOOLS}
+
+nodes:		    ## Start Two Extra Elasticsearch Nodes
+	${COMPOSE_PREFIX_CMD} docker-compose ${COMPOSE_ALL_FILES} up -d ${ELK_NODES}
 
 build:			## Build ELK and all its extra components.
 	${COMPOSE_PREFIX_CMD} docker-compose ${COMPOSE_ALL_FILES} build ${ELK_ALL_SERVICES}
