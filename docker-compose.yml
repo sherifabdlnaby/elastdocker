@@ -12,8 +12,9 @@ volumes:
 
 secrets:
   elasticsearch.keystore:
-    file: ./keystore/elasticsearch.keystore
-    name: /usr/share/elasticsearch/config/elasticsearch.keystore
+    file: ./secrets/keystore/elasticsearch.keystore
+  elastic.certificates:
+    file: ./secrets/certs/elastic-certificates.p12
 
 services:
   elasticsearch:
@@ -34,6 +35,8 @@ services:
     secrets:
       - source: elasticsearch.keystore
         target: /usr/share/elasticsearch/config/elasticsearch.keystore
+      - source: elastic.certificates
+        target: /usr/share/elasticsearch/config/certs/elastic-certificates.p12
     ports:
       - "9200:9200"
       - "9300:9300"

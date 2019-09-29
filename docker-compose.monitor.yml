@@ -6,7 +6,9 @@ services:
   elasticsearch_exporter:
     image: justwatch/elasticsearch_exporter:1.1.0
     restart: always
-    command: ["--es.uri", "http://${ELASTIC_USERNAME}:${ELASTIC_PASSWORD}@${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT}"]
+    command: ["--es.uri", "http://${ELASTIC_USERNAME}:${ELASTIC_PASSWORD}@${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT}",
+              "--es.snapshots",
+              "--es.indices"]
     ports:
       - "9114:9114"
 
@@ -22,7 +24,7 @@ services:
   cadvisor_exporter:
     image: google/cadvisor:latest
     privileged: true
-    command: -logtostderr -docker_only
+    command: ["--logtostderr", "--docker_only"]
     ports:
     - 8080:8080
     volumes:
