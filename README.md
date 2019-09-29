@@ -1,65 +1,45 @@
 <p align="center">
-<img width="520px" src="https://user-images.githubusercontent.com/16992394/65820321-a87ee080-e227-11e9-9c61-8cf60357a034.png">
+<img width="680px" src="https://user-images.githubusercontent.com/16992394/65840473-f70ca780-e319-11e9-9245-29ec0a8948d6.png">
 </p>
-<h2 align="center">🐳 Pre-configured Elastic Stack on Docker, for single node, single host deployments.
-<h4 align="center">Comes with Prometheus Metrics Exporters, Elastic Stack Monitoring and Tools preconfigured.</h4>
-</h2>
-<p align="center">A Composition</p>
+<h2 align="center">🐳 Elastic Stack on Docker, with preconfigured security, tools, self-monitoring, and Prometheus Metrics Exporters</h2>
+<h4 align="center">Comes with tools like Curator, ElastAlert for Alerting.</h4>
 <p align="center">
-	<a>
-		<img src="https://img.shields.io/github/v/tag/sherifabdlnaby/elastdocker?label=release&amp;sort=semver">
+   <a>
+      <img src="https://img.shields.io/github/v/tag/sherifabdlnaby/elastdocker?label=release&amp;sort=semver">
     </a>
-	<a>
-		<img src="https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat" alt="contributions welcome">
-	</a>
-	<a>
-		<img src="https://img.shields.io/badge/Elastic%20Stack-7%5E-blue?style=flat&logo=elasticsearch" alt="Elastic Stack Version 7^^">
-	</a>
-	<a href="https://github.com/sherifabdlnaby/elastdocker/network">
-		<img src="https://img.shields.io/github/forks/sherifabdlnaby/elastdocker.svg" alt="GitHub forks">
-	</a>
-	<a href="https://github.com/sherifabdlnaby/elastdocker/issues">
+   <a>
+      <img src="https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat" alt="contributions welcome">
+   </a>
+   <a>
+      <img src="https://img.shields.io/badge/Elastic%20Stack-7%5E-blue?style=flat&logo=elasticsearch" alt="Elastic Stack Version 7^^">
+   </a>
+   <a href="https://github.com/sherifabdlnaby/elastdocker/network">
+      <img src="https://img.shields.io/github/forks/sherifabdlnaby/elastdocker.svg" alt="GitHub forks">
+   </a>
+   <a href="https://github.com/sherifabdlnaby/elastdocker/issues">
         <img src="https://img.shields.io/github/issues/sherifabdlnaby/elastdocker.svg" alt="GitHub issues">
-	</a>
-	<a href="https://raw.githubusercontent.com/sherifabdlnaby/elastdocker/blob/master/LICENSE">
-		<img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="GitHub license">
-	</a>
+   </a>
+   <a href="https://raw.githubusercontent.com/sherifabdlnaby/elastdocker/blob/master/LICENSE">
+      <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="GitHub license">
+   </a>
 </p>
-
-sudo sysctl -w vm.max_map_count=262144
 
 # Introduction
-**Docker Image for Symfony 4.3+ Application** running on **Nginx + PHP_FPM** based on [PHP Official Image](https://hub.docker.com/_/php).
-This image should be used as a **base** image for your Symfony Project, **and you shall extend and edit it according to your app needs.**
-The Image utilizes docker's multistage builds to create multiple targets optimized for **production** and **development**.
-
-
-You should copy this repository`Dockerfile`, `docker` Directory, `Makefile`, and `.dockerignore` to your Symfony application repository and configure it to your needs.
+Elastic Stack (AKA **ELK**) Docker Composition, preconfigured with **Security**, **Monitoring**, Tools such as **ElastAlert** for alerting and **Curator**.
 
 ### Main Points 📜
 
-- **Production Image is a fully contained Image with source code and dependencies inside**, Development image is set up for mounting source code on runtime with hot-reload.
-
-- Image configuration is transparent, you can view and modify any of the configurations that determine the behavior of the application.
-
-- Nginx **HTTP**, **HTTPS**, and **HTTP2** are pre-configured, for **HTTPS** it uses self-signed certificate generated at build-time. For production you'll need to mount your own signed certificates to `/etc/nginx/ssl` amd overwrite defaults.
-
-- Image tries to fail at build time as much as possible by running all sort of Checks.
-
-- Dockerfile is arranged for optimize builds, so that changed won't invalidate cache as much as possible.
-
-### Image Targets
-
-| **Target**   	| **Description**                                                                                    	|  **Size** 	|          **Stdout**          	|             **Targets**            	|
-|--------------	|----------------------------------------------------------------------------------------------------	|--------------	|:----------------------------:	|:-----------------------------------:	|
-| `nginx`      	| The Webserver, serves static content and replay others requests `php-fpm`                          	| 21 MB        	| Nginx Access and Error logs. 	|      `nginx-prod`, `nginx-dev`      	|
-| `fpm`        	| PHP_FPM, which will actually run the PHP Scripts for web requests.                                 	| 78 MB        	|  PHP Application logs only.  	|        `fpm-prod`, `fpm-dev`        	|
-| `supervisor` 	| Contains supervisor and source-code, for your consumers. (config at `docker/conf/supervisor/`)    	| 120 MB       	|    Stdout of all Commands.   	|           `supervisor-prod`           |
-| `cron`       	| Loads crontab and your app source-code, for your cron commands. (config at `docker/conf/crontab`) 	| 78 MB        	|     Stdout of all Crons.     	|              `cron-prod`            	|
-
-> All Images are **Alpine** based.  Official PHP-Alpine-Cli image size is 79.4MB. 
-
-> Size stated above are calculated excluding source code and vendor directory. 
+- Configured as Production Single Node Cluster (With a multi-node option for experimenting).
+- Use Docker-Compose and `.env` to configure your stack.
+- Security Enabled (under basic license).
+- SSL Enabled for Transport Layer.
+- Automated Script that initializes and persist Elasticsearch's Keystore and SSL Certifications.
+- Curator Preconfigured for Automated Snapshotting (Need to setup S3 Repository).
+- Self-Monitoring Metrics Enabled.
+- Filebeat instance for shipping Stack logs to Elasticsearch itself.
+- Prometheus Exporters for Stack Metrics.
+- ElastAlert preconfigured for Alerting.
+- Embedded Container Healthchecks for Stack Images.
 
 -----
 
@@ -67,161 +47,108 @@ You should copy this repository`Dockerfile`, `docker` Directory, `Makefile`, and
 
 - [Docker 17.05 or higher](https://docs.docker.com/install/) 
 - [Docker-Compose 3.4 or higher](https://docs.docker.com/compose/install/) (optional) 
-- Symfony 4+ Application
-- PHP >= 7 Application
 
 # Setup
 
-### Get Template
-#### 1. Generate Repo from this Template
+1. 
+> <a href="https://github.com/sherifabdlnaby/elastdocker/generate"><img src="https://user-images.githubusercontent.com/16992394/65464461-20c95880-de5a-11e9-9bf0-fc79d125b99e.png" alt="create repository from template"></a>
+2. Go to repository directory
+3. Modify `.env` file for your requirments, most importantly `ELASTIC_PASSWORD` that setup your superuser `elastic`'s password. and `ELK_VERSION` for, yk, ELK Version.
+4. Initalize Elasticsearch Keystore and SSL Certificates
+```shell
+$ make setup
+```
+5. Start Elastic Stack 
+```shell
+$ make elk
+---- OR ----
+$ docker-compose up -d
+```
+6. Visit Kibana at [localhost:5601](http://localhost:5601) 
 
-1. Download This Repository
-2. Copy `Dockerfile`, `docker` Directory, `Makefile`, and `.dockerignore` Into your Symfony Application Repository.
-3. Modify `Dockerfile` to your app needs, and add your app needed PHP Extensions and Required Packages.
-4. Situational:
-    - If you will use `Makefile` and `Docker-Compose`: go to `docker/.composer/.env` and modify `SERVER_NAME` to your app's name.
-    - If you will expose SSL port to Production: Mount your signed certificates `server.crt` & `server.key` to `/etc/nginx/ssl`.
-      Also make sure `SERVER_NAME` build ARG matches Certificate's **Common Name**.
-5. run `make up` for development or `make deploy` for production. 
+Username: `elastic`
 
-OR
+Password: `changeme` (or `ELASTIC_PASSWORD` value in `.env`)
 
-<a href="https://github.com/sherifabdlnaby/elastdocker/generate">
-<img src="https://user-images.githubusercontent.com/16992394/65464461-20c95880-de5a-11e9-9bf0-fc79d125b99e.png" alt="create repository from template"></a>
+### Additional
 
-<p> <small>And start from step 3..</small> </p>
+#### To Start Monitoring and Promethus Exporters
+```shell
+$ make monitoring
+```
+#### To Start Tools (ElastAlert and Curator
+```shell
+$ make tools
+```
+#### To Start **ELK, Tools and Monitoring**
+```
+$ make all
+```
+#### To Start 2 Extra Elasticsearch nodes (for development only)
+```shell
+$ make nodes
+```
 
-      
-# Building Image
+### Notes
 
-1. The image is to be used as a base for your Symfony application image, you should modify its Dockerfile to your needs.
+- Adding Two Extra Nodes to the cluster will make the cluster depending on them and won't start without them again.
 
-2. The image come with a handy _Makefile_ to build the image using Docker-Compose files, it's handy when manually building the image for development or in a not-orchestrated docker hosts.
-However in an environment where CI/CD pipelines will build the image, they will need to supply some build-time arguments for the image. (tho defaults exist.)
+* Makefile is a wrapper around `Docker-Compose` commands, use `make help` to know every command.
 
-### Build Time Arguments
-| **ARG**            | **Description**                                                                                                                                      | **Default** |
-|--------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|-------------|
-| `PHP_VERSION`      | PHP Version used in the Image                                                                                                                        | `7.3.9`     |
-| `ALPINE_VERSION`   | Alpine Version                                                                                                                                       | `3.10`      |
-| `NGINX_VERSION`    | Nginx Version                                                                                                                                        | `1.17.4`    |
-| `COMPOSER_VERSION` | Composer Version used in Image                                                                                                                       | `1.9.0`     |
-| `SERVER_NAME`      | Server Name</br> (In production, and using SSL, this must match certificate's *common name*)                                                              | `php-app`   |
-| `COMPOSER_AUTH`    | A Json Object with Bitbucket or Github token to clone private Repos with composer.</br>[Reference](https://getcomposer.org/doc/03-cli.md#composer-auth) | `{}`        | 
+- Elasticsearch will save its data to a volume named `elasticsearch-data`
 
-### Runtime Environment Variables
-| **ENV**     | **Description** | **Default**                                                 |
-|-------------|-----------------|-------------------------------------------------------------|
-| `APP_ENV`   | App Environment | - `prod` for Production image</br> - `dev` for Development image     |
-| `APP_DEBUG` | Enable Debug    | - `0` for Production image</br>- `1` for Development image           |
-
-## Tips for building Image in different environments
-
-### Production
-1. For SSL: Mount your signed certificates as secrets to `/etc/nginx/ssl/server.key` & `/etc/nginx/ssl/server.crt`
-2. Make sure build argument `SERVER_NAME` matches certificate's **common name**.
-2. Expose container port `80` and `443`.
-
-> By default, Image has a generated self-signed certificate for SSL connections added at build time.
-### Development
-1. Mount source code root to `/var/www/app`
-2. Expose container port `8080` and `443`. (or whatever you need actually)
-
-----
-
+- Elasticsearch Keystore (that contains passwords and credentials) and SSL Certificate are generated in the `./secrets` directory by the setup command.
 
 # Configuration
 
-## 1. PHP Extensions, Dependencies, and Configuration
+* Some Configuration are parameterized in the `.env` file.
+  * `ELASTIC_PASSWORD`, user `elastic`'s password (default: `changeme` _pls_).
+  * `ELK_VERSION` Elastic Stack Version (default: `7.3.0`)
+  * `ELASTICSEARCH_HEAP`, how much Elasticsearch allocate from memory (default: 1GB -good for development only-)
+  * `LOGSTASH_HEAP`, how much Logstash allocate from memory.
+  * Other configurations which their such as cluster name, and node name, etc.
+* Elasticsearch Configuration in `elasticsearch.yml` at `./elasticsearch/config`.
+* Logstash Configuration in `logstash.yml` at `./elasticsearch/config/logstash.yml`.
+* Logstash Pipeline in `main.conf` at `./elasticsearch/pipeline/main.conf`.
+* Kibana Configuration in `kibana.yml` at `./kibana/config`.
+* ElastAlert Configuration in `./tools/elastalert/config`.
+* ElastAlert Alert rules in `./tools/elastalert/rules`, [head to ElastAlert docs to lookup how to create alerts.](https://elastalert.readthedocs.io/en/latest/elastalert.html)
+* Curator Actions at `./tools/curator/actions` and `./tools/curator/crontab`.
 
-### Modify PHP Configuration
-1. PHP `prod` Configuration  `docker/conf/php/php-prod.ini`[🔗](https://github.com/sherifabdlnaby/elastdocker/blob/master/docker/conf/php/php-prod.ini) 
-2. PHP `dev` Configuration  `docker/conf/php/php-dev.ini`[🔗](https://github.com/sherifabdlnaby/elastdocker/blob/master/docker/conf/php/php-dev.ini) 
-3. PHP additional [Symfony recommended configuration](https://symfony.com/doc/current/performance.html#configure-opcache-for-maximum-performance) at `docker/conf/php/symfony.ini` [🔗](https://github.com/sherifabdlnaby/elastdocker/blob/master/docker/conf/php/symfony.ini) 
+### Setting Up Keystore
 
-### Add Packages needed for PHP runtime
-Add Packages needed for PHP runtime in this section of the `Dockerfile`.
-```Dockerfile
-...
-# ------------------------------------- Install Packages Needed Inside Base Image --------------------------------------
-RUN apk add --no-cache		\
-#    # - Please define package version too ---
-#    # -----  Needed for Image----------------
-	fcgi tini \
-#    # -----  Needed for PHP -----------------
-    <HERE>
-...
-``` 
+You can extend the Keystore generation script by adding keys to `./setup/keystore.sh` script. (e.g Add S3 Snapshot Repository Credentials)
 
-### Add & Enable PHP Extensions
-Add PHP Extensions using `docker-php-ext-install <extensions...>` or `pecl install <extensions...>`  and Enable them by `docker-php-ext-enable <extensions...>`
-in this section of the `Dockerfile`.
-```Dockerfile
-...
-# --------------------- Install / Enable PHP Extensions ------------------------
-RUN docker-php-ext-install opcache && pecl install memcached && docker-php-ext-enable memcached
-...
+To Re-generate Keystore:
+```
+make keystore
 ```
 
-##### Note
+# Monitoring Cluster
 
-> At build time, Image will run `composer check-platform-reqs` to check that PHP and extensions versions match the platform requirements of the installed packages.
+### Prometheus Exporters
+If you started Prometheus Exporters using `make monitoring` command. Prometheus Exporters will expose metrics at the following ports.
 
-## 2. Nginx Configuration
+| **Prometheus Exporter**      | **Port**     | **Note**                                         |
+|--------------------------    |----------    |------------------------------------------------  |
+| `elasticsearch-exporter`     | `9114`       | -                                                |
+| `logstash-exporter`          | `9304`       | -                                                |
+| `cadvisor-exporter`          | `8080`       | - To Monitor Each Container stats and metrics.   |
 
-Nginx defaults are all defined in `docker/conf/nginx/` [🔗](https://github.com/sherifabdlnaby/elastdocker/blob/master/docker/conf/nginx/)
+### Self-Monitoring is Enabled
 
-Nginx is pre-configured with:
-1. HTTP, HTTPS, and HTTP2.
-2. Rate limit (`rate=5r/s`)
-3. Access & Error logs to `stdout/err`
-4. Recommended Security Headers
-5. Serving Static content with default cache `7d`
-6. Metrics endpoint at `:8080/stub_status` from localhost only.
+Head to Stack Monitoring tab in Kibana to see cluster metrics for all stack components.
 
-##### Note
+![Metrics](https://user-images.githubusercontent.com/16992394/65841358-b0bb4680-e321-11e9-9a71-36a1d6fb2a41.png)
+![Metrics](https://user-images.githubusercontent.com/16992394/65841362-b6189100-e321-11e9-93e4-b7b2caa5a37d.jpg)
 
-> At build time, Image will run `nginx -t` to check config file syntax is OK.
+> In Production, cluster metrics should be shipped to another dedicated monitoring cluster. 
 
-## 3. Post Deployment Custom Scripts
-
-Post Installation scripts should be configured in `composer.json` in the `post-install-cmd` [part](https://getcomposer.org/doc/articles/scripts.md#command-events).
-
-However, Sometimes, some packages has commands that need to be run on startup, that are not compatible with composer, provided in the image a shell script `post-deployment.sh`[🔗](https://github.com/sherifabdlnaby/elastdocker/blob/master/docker/post-deployment.sh) that will be executed after deployment. 
-Special about this file that it comes loaded with all OS Environment variables **as well as defaults from `.env` and `.env.${APP_ENV}` files.** so it won't need a special treatment handling parameters.
-
-> It is still discouraged to be used if it's possible to run these commands using composer scripts.
-
-## 3. Supervisor Consumers
-
-If you have consumers (e.g rabbitMq or Kafka consumers) that need to be run under supervisor, you can define these at `docker/conf/supervisor/*`, which will run by the `supervisor` image target.
-
-## 4. Cron Commands
-
-If you have cron jobs, you can define them in `docker/conf/crontab`, which will run by the `cron` image target.
-
---------
-
-# Misc Notes
-- Your application [should log app logs to stdout.](https://stackoverflow.com/questions/38499825/symfony-logs-to-stdout-inside-docker-container). Read about [12factor/logs](https://12factor.net/logs) 
-- By default, `php-fpm` access & error logs are disabled as they're mirrored on `nginx`, this is so that `php-fpm` image will contains **only** application logs written by PHP.
-- During Build, Image will run `composer dump-autoload` and `composer dump-env` to optimize for performance.
-- In **production**, Image contains source-code, however you must sync both `php-fpm` and `nginx` images so that they contain the same code.
-
+  
 # License 
 [MIT License](https://raw.githubusercontent.com/sherifabdlnaby/elastdocker/blob/master/LICENSE)
 Copyright (c) 2019 Sherif Abdel-Naby
 
 # Contribution
 
-PR(s) are Open and welcomed.
-
-This image has so little to do with Symfony itself and more with Setting up a PHP Website with Nginx and FPM, hence it can be extended for other PHP Frameworks (e.g Laravel, etc). maybe if you're interested to build a similar image for another framework we can collaborate. 
-
-### Possible Ideas
-
-- [x] Add a slim image with supervisor for running consumers.
-- [x] Add a slim image with cron tab for cron job instances.
-- [ ] Add node build stage that compiles javascript.
-- [ ] Recreate the image for Symfony 3^
-- [ ] Recreate the image for Laravel
+PR(s) are Open and Welcomed.
