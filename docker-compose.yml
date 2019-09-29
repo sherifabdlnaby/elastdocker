@@ -12,13 +12,8 @@ volumes:
 
 secrets:
   elasticsearch.keystore:
-    file: ./secrets/keystore/elasticsearch.keystore
-  elastic.certificate.key:
-    file: ./secrets/certs/elastic.key
-  elastic.certificate.crt:
-    file: ./secrets/certs/elastic.crt
-  elastic.certificate-ca.crt:
-    file: ./secrets/certs/elastic-ca.crt
+    file: ./keystore/elasticsearch.keystore
+    name: /usr/share/elasticsearch/config/elasticsearch.keystore
 
 services:
   elasticsearch:
@@ -39,12 +34,6 @@ services:
     secrets:
       - source: elasticsearch.keystore
         target: /usr/share/elasticsearch/config/elasticsearch.keystore
-      - source: elastic.certificate.key
-        target: /usr/share/elasticsearch/config/certs/elastic.key
-      - source: elastic.certificate.crt
-        target: /usr/share/elasticsearch/config/certs/elastic.crt
-      - source: elastic.certificate-ca.crt
-        target: /usr/share/elasticsearch/config/certs/elastic-ca.crt
     ports:
       - "9200:9200"
       - "9300:9300"
