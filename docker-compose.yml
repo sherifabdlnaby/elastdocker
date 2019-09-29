@@ -12,7 +12,7 @@ volumes:
 
 secrets:
   elasticsearch.keystore:
-    file: ./elasticsearch/keystore/elasticsearch.keystore
+    file: ./keystore/elasticsearch.keystore
     name: /usr/share/elasticsearch/config/elasticsearch.keystore
 
 services:
@@ -21,7 +21,7 @@ services:
       context: elasticsearch/
       args:
         ELK_VERSION: ${ELK_VERSION}
-    restart: unless-stopped
+#    restart: unless-stopped
     environment:
       ELASTIC_USERNAME: ${ELASTIC_USERNAME}
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}

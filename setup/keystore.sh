@@ -3,7 +3,7 @@ set -e
 
 # Setting Bootstrap Password
 echo "Setting bootstrap.password..."
-(echo "$ELASTIC_PASSWORD" | bin/elasticsearch-keystore add -x 'bootstrap.password')
+(echo "$ELASTIC_PASSWORD" | elasticsearch-keystore add -x 'bootstrap.password')
 
 # ----- Setting Secrets
 
@@ -13,15 +13,15 @@ echo "Setting bootstrap.password..."
 
 ## Setting <name>
 #echo "Setting <name>..."
-#(echo "$<KEY_ENV_VALUE>" | bin/elasticsearch-keystore add -x '<key>')
+#(echo "$<KEY_ENV_VALUE>" | elasticsearch-keystore add -x '<key>')
 
 
 # ----- Setting S3 Secrets
 
 # Setting S3 Access Key
 echo "Setting S3 Access Key..."
-(echo "$AWS_ACCESS_KEY_ID" | bin/elasticsearch-keystore add -x 's3.client.default.access_key')
+(echo "$AWS_ACCESS_KEY_ID" | elasticsearch-keystore add -x 's3.client.default.access_key')
 
 # Setting S3 Secret Key
 echo "Setting S3 Secret Key..."
-(echo "$AWS_SECRET_ACCESS_KEY" | bin/elasticsearch-keystore add -x 's3.client.default.secret_key')
+(echo "$AWS_SECRET_ACCESS_KEY" | elasticsearch-keystore add -x 's3.client.default.secret_key')

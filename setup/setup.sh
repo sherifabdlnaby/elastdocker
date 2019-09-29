@@ -5,7 +5,7 @@ echo "=== Creating Elasticsearch Keystore ==="
 # Replace current Keystore
 if [ -f "keystore/elasticsearch.keystore" ]; then
     echo "Remove old elasticsearch.keystore"
-    rm keystore/elasticsearch.keystore
+    rm /keystore/elasticsearch.keystore
 fi
 
 # Password Generate
@@ -15,11 +15,11 @@ export ELASTIC_PASSWORD
 echo "Elastic password is: $ELASTIC_PASSWORD"
 
 # Create Keystore
-bin/elasticsearch-keystore create >> /dev/null
+elasticsearch-keystore create >> /dev/null
 
 # Setting Secrets
-sh scripts/keystore.sh
+sh /setup/keystore.sh
 
 echo "Saving new keystore..."
-mv config/elasticsearch.keystore keystore/elasticsearch.keystore
-chmod 0644 keystore/elasticsearch.keystore
+mv config/elasticsearch.keystore /keystore/elasticsearch.keystore
+chmod 0644 /keystore/elasticsearch.keystore

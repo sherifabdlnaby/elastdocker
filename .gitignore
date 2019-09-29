@@ -1,4 +1,4 @@
 .idea/
 .DS_Store
-*/keystore/*.keystore
+/keystore/*
 tools/elastalert/rules/*

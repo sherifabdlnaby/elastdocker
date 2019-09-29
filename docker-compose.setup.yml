@@ -6,12 +6,12 @@ services:
       context: elasticsearch/
       args:
         ELK_VERSION: ${ELK_VERSION}
-    command: bash scripts/setup.sh
+    command: bash /setup/setup.sh
     user: "0"
-    working_dir: /usr/share/elasticsearch
+    working_dir: /usr/share/elasticsearch/bin
     volumes:
-        - ./elasticsearch/keystore:/usr/share/elasticsearch/keystore
-        - ./elasticsearch/scripts:/usr/share/elasticsearch/scripts
+        - ./keystore:/keystore
+        - ./setup/:/setup/
     environment:
       ELASTIC_USERNAME: ${ELASTIC_USERNAME}
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
