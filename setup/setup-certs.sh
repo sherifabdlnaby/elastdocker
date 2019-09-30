@@ -17,6 +17,8 @@ if [ -f "$CERT_FILE" ]; then
 fi
 elasticsearch-certutil ca -s --pass "" --out $CA_FILE
 elasticsearch-certutil cert -s --ca $CA_FILE --ca-pass "" --out $CERT_FILE --pass ""
+chmod 0644 $CA_FILE
+chmod 0644 $CERT_FILE
 printf "Certificate Authority created at $CA_FILE\n"
 printf "Certificate created at $CERT_FILE\n"
 printf "=====================================================\n"
