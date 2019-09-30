@@ -70,7 +70,7 @@ Username: `elastic`
 
 Password: `changeme` (or `ELASTIC_PASSWORD` value in `.env`)
 
-### Additional
+### Additional Commands
 
 #### To Start Monitoring and Promethus Exporters
 ```shell
