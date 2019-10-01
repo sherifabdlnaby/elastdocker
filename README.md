@@ -53,8 +53,8 @@ Elastic Stack (AKA **ELK**) Docker Composition, preconfigured with **Security**,
 1. 
 > <a href="https://github.com/sherifabdlnaby/elastdocker/generate"><img src="https://user-images.githubusercontent.com/16992394/65464461-20c95880-de5a-11e9-9bf0-fc79d125b99e.png" alt="create repository from template"></a>
 2. Go to repository directory
-3. Modify `.env` file for your requirments, most importantly `ELASTIC_PASSWORD` that setup your superuser `elastic`'s password. and `ELK_VERSION` for, yk, ELK Version.
-4. Initalize Elasticsearch Keystore and SSL Certificates
+3. Modify `.env` file for your requirements, most importantly `ELASTIC_PASSWORD` that setup your superuser `elastic`'s password. and `ELK_VERSION` for, yk, ELK Version.
+4. Initialize Elasticsearch Keystore and SSL Certificates
 ```shell
 $ make setup
 ```
@@ -72,7 +72,7 @@ Password: `changeme` (or `ELASTIC_PASSWORD` value in `.env`)
 
 ### Additional Commands
 
-#### To Start Monitoring and Promethus Exporters
+#### To Start Monitoring and Prometheus Exporters
 ```shell
 $ make monitoring
 ```
