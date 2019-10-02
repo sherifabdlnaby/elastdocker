@@ -55,7 +55,7 @@ rm:				## Remove ELK and all its extra components containers.
 	@${COMPOSE_PREFIX_CMD} docker-compose $(COMPOSE_ALL_FILES) rm -f ${ELK_ALL_SERVICES}
 
 logs:			## Tail all logs with -n 1000.
-	@${COMPOSE_PREFIX_CMD} docker-compose $(COMPOSE_ALL_FILES) logs --follow --tail=1000 ${ELK_TOOLS} ${ELK_SERVICES}
+	@${COMPOSE_PREFIX_CMD} docker-compose $(COMPOSE_ALL_FILES) logs --follow --tail=1000 ${ELK_ALL_SERVICES}
 
 images:			## Show all Images of ELK and all its extra components.
 	@${COMPOSE_PREFIX_CMD} docker-compose $(COMPOSE_ALL_FILES) images ${ELK_ALL_SERVICES}

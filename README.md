@@ -2,10 +2,10 @@
 <img width="680px" src="https://user-images.githubusercontent.com/16992394/65840473-f70ca780-e319-11e9-9245-29ec0a8948d6.png">
 </p>
 <h2 align="center">🐳 Elastic Stack on Docker, with preconfigured security, tools, self-monitoring, and Prometheus Metrics Exporters</h2>
-<h4 align="center">Comes with tools like Curator, ElastAlert for Alerting.</h4>
+<h4 align="center">With tools like Curator, ElastAlert for Alerting.</h4>
 <p align="center">
    <a>
-      <img src="https://img.shields.io/badge/Elastic%20Stack->=7.0.0-blue?style=flat&logo=elasticsearch" alt="Elastic Stack Version 7^^">
+      <img src="https://img.shields.io/badge/Elastic%20Stack-7.4.0-blue?style=flat&logo=elasticsearch" alt="Elastic Stack Version 7^^">
    </a>
    <a>
       <img src="https://img.shields.io/github/v/tag/sherifabdlnaby/elastdocker?label=release&amp;sort=semver">
@@ -27,17 +27,21 @@
 # Introduction
 Elastic Stack (AKA **ELK**) Docker Composition, preconfigured with **Security**, **Monitoring**, Tools such as **ElastAlert** for alerting and **Curator**.
 
+
+Current Stack Version: [7.4.0](https://www.elastic.co/blog/elastic-stack-7-4-0-released).
+> You can change Elastic Stack version by setting `ELK_VERSION` in `.env` file and rebuild your images. Any version >= 7.0.0 is compatible with this template.
+
 ### Main Points 📜
 
-- Configured as Production Single Node Cluster (With a multi-node option for experimenting).
-- Use Docker-Compose and `.env` to configure your stack.
+- Configured as Production Single Node Cluster. (With a multi-node option for experimenting).
 - Security Enabled (under basic license).
 - SSL Enabled for Transport Layer.
+- Use Docker-Compose and `.env` to configure your stack.
 - Automated Script that initializes and persist Elasticsearch's Keystore and SSL Certifications.
 - Curator Preconfigured for Automated Snapshotting (Need to setup S3 Repository).
 - Self-Monitoring Metrics Enabled.
-- Filebeat instance for shipping Stack logs to Elasticsearch itself.
 - Prometheus Exporters for Stack Metrics.
+- Filebeat instance for shipping Stack logs to Elasticsearch itself.
 - ElastAlert preconfigured for Alerting.
 - Embedded Container Healthchecks for Stack Images.
 
@@ -46,33 +50,31 @@ Elastic Stack (AKA **ELK**) Docker Composition, preconfigured with **Security**,
 # Requirements 
 
 - [Docker 17.05 or higher](https://docs.docker.com/install/) 
-- [Docker-Compose 3.4 or higher](https://docs.docker.com/compose/install/) (optional) 
+- [Docker-Compose 3 or higher](https://docs.docker.com/compose/install/) (optional) 
 
 # Setup
 
-1. 
+1. Clone the Repository, or:
 > <a href="https://github.com/sherifabdlnaby/elastdocker/generate"><img src="https://user-images.githubusercontent.com/16992394/65464461-20c95880-de5a-11e9-9bf0-fc79d125b99e.png" alt="create repository from template"></a>
-2. Go to repository directory
-3. Modify `.env` file for your requirments, most importantly `ELASTIC_PASSWORD` that setup your superuser `elastic`'s password. and `ELK_VERSION` for, yk, ELK Version.
-4. Initalize Elasticsearch Keystore and SSL Certificates
+2. Initialize Elasticsearch Keystore and SSL Certificates
 ```shell
 $ make setup
 ```
-5. Start Elastic Stack 
+3. Start Elastic Stack 
 ```shell
 $ make elk
 ---- OR ----
 $ docker-compose up -d
 ```
-6. Visit Kibana at [localhost:5601](http://localhost:5601) 
+4. Visit Kibana at [localhost:5601](http://localhost:5601) 
 
-Username: `elastic`
+Username: `elastic` Password: `changeme` (or `ELASTIC_PASSWORD` value in `.env`)
 
-Password: `changeme` (or `ELASTIC_PASSWORD` value in `.env`)
+> Modify `.env` file for your needs, most importantly `ELASTIC_PASSWORD` that setup your superuser `elastic`'s password, `ELASTICSEARCH_HEAP` & `LOGSTASH_HEAP` for Elasticsearch & Logstash Heap Size and `ELK_VERSION` for, yk, Stack Version.
 
 ### Additional Commands
 
-#### To Start Monitoring and Promethus Exporters
+#### To Start Monitoring and Prometheus Exporters
 ```shell
 $ make monitoring
 ```
@@ -88,6 +90,16 @@ $ make all
 ```shell
 $ make nodes
 ```
+#### To Rebuild Images
+```shell
+$ make build
+```
+#### Bring down the stack.
+```shell
+$ make build
+```
+
+> Make sure to run `make setup` if you changed `ELASTIC_PASSWORD` and to restart the stack after changing anything in `.env`.
 
 ### Notes
 
