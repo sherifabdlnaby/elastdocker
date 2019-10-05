@@ -144,6 +144,19 @@ To Re-generate Keystore:
 make keystore
 ```
 
+### Enable SSL on HTTP 
+
+By default, only transport layer has SSL Enabled, to enable SSL on Http layer, add the following lines to `elasticsearch.yml`
+```yaml
+## - http
+xpack.security.http.ssl.enabled: true
+xpack.security.http.ssl.verification_mode: certificate
+xpack.security.http.ssl.keystore.path: certs/elastic-certificates.p12
+xpack.security.http.ssl.truststore.path: certs/elastic-certificates.p12
+```
+
+> Enabling SSL on HTTP layer will require all clients that connect to elasticsearch to configure SSL connection, this includes all current parts of the stack (e.g Logstash, Kibana, Curator, etc).
+
 # Monitoring Cluster
 
 ### Prometheus Exporters
