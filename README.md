@@ -97,7 +97,7 @@ $ make build
 ```
 #### Bring down the stack.
 ```shell
-$ make build
+$ make down
 ```
 
 > Make sure to run `make setup` if you changed `ELASTIC_PASSWORD` and to restart the stack after changing anything in `.env`.
