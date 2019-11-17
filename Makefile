@@ -25,19 +25,19 @@ setup:		    ## Generate Elasticsearch SSL Certs and Keystore.
 	@make keystore
 
 all:		    ## Start Elk and all its component (ELK, Monitoring, and Tools).
-	${COMPOSE_PREFIX_CMD} docker-compose ${COMPOSE_ALL_FILES} up -d ${ELK_MAIN_SERVICES}
+	${COMPOSE_PREFIX_CMD} docker-compose ${COMPOSE_ALL_FILES} up -d --build ${ELK_MAIN_SERVICES}
 
 elk:		    ## Start ELK.
-	${COMPOSE_PREFIX_CMD} docker-compose ${COMPOSE_ALL_FILES} up -d ${ELK_SERVICES}
+	${COMPOSE_PREFIX_CMD} docker-compose ${COMPOSE_ALL_FILES} up -d --build ${ELK_SERVICES}
 
 monitoring:		## Start ELK Prometheus Monitoring.
-	${COMPOSE_PREFIX_CMD} docker-compose ${COMPOSE_ALL_FILES} up -d ${ELK_MONITORING}
+	${COMPOSE_PREFIX_CMD} docker-compose ${COMPOSE_ALL_FILES} up -d --build ${ELK_MONITORING}
 
 tools:		    ## Start ELK Tools (ElastAlert, Curator).
-	${COMPOSE_PREFIX_CMD} docker-compose ${COMPOSE_ALL_FILES} up -d ${ELK_TOOLS}
+	${COMPOSE_PREFIX_CMD} docker-compose ${COMPOSE_ALL_FILES} up -d --build ${ELK_TOOLS}
 
 nodes:		    ## Start Two Extra Elasticsearch Nodes
-	${COMPOSE_PREFIX_CMD} docker-compose ${COMPOSE_ALL_FILES} up -d ${ELK_NODES}
+	${COMPOSE_PREFIX_CMD} docker-compose ${COMPOSE_ALL_FILES} up -d --build ${ELK_NODES}
 
 build:			## Build ELK and all its extra components.
 	${COMPOSE_PREFIX_CMD} docker-compose ${COMPOSE_ALL_FILES} build ${ELK_ALL_SERVICES}
