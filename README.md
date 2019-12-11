@@ -46,6 +46,8 @@ Stack Version: [7.5.0](https://www.elastic.co/blog/elastic-stack-7-5-0-released)
 - ElastAlert preconfigured for Alerting.
 - Embedded Container Healthchecks for Stack Images.
 
+More points at [comparison with deviantony/docker-elk](#Comparison)
+
 -----
 
 # Requirements 
@@ -177,6 +179,32 @@ Head to Stack Monitoring tab in Kibana to see cluster metrics for all stack comp
 
 > In Production, cluster metrics should be shipped to another dedicated monitoring cluster. 
 
+# Comparison
+
+One of the most popular elk on docker repositories is the awesome [deviantony/docker-elk](https://github.com/deviantony/docker-elk).
+Elastdocker differs from `deviantony/docker-elk` in the following points.
+
+- Security enabled by default using Basic license, not Trial.
+
+- Persisting data by default in a volume.
+
+- Run in Production Mode (by enabling SSL on Transport Layer, and add initial master node settings).
+
+- Persisting Generated Keystore, and create an extendable script that makes it easier to recreate it every-time the container is created.
+
+- Parameterize credentials in .env instead of hardcoding `elastich:changeme` in every component config.
+
+- Parameterize all other Config like Heap Size.
+
+- Add recommended environment configurations as Ulimits and Swap disable to the docker-compose.
+
+- Make it ready to be extended into a multinode cluster.
+
+- Configuring the Self-Monitoring and the Filebeat agent that ship ELK logs to ELK itself. (as a step to shipping it to a monitoring cluster in the future).
+
+- Configured tools and Prometheus Exporters.
+
+- The Makefile that simplifies everything into some simple commands.
   
 # License 
 [MIT License](https://raw.githubusercontent.com/sherifabdlnaby/elastdocker/blob/master/LICENSE)
