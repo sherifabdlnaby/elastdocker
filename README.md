@@ -53,7 +53,7 @@ More points at [comparison with deviantony/docker-elk](#Comparison)
 # Requirements 
 
 - [Docker 17.05 or higher](https://docs.docker.com/install/) 
-- [Docker-Compose 3 or higher](https://docs.docker.com/compose/install/) (optional) 
+- [Docker-Compose 3 or higher](https://docs.docker.com/compose/install/)
 
 # Setup
 
@@ -148,7 +148,7 @@ make keystore
 
 ### Enable SSL on HTTP 
 
-By default, only transport layer has SSL Enabled, to enable SSL on Http layer, add the following lines to `elasticsearch.yml`
+By default, only Transport Layer has SSL Enabled, to enable SSL on HTTP layer, add the following lines to `elasticsearch.yml`
 ```yaml
 ## - http
 xpack.security.http.ssl.enabled: true
@@ -157,7 +157,7 @@ xpack.security.http.ssl.keystore.path: certs/elastic-certificates.p12
 xpack.security.http.ssl.truststore.path: certs/elastic-certificates.p12
 ```
 
-> Enabling SSL on HTTP layer will require all clients that connect to elasticsearch to configure SSL connection, this includes all current parts of the stack (e.g Logstash, Kibana, Curator, etc).
+> ⚠️ Enabling SSL on HTTP layer will require all clients that connect to Elasticsearch to configure SSL connection for HTTP, this includes all the current configured parts of the stack (e.g Logstash, Kibana, Curator, etc) plus any library/binding that connects to Elasticsearch from your application code.
 
 # Monitoring Cluster
 
