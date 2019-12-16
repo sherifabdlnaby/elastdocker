@@ -2,25 +2,28 @@
 set -e
 
 OUTPUT_DIR=/secrets/certs
-CA_FILE=$OUTPUT_DIR/elastic-stack-ca.p12
-CERT_FILE=$OUTPUT_DIR/elastic-certificates.p12
+ZIP_FILE=$OUTPUT_DIR/certs.zip
 
-printf "====== Generating Elasticsearch Certifications ======\n"
+printf "======= Generating Elastic Stack Certificates =======\n"
 printf "=====================================================\n"
-if [ -f "$CA_FILE" ]; then
-    echo "Removing current Certificate Authority (CA)..."
-    rm $CA_FILE
-fi
-if [ -f "$CERT_FILE" ]; then
-    echo "Removing current Certificate (P12)..."
-    rm $CERT_FILE
-fi
-elasticsearch-certutil ca -s --pass "" --out $CA_FILE
-elasticsearch-certutil cert -s --ca $CA_FILE --ca-pass "" --out $CERT_FILE --pass ""
-chmod 0644 $CA_FILE
-chmod 0644 $CERT_FILE
-printf "Certificate Authority created at $CA_FILE\n"
-printf "Certificate created at $CERT_FILE\n"
+
+printf "Installing Necessary Tools... \n"
+yum install -y -q -e 0 unzip;
+
+printf "Clearing Old Certificates if exits... \n"
+find $OUTPUT_DIR -mindepth 1 -type d -exec rm -rf -- {} +
+rm -f $ZIP_FILE
+
+printf "Generating... \n"
+bin/elasticsearch-certutil cert --silent --pem --in /setup/instances.yml -out $ZIP_FILE;
+
+printf "Unzipping Certifications... \n"
+unzip -qq $ZIP_FILE -d $OUTPUT_DIR;
+
+printf "Applying Permissions... \n"
+chown -R 1000:0 $OUTPUT_DIR
+find $OUTPUT_DIR -type f -exec chmod 655 -- {} +
+
 printf "=====================================================\n"
 printf "SSL Certifications generation completed successfully.\n"
 printf "=====================================================\n"

@@ -36,10 +36,10 @@ Stack Version: [7.5.0](https://www.elastic.co/blog/elastic-stack-7-5-0-released)
 
 - Configured as Production Single Node Cluster. (With a multi-node option for experimenting).
 - Security Enabled (under basic license).
-- SSL Enabled for Transport Layer.
+- SSL Enabled for Transport Layer and Kibana.
 - Use Docker-Compose and `.env` to configure your stack.
 - Automated Script that initializes and persist Elasticsearch's Keystore and SSL Certifications.
-- Curator Preconfigured for Automated Snapshotting (Need to setup S3 Repository).
+- Curator with Crond preconfigured for Automated Scheduled tasks (e.g Snapshots to S3).
 - Self-Monitoring Metrics Enabled.
 - Prometheus Exporters for Stack Metrics.
 - Filebeat instance for shipping Stack logs to Elasticsearch itself.
@@ -69,11 +69,13 @@ $ make elk
 ---- OR ----
 $ docker-compose up -d
 ```
-4. Visit Kibana at [localhost:5601](http://localhost:5601) 
+4. Visit Kibana at [https://localhost:5601](https://localhost:5601) 
 
 Username: `elastic` Password: `changeme` (or `ELASTIC_PASSWORD` value in `.env`)
 
 > Modify `.env` file for your needs, most importantly `ELASTIC_PASSWORD` that setup your superuser `elastic`'s password, `ELASTICSEARCH_HEAP` & `LOGSTASH_HEAP` for Elasticsearch & Logstash Heap Size and `ELK_VERSION` for, yk, Stack Version.
+
+> Notice that Kibana is configured to use HTTPS, so you'll need to write `https://` before `localhost:5601` in the browser.
 
 ### Additional Commands
 

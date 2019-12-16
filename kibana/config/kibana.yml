@@ -5,10 +5,16 @@
 server.name: kibana
 server.host: "0"
 
+# Elasticsearch Connection
 elasticsearch.hosts: [ "http://${ELASTICSEARCH_HOST_PORT}" ]
 
+# SSL settings
+server.ssl.enabled: true
+server.ssl.certificate: /certs/kibana.crt
+server.ssl.key: /certs/kibana.key
+elasticsearch.ssl.certificateAuthorities: [ "/certs/ca.crt" ]
+
 ## X-Pack security credentials
-#
 elasticsearch.username: ${ELASTIC_USERNAME}
 elasticsearch.password: ${ELASTIC_PASSWORD}
 
