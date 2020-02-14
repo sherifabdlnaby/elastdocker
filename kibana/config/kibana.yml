@@ -3,7 +3,7 @@
 ## https://github.com/elastic/kibana/blob/master/src/dev/build/tasks/os_packages/docker_generator/templates/kibana_yml.template.js
 #
 server.name: kibana
-server.host: "0"
+server.host: "0.0.0.0"
 
 # Elasticsearch Connection
 elasticsearch.hosts: [ "http://${ELASTICSEARCH_HOST_PORT}" ]
@@ -12,11 +12,14 @@ elasticsearch.hosts: [ "http://${ELASTICSEARCH_HOST_PORT}" ]
 server.ssl.enabled: true
 server.ssl.certificate: /certs/kibana.crt
 server.ssl.key: /certs/kibana.key
-elasticsearch.ssl.certificateAuthorities: [ "/certs/ca.crt" ]
+server.ssl.certificateAuthorities: [ "/certs/ca.crt" ]
+xpack.security.encryptionKey: C1tHnfrlfxSPxPlQ8BlgPB5qMNRtg5V5
+xpack.encrypted_saved_objects.encryptionKey: RSCueeHKzrqzOVTJhkjt17EMnzM96LlN
 
 ## X-Pack security credentials
 elasticsearch.username: ${ELASTIC_USERNAME}
 elasticsearch.password: ${ELASTIC_PASSWORD}
+elasticsearch.ssl.certificateAuthorities: [ "/certs/ca.crt" ]
 
 ## ElastAlert Plugin
 #elastalert-kibana-plugin.serverHost: elastalert

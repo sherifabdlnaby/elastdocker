@@ -154,9 +154,10 @@ By default, only Transport Layer has SSL Enabled, to enable SSL on HTTP layer, a
 ```yaml
 ## - http
 xpack.security.http.ssl.enabled: true
-xpack.security.http.ssl.verification_mode: certificate
-xpack.security.http.ssl.keystore.path: certs/elastic-certificates.p12
-xpack.security.http.ssl.truststore.path: certs/elastic-certificates.p12
+xpack.security.http.ssl.key: certs/elasticsearch.key
+xpack.security.http.ssl.certificate: certs/elasticsearch.crt
+xpack.security.http.ssl.certificate_authorities: certs/ca.crt
+xpack.security.http.ssl.client_authentication: optional
 ```
 
 > ⚠️ Enabling SSL on HTTP layer will require all clients that connect to Elasticsearch to configure SSL connection for HTTP, this includes all the current configured parts of the stack (e.g Logstash, Kibana, Curator, etc) plus any library/binding that connects to Elasticsearch from your application code.
