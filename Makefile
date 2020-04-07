@@ -5,7 +5,7 @@ COMPOSE_PREFIX_CMD := COMPOSE_DOCKER_CLI_BUILD=1
 
 COMPOSE_ALL_FILES := -f docker-compose.yml -f docker-compose.monitor.yml -f docker-compose.tools.yml -f docker-compose.nodes.yml
 ELK_SERVICES   := elasticsearch logstash kibana
-ELK_MONITORING := elasticsearch-exporter logstash-exporter cadvisor-exporter filebeat-cluster-logs
+ELK_MONITORING := elasticsearch-exporter logstash-exporter filebeat-cluster-logs
 ELK_TOOLS  := curator elastalert
 ELK_NODES := elasticsearch-1 elasticsearch-2
 ELK_MAIN_SERVICES := ${ELK_SERVICES} ${ELK_MONITORING} ${ELK_TOOLS}
@@ -59,6 +59,9 @@ logs:			## Tail all logs with -n 1000.
 
 images:			## Show all Images of ELK and all its extra components.
 	@${COMPOSE_PREFIX_CMD} docker-compose $(COMPOSE_ALL_FILES) images ${ELK_ALL_SERVICES}
+
+prune:			## Remove ELK Containers and Delete Volume Data
+	@make stop && make rm && docker volume prune -f
 
 help:       	## Show this help.
 	@echo "Make Application Docker Images and Containers using Docker-Compose files in 'docker' Dir."

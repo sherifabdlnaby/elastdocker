@@ -50,26 +50,28 @@ More points at [comparison with deviantony/docker-elk](#Comparison)
 
 -----
 
-# Requirements 
+# Requirements
 
-- [Docker 17.05 or higher](https://docs.docker.com/install/) 
+- [Docker 17.05 or higher](https://docs.docker.com/install/)
 - [Docker-Compose 3 or higher](https://docs.docker.com/compose/install/)
 
 # Setup
 
 1. Clone the Repository, or:
-> <a href="https://github.com/sherifabdlnaby/elastdocker/generate"><img src="https://user-images.githubusercontent.com/16992394/65464461-20c95880-de5a-11e9-9bf0-fc79d125b99e.png" alt="create repository from template"></a>
+
+ <a href="https://github.com/sherifabdlnaby/elastdocker/generate"><img src="https://user-images.githubusercontent.com/16992394/65464461-20c95880-de5a-11e9-9bf0-fc79d125b99e.png" alt="create repository from template"></a>
+
 2. Initialize Elasticsearch Keystore and SSL Certificates
 ```shell
 $ make setup
 ```
-3. Start Elastic Stack 
+3. Start Elastic Stack
 ```shell
 $ make elk
 ---- OR ----
 $ docker-compose up -d
 ```
-4. Visit Kibana at [https://localhost:5601](https://localhost:5601) 
+4. Visit Kibana at [https://localhost:5601](https://localhost:5601)
 
 Username: `elastic` Password: `changeme` (or `ELASTIC_PASSWORD` value in `.env`)
 
@@ -79,19 +81,22 @@ Username: `elastic` Password: `changeme` (or `ELASTIC_PASSWORD` value in `.env`)
 
 ### Additional Commands
 
+<details><summary>Expand</summary>
+<p>
+
 #### To Start Monitoring and Prometheus Exporters
 ```shell
 $ make monitoring
 ```
-#### To Start Tools (ElastAlert and Curator
+#### To Start Tools (ElastAlert and Curator)
 ```shell
 $ make tools
 ```
-#### To Start **ELK, Tools and Monitoring**
+#### To Start **Elastic Stack, Tools and Monitoring**
 ```
 $ make all
 ```
-#### To Start 2 Extra Elasticsearch nodes (for development only)
+#### To Start 2 Extra Elasticsearch nodes (recommended for experimenting only)
 ```shell
 $ make nodes
 ```
@@ -104,24 +109,8 @@ $ make build
 $ make down
 ```
 
-> Make sure to run `make setup` if you changed `ELASTIC_PASSWORD` and to restart the stack after changing anything in `.env`.
-
-### Notes
-
-- Adding Two Extra Nodes to the cluster will make the cluster depending on them and won't start without them again.
-
-- Makefile is a wrapper around `Docker-Compose` commands, use `make help` to know every command.
-
-- Elasticsearch will save its data to a volume named `elasticsearch-data`
-
-- Elasticsearch Keystore (that contains passwords and credentials) and SSL Certificate are generated in the `./secrets` directory by the setup command.
-
-- Linux Users must set the following configuration as `root`
-```
-sysctl -w vm.max_map_count=262144
-```
-By default, Virtual Memory [is not enough](https://www.elastic.co/guide/en/elasticsearch/reference/current/vm-max-map-count.html).
-
+</p>
+</details>
 
 # Configuration
 
@@ -162,18 +151,40 @@ xpack.security.http.ssl.client_authentication: optional
 
 > ⚠️ Enabling SSL on HTTP layer will require all clients that connect to Elasticsearch to configure SSL connection for HTTP, this includes all the current configured parts of the stack (e.g Logstash, Kibana, Curator, etc) plus any library/binding that connects to Elasticsearch from your application code.
 
-# Monitoring Cluster
 
-### Prometheus Exporters
+### Notes
+
+- Adding Two Extra Nodes to the cluster will make the cluster depending on them and won't start without them again.
+
+- Makefile is a wrapper around `Docker-Compose` commands, use `make help` to know every command.
+
+- Elasticsearch will save its data to a volume named `elasticsearch-data`
+
+- Elasticsearch Keystore (that contains passwords and credentials) and SSL Certificate are generated in the `./secrets` directory by the setup command.
+
+- Make sure to run `make setup` if you changed `ELASTIC_PASSWORD` and to restart the stack afterwards.
+
+- For Linux Users it's recommended to set the following configuration (run as `root`)
+    ```
+    sysctl -w vm.max_map_count=262144
+    ```
+    By default, Virtual Memory [is not enough](https://www.elastic.co/guide/en/elasticsearch/reference/current/vm-max-map-count.html).
+
+---------------------------
+
+# Monitoring The Cluster
+
+### Via Prometheus Exporters
 If you started Prometheus Exporters using `make monitoring` command. Prometheus Exporters will expose metrics at the following ports.
 
-| **Prometheus Exporter**      | **Port**     | **Note**                                         |
+| **Prometheus Exporter**      | **Port**     | **Recommended Grafana Dashboard**                                         |
 |--------------------------    |----------    |------------------------------------------------  |
-| `elasticsearch-exporter`     | `9114`       | -                                                |
-| `logstash-exporter`          | `9304`       | -                                                |
-| `cadvisor-exporter`          | `8080`       | - To Monitor Each Container stats and metrics.   |
+| `elasticsearch-exporter`     | `9114`       | [Elasticsearch by Kristian Jensen](https://grafana.com/grafana/dashboards/4358)                                                |
+| `logstash-exporter`          | `9304`       | [logstash-monitoring by dpavlos](https://github.com/dpavlos/logstash-monitoring)                                               |
 
-### Self-Monitoring is Enabled
+![Metrics](https://user-images.githubusercontent.com/16992394/78685076-89a58900-78f1-11ea-959b-ce374fe51500.jpg)
+
+### Via Self-Monitoring
 
 Head to Stack Monitoring tab in Kibana to see cluster metrics for all stack components.
 
