@@ -6,7 +6,7 @@ COMPOSE_PREFIX_CMD := COMPOSE_DOCKER_CLI_BUILD=1
 COMPOSE_ALL_FILES := -f docker-compose.yml -f docker-compose.monitor.yml -f docker-compose.tools.yml -f docker-compose.nodes.yml
 ELK_SERVICES   := elasticsearch logstash kibana
 ELK_MONITORING := elasticsearch-exporter logstash-exporter filebeat-cluster-logs
-ELK_TOOLS  := curator elastalert
+ELK_TOOLS  := curator elastalert rubban
 ELK_NODES := elasticsearch-1 elasticsearch-2
 ELK_MAIN_SERVICES := ${ELK_SERVICES} ${ELK_MONITORING} ${ELK_TOOLS}
 ELK_ALL_SERVICES := ${ELK_MAIN_SERVICES} ${ELK_NODES}

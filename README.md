@@ -2,7 +2,7 @@
 <img width="680px" src="https://user-images.githubusercontent.com/16992394/65840473-f70ca780-e319-11e9-9245-29ec0a8948d6.png">
 </p>
 <h2 align="center">🐳 Elastic Stack on Docker, with preconfigured security, tools, self-monitoring, and Prometheus Metrics Exporters</h2>
-<h4 align="center">With tools like Curator, ElastAlert for Alerting.</h4>
+<h4 align="center">With tools like Curator, Rubban, ElastAlert for Alerting.</h4>
 <p align="center">
    <a>
       <img src="https://img.shields.io/badge/Elastic%20Stack-7.6.2-blue?style=flat&logo=elasticsearch" alt="Elastic Stack Version 7^^">
@@ -25,7 +25,7 @@
 </p>
 
 # Introduction
-Elastic Stack (AKA **ELK**) Docker Composition, preconfigured with **Security**, **Monitoring**, Tools such as **ElastAlert** for alerting and **Curator**.
+Elastic Stack (AKA **ELK**) Docker Composition, preconfigured with **Security**, **Monitoring**, Tools such as **ElastAlert** for alerting, **Rubban** and **Curator**.
 
 Based on [Official Elastic Docker Images](https://www.docker.elastic.co/)
 
@@ -37,13 +37,13 @@ Stack Version: [7.6.2](https://www.elastic.co/blog/elastic-stack-7-6-0-released)
 - Configured as Production Single Node Cluster. (With a multi-node option for experimenting).
 - Security Enabled (under basic license).
 - SSL Enabled for Transport Layer and Kibana.
-- Use Docker-Compose and `.env` to configure your stack.
+- Use Docker-Compose and `.env` to configure your entire stack.
 - Automated Script that initializes and persist Elasticsearch's Keystore and SSL Certifications.
-- Curator with Crond preconfigured for Automated Scheduled tasks (e.g Snapshots to S3).
 - Self-Monitoring Metrics Enabled.
 - Prometheus Exporters for Stack Metrics.
-- Filebeat instance for shipping Stack logs to Elasticsearch itself.
-- ElastAlert preconfigured for Alerting.
+- [ElastAlert](https://github.com/Yelp/elastalert) preconfigured for Alerting.
+- [Curator](https://github.com/elastic/curator) with Crond preconfigured for Automated Scheduled tasks (e.g Snapshots to S3).
+- [Rubban](https://github.com/sherifabdlnaby/rubban) for Kibana curating tasks.
 - Embedded Container Healthchecks for Stack Images.
 
 More points at [comparison with deviantony/docker-elk](#Comparison)
@@ -88,7 +88,7 @@ Username: `elastic` Password: `changeme` (or `ELASTIC_PASSWORD` value in `.env`)
 ```shell
 $ make monitoring
 ```
-#### To Start Tools (ElastAlert and Curator)
+#### To Start Tools (ElastAlert, Rubban, and Curator)
 ```shell
 $ make tools
 ```
@@ -127,6 +127,7 @@ $ make down
 * ElastAlert Configuration in `./tools/elastalert/config`.
 * ElastAlert Alert rules in `./tools/elastalert/rules`, [head to ElastAlert docs to lookup how to create alerts.](https://elastalert.readthedocs.io/en/latest/elastalert.html)
 * Curator Actions at `./tools/curator/actions` and `./tools/curator/crontab`.
+* Rubban Configuration using Docker-Compose passed Environment Variables.
 
 ### Setting Up Keystore
 

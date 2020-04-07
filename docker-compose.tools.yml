@@ -29,3 +29,14 @@ services:
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
     ports:
       - 3030:3030
+
+  rubban:
+    image: sherifabdlnaby/rubban:latest
+    restart: unless-stopped
+    environment:
+      RUBBAN_KIBANA_HOST: "https://${KIBANA_HOST}:${KIBANA_PORT}"
+      RUBBAN_KIBANA_USER: ${ELASTIC_USERNAME}
+      RUBBAN_KIBANA_PASSWORD: ${ELASTIC_PASSWORD}
+      RUBBAN_REFRESHINDEXPATTERN_ENABLED: 'true'
+      RUBBAN_REFRESHINDEXPATTERN_SCHEDULE: '*/5 * * * *'
+      RUBBAN_REFRESHINDEXPATTERN_PATTERNS: '*'
