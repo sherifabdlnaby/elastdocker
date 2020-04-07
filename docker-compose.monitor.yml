@@ -20,21 +20,6 @@ services:
       - "9304:9304"
     command: ["-logstash.host", "${LOGSTASH_HOST}"]
 
-
-  # Containers Exporter --------------------------------
-  cadvisor-exporter:
-    image: google/cadvisor:latest
-    privileged: true
-    command: ["--logtostderr", "--docker_only"]
-    ports:
-    - 8080:8080
-    volumes:
-    - /:/rootfs:ro
-    - /var/run:/var/run:rw
-    - /sys:/sys:ro
-    - /var/lib/docker/:/var/lib/docker:ro
-    - /dev/disk/:/dev/disk:ro
-
   # Cluster Logs Shipper ------------------------------
   filebeat-cluster-logs:
     build:
