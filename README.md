@@ -57,20 +57,24 @@ More points at [comparison with deviantony/docker-elk](#Comparison)
 
 # Setup
 
-1. Clone the Repository, or:
+1. Clone the Repository
+     ```bash
+     git clone https://github.com/sherifabdlnaby/elastdocker.git
+     ```
+     or:
 
- <a href="https://github.com/sherifabdlnaby/elastdocker/generate"><img src="https://user-images.githubusercontent.com/16992394/65464461-20c95880-de5a-11e9-9bf0-fc79d125b99e.png" alt="create repository from template"></a>
+     <a href="https://github.com/sherifabdlnaby/elastdocker/generate"><img src="https://user-images.githubusercontent.com/16992394/65464461-20c95880-de5a-11e9-9bf0-fc79d125b99e.png" alt="create repository from template"></a>
 
 2. Initialize Elasticsearch Keystore and SSL Certificates
-```shell
-$ make setup
-```
+    ```shell
+    $ make setup
+    ```
 3. Start Elastic Stack
-```shell
-$ make elk
----- OR ----
-$ docker-compose up -d
-```
+    ```shell
+    $ make elk
+    ---- OR ----
+    $ docker-compose up -d
+    ```
 4. Visit Kibana at [https://localhost:5601](https://localhost:5601)
 
 Username: `elastic` Password: `changeme` (or `ELASTIC_PASSWORD` value in `.env`)
@@ -138,7 +142,7 @@ To Re-generate Keystore:
 make keystore
 ```
 
-### Enable SSL on HTTP 
+### Enable SSL on HTTP
 
 By default, only Transport Layer has SSL Enabled, to enable SSL on HTTP layer, add the following lines to `elasticsearch.yml`
 ```yaml
@@ -192,7 +196,7 @@ Head to Stack Monitoring tab in Kibana to see cluster metrics for all stack comp
 ![Metrics](https://user-images.githubusercontent.com/16992394/65841358-b0bb4680-e321-11e9-9a71-36a1d6fb2a41.png)
 ![Metrics](https://user-images.githubusercontent.com/16992394/65841362-b6189100-e321-11e9-93e4-b7b2caa5a37d.jpg)
 
-> In Production, cluster metrics should be shipped to another dedicated monitoring cluster. 
+> In Production, cluster metrics should be shipped to another dedicated monitoring cluster.
 
 # Comparison
 
@@ -220,8 +224,8 @@ Elastdocker differs from `deviantony/docker-elk` in the following points.
 - Configured tools and Prometheus Exporters.
 
 - The Makefile that simplifies everything into some simple commands.
-  
-# License 
+
+# License
 [MIT License](https://raw.githubusercontent.com/sherifabdlnaby/elastdocker/master/LICENSE)
 Copyright (c) 2020 Sherif Abdel-Naby
 
