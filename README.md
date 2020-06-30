@@ -145,6 +145,11 @@ $ make build
 $ make down
 ```
 
+#### Reset everything, Remove all containers, and delete **DATA**!
+```shell
+$ make prune
+```
+
 </p>
 </details>
 
