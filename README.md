@@ -5,7 +5,7 @@
 <h4 align="center">With tools like Curator, Rubban, ElastAlert for Alerting.</h4>
 <p align="center">
    <a>
-      <img src="https://img.shields.io/badge/Elastic%20Stack-7.7.0-blue?style=flat&logo=elasticsearch" alt="Elastic Stack Version 7^^">
+      <img src="https://img.shields.io/badge/Elastic%20Stack-7.8.0-blue?style=flat&logo=elasticsearch" alt="Elastic Stack Version 7^^">
    </a>
    <a>
       <img src="https://img.shields.io/github/v/tag/sherifabdlnaby/elastdocker?label=release&amp;sort=semver">
@@ -29,7 +29,7 @@ Elastic Stack (AKA **ELK**) Docker Composition, preconfigured with **Security**,
 
 Based on [Official Elastic Docker Images](https://www.docker.elastic.co/)
 
-Stack Version: [7.7.0](https://www.elastic.co/blog/elastic-stack-7-7-0-released).
+Stack Version: [7.8.0](https://www.elastic.co/blog/elastic-stack-7-8-0-released).
 > You can change Elastic Stack version by setting `ELK_VERSION` in `.env` file and rebuild your images. Any version >= 7.0.0 is compatible with this template.
 
 ### Main Points 📜
@@ -37,8 +37,8 @@ Stack Version: [7.7.0](https://www.elastic.co/blog/elastic-stack-7-7-0-released)
 - Configured as Production Single Node Cluster. (With a multi-node option for experimenting).
 - Security Enabled (under basic license).
 - SSL Enabled for Transport Layer and Kibana.
-- Use Docker-Compose and `.env` to configure your entire stack.
-- Automated Script that initializes and persist Elasticsearch's Keystore and SSL Certifications.
+- Use Docker-Compose and `.env` to configure your entire stack parameters.
+- Persist Elasticsearch's Keystore and SSL Certifications.
 - Self-Monitoring Metrics Enabled.
 - Prometheus Exporters for Stack Metrics.
 - [ElastAlert](https://github.com/Yelp/elastalert) preconfigured for Alerting.
@@ -46,7 +46,39 @@ Stack Version: [7.7.0](https://www.elastic.co/blog/elastic-stack-7-7-0-released)
 - [Rubban](https://github.com/sherifabdlnaby/rubban) for Kibana curating tasks.
 - Embedded Container Healthchecks for Stack Images.
 
-More points at [comparison with deviantony/docker-elk](#Comparison)
+#### More points
+Comparing Elastdocker and the popular [deviantony/docker-elk](https://github.com/deviantony/docker-elk)
+
+<details><summary>Expand</summary>
+<p>
+
+One of the most popular ELK on Docker repositories is the awesome [deviantony/docker-elk](https://github.com/deviantony/docker-elk).
+Elastdocker differs from `deviantony/docker-elk` in the following points.
+
+- Security enabled by default using Basic license, not Trial.
+
+- Persisting data by default in a volume.
+
+- Run in Production Mode (by enabling SSL on Transport Layer, and add initial master node settings).
+
+- Persisting Generated Keystore, and create an extendable script that makes it easier to recreate it every-time the container is created.
+
+- Parameterize credentials in .env instead of hardcoding `elastich:changeme` in every component config.
+
+- Parameterize all other Config like Heap Size.
+
+- Add recommended environment configurations as Ulimits and Swap disable to the docker-compose.
+
+- Make it ready to be extended into a multinode cluster.
+
+- Configuring the Self-Monitoring and the Filebeat agent that ship ELK logs to ELK itself. (as a step to shipping it to a monitoring cluster in the future).
+
+- Configured tools and Prometheus Exporters.
+
+- The Makefile that simplifies everything into some simple commands.
+
+</p>
+</details>
 
 -----
 
@@ -120,7 +152,7 @@ $ make down
 
 * Some Configuration are parameterized in the `.env` file.
   * `ELASTIC_PASSWORD`, user `elastic`'s password (default: `changeme` _pls_).
-  * `ELK_VERSION` Elastic Stack Version (default: `7.7.0`)
+  * `ELK_VERSION` Elastic Stack Version (default: `7.8.0`)
   * `ELASTICSEARCH_HEAP`, how much Elasticsearch allocate from memory (default: 1GB -good for development only-)
   * `LOGSTASH_HEAP`, how much Logstash allocate from memory.
   * Other configurations which their such as cluster name, and node name, etc.
@@ -197,33 +229,6 @@ Head to Stack Monitoring tab in Kibana to see cluster metrics for all stack comp
 ![Metrics](https://user-images.githubusercontent.com/16992394/65841362-b6189100-e321-11e9-93e4-b7b2caa5a37d.jpg)
 
 > In Production, cluster metrics should be shipped to another dedicated monitoring cluster.
-
-# Comparison
-
-One of the most popular elk on docker repositories is the awesome [deviantony/docker-elk](https://github.com/deviantony/docker-elk).
-Elastdocker differs from `deviantony/docker-elk` in the following points.
-
-- Security enabled by default using Basic license, not Trial.
-
-- Persisting data by default in a volume.
-
-- Run in Production Mode (by enabling SSL on Transport Layer, and add initial master node settings).
-
-- Persisting Generated Keystore, and create an extendable script that makes it easier to recreate it every-time the container is created.
-
-- Parameterize credentials in .env instead of hardcoding `elastich:changeme` in every component config.
-
-- Parameterize all other Config like Heap Size.
-
-- Add recommended environment configurations as Ulimits and Swap disable to the docker-compose.
-
-- Make it ready to be extended into a multinode cluster.
-
-- Configuring the Self-Monitoring and the Filebeat agent that ship ELK logs to ELK itself. (as a step to shipping it to a monitoring cluster in the future).
-
-- Configured tools and Prometheus Exporters.
-
-- The Makefile that simplifies everything into some simple commands.
 
 # License
 [MIT License](https://raw.githubusercontent.com/sherifabdlnaby/elastdocker/master/LICENSE)
