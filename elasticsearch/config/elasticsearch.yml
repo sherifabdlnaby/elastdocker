@@ -31,5 +31,4 @@ xpack.security.transport.ssl.certificate_authorities: certs/ca.crt
 #xpack.security.http.ssl.client_authentication: optional
 
 # Monitoring
-xpack.monitoring.enabled: true
 xpack.monitoring.collection.enabled: true
