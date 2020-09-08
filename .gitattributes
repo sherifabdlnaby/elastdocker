@@ -1,4 +1,4 @@
 # Declare files that will always have LF line endings on checkout.
 *.sh text eol=lf
-setup/*.sh linguist-vendored
+setup/*.sh linguist-language=Dockerfile
 Makefile linguist-vendored
