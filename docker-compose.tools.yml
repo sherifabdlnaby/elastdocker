@@ -2,6 +2,7 @@ version: '3.5'
 
 services:
   curator:
+    image: curator:elastdocker-${ELK_VERSION}
     build:
       context: tools/curator/.
     restart: unless-stopped

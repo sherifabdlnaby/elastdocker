@@ -22,6 +22,7 @@ services:
 
   # Cluster Logs Shipper ------------------------------
   filebeat-cluster-logs:
+    image: filebeat:elastdocker-${ELK_VERSION}
     build:
       context: tools/filebeat/
       args:
