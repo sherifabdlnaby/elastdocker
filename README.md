@@ -1,7 +1,7 @@
 <p align="center">
 <img width="680px" src="https://user-images.githubusercontent.com/16992394/65840473-f70ca780-e319-11e9-9245-29ec0a8948d6.png">
 </p>
-<h2 align="center">🐳 Elastic Stack on Docker, with preconfigured security, tools, self-monitoring, and Prometheus Metrics Exporters</h2>
+<h2 align="center">Elastic Stack on Docker, with preconfigured security, tools, self-monitoring, and Prometheus Metrics Exporters</h2>
 <h4 align="center">With tools like Curator, Rubban, ElastAlert for Alerting.</h4>
 <p align="center">
    <a>
@@ -25,31 +25,32 @@
 </p>
 
 # Introduction
-Elastic Stack (AKA **ELK**) Docker Composition, preconfigured with **Security**, **Monitoring**, Tools such as **ElastAlert** for alerting, **Rubban** and **Curator**.
+Elastic Stack (AKA **ELK**) Docker Composition, preconfigured with **Security**, **Monitoring**, and Tools Up with a Single Command.
 
 Based on [Official Elastic Docker Images](https://www.docker.elastic.co/)
 
 Stack Version: [7.9.0](https://www.elastic.co/blog/elastic-stack-7-9-0-released).
 > You can change Elastic Stack version by setting `ELK_VERSION` in `.env` file and rebuild your images. Any version >= 7.0.0 is compatible with this template.
 
-### Main Points 📜
+### Main Features 📜
 
-- Configured as Production Single Node Cluster. (With a multi-node option for experimenting).
+- Configured as Production Single Node Cluster. (With a multi-node cluster option for experimenting).
+- Deployed on a Single Docker Host or a Docker Swarm Cluster.
 - Security Enabled (under basic license).
 - SSL Enabled for Transport Layer and Kibana.
 - Use Docker-Compose and `.env` to configure your entire stack parameters.
 - Persist Elasticsearch's Keystore and SSL Certifications.
 - Self-Monitoring Metrics Enabled.
 - Prometheus Exporters for Stack Metrics.
+- Embedded Container Healthchecks for Stack Images.
 - [ElastAlert](https://github.com/Yelp/elastalert) preconfigured for Alerting.
 - [Curator](https://github.com/elastic/curator) with Crond preconfigured for Automated Scheduled tasks (e.g Snapshots to S3).
 - [Rubban](https://github.com/sherifabdlnaby/rubban) for Kibana curating tasks.
-- Embedded Container Healthchecks for Stack Images.
 
 #### More points
-Comparing Elastdocker and the popular [deviantony/docker-elk](https://github.com/deviantony/docker-elk)
+And comparing Elastdocker and the popular [deviantony/docker-elk](https://github.com/deviantony/docker-elk)
 
-<details><summary>Expand</summary>
+<details><summary>Expand...</summary>
 <p>
 
 One of the most popular ELK on Docker repositories is the awesome [deviantony/docker-elk](https://github.com/deviantony/docker-elk).
@@ -94,8 +95,7 @@ Elastdocker differs from `deviantony/docker-elk` in the following points.
      git clone https://github.com/sherifabdlnaby/elastdocker.git
      ```
      or:
-
-     <a href="https://github.com/sherifabdlnaby/elastdocker/generate"><img src="https://user-images.githubusercontent.com/16992394/65464461-20c95880-de5a-11e9-9bf0-fc79d125b99e.png" alt="create repository from template"></a>
+    <a href="https://github.com/sherifabdlnaby/elastdocker/generate"><img src="https://user-images.githubusercontent.com/16992394/92532187-08e81180-f230-11ea-96c9-07e9331411bc.png" alt="create repository from template"></a>
 
 2. Initialize Elasticsearch Keystore and SSL Certificates
     ```shell
@@ -109,13 +109,25 @@ Elastdocker differs from `deviantony/docker-elk` in the following points.
     ```
 4. Visit Kibana at [https://localhost:5601](https://localhost:5601)
 
-Username: `elastic` Password: `changeme` (or `ELASTIC_PASSWORD` value in `.env`)
+    Notice that Kibana is configured to use HTTPS, so you'll need to write `https://` before `localhost:5601` in the browser.
 
-> Modify `.env` file for your needs, most importantly `ELASTIC_PASSWORD` that setup your superuser `elastic`'s password, `ELASTICSEARCH_HEAP` & `LOGSTASH_HEAP` for Elasticsearch & Logstash Heap Size and `ELK_VERSION` for, yk, Stack Version.
+    Username: `elastic` Password: `changeme`
 
-> Notice that Kibana is configured to use HTTPS, so you'll need to write `https://` before `localhost:5601` in the browser.
+    > Modify `.env` file for your needs, most importantly `ELASTIC_PASSWORD` that setup your superuser `elastic`'s password, `ELASTICSEARCH_HEAP` & `LOGSTASH_HEAP` for Elasticsearch & Logstash Heap Size.
 
-### Additional Commands
+Whatever your Host (e.g AWS EC2, Azure, On-premise server), once you expose your host to the network ELK component will be accessible on their respective ports.
+
+### Docker Swarm Support
+
+Elastdocker can be deployed to Docker Swarm using `make swarm-deploy`
+
+However it is not recommended to [depend on Docker Swarm](https://boxboat.com/2019/12/10/migrate-docker-swarm-to-kubernetes/); if your scale needs a multi-host cluster to host your ELK then Kubernetes is the recommended next step.
+
+Elastdocker should be used for small production workloads enough to fit on a single host.
+
+> Docker Swarm lacks some features such as `ulimits` used to disable swapping in Elasticsearch container, please change `bootstrap.memory_lock` to `false` in docker-compose.yml and find an [alternative way](https://www.elastic.co/guide/en/elasticsearch/reference/master/setup-configuration-memory.html) to disable swapping in your swarm cluster.
+
+## Additional Commands
 
 <details><summary>Expand</summary>
 <p>
