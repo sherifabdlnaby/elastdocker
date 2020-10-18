@@ -27,6 +27,7 @@ services:
       context: tools/filebeat/
       args:
         ELK_VERSION: $ELK_VERSION
+    restart: always
     # -e flag to log to stderr and disable syslog/file output
     command: -e --strict.perms=false
     user: root
