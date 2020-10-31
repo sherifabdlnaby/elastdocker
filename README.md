@@ -1,7 +1,7 @@
 <p align="center">
 <img width="680px" src="https://user-images.githubusercontent.com/16992394/65840473-f70ca780-e319-11e9-9245-29ec0a8948d6.png">
 </p>
-<h2 align="center">Elastic Stack on Docker, with preconfigured security, tools, self-monitoring, and Prometheus Metrics Exporters</h2>
+<h2 align="center">Elastic Stack on Docker with Preconfigured Security, Tools, Self-Monitoring, and Prometheus Metrics Exporters</h2>
 <h4 align="center">With tools like Curator, Rubban, ElastAlert for Alerting.</h4>
 <p align="center">
    <a>
@@ -25,7 +25,7 @@
 </p>
 
 # Introduction
-Elastic Stack (AKA **ELK**) Docker Composition, preconfigured with **Security**, **Monitoring**, and Tools; Up with a Single Command.
+Elastic Stack (**ELK**) Docker Composition, preconfigured with **Security**, **Monitoring**, and **Tools**; Up with a Single Command.
 
 Based on [Official Elastic Docker Images](https://www.docker.elastic.co/)
 
@@ -87,6 +87,7 @@ Elastdocker differs from `deviantony/docker-elk` in the following points.
 
 - [Docker 17.05 or higher](https://docs.docker.com/install/)
 - [Docker-Compose 3 or higher](https://docs.docker.com/compose/install/)
+- 4GB RAM (For Windows and MacOS make sure Docker's VM has more than 4GB+ memory.)
 
 # Setup
 
@@ -101,15 +102,14 @@ Elastdocker differs from `deviantony/docker-elk` in the following points.
     > **For Linux's docker hosts only**. By default virtual memory [is not enough](https://www.elastic.co/guide/en/elasticsearch/reference/current/vm-max-map-count.html) so run the next command as root `sysctl -w vm.max_map_count=262144`
 3. Start Elastic Stack
     ```bash
-    $ make elk          <OR>          docker-compose up -d
+    $ make elk           <OR>         $ docker-compose up -d
     ```
 4. Visit Kibana at [https://localhost:5601](https://localhost:5601) or `https://<your_public_ip>:5601`
 
     Default Username: `elastic`, Password: `changeme`
 
-    > Notice that Kibana is configured to use HTTPS, so you'll need to write `https://` before `localhost:5601` in the browser.
-
-    > Modify `.env` file for your needs, most importantly `ELASTIC_PASSWORD` that setup your superuser `elastic`'s password, `ELASTICSEARCH_HEAP` & `LOGSTASH_HEAP` for Elasticsearch & Logstash Heap Size.
+    > - Notice that Kibana is configured to use HTTPS, so you'll need to write `https://` before `localhost:5601` in the browser.
+    > - Modify `.env` file for your needs, most importantly `ELASTIC_PASSWORD` that setup your superuser `elastic`'s password, `ELASTICSEARCH_HEAP` & `LOGSTASH_HEAP` for Elasticsearch & Logstash Heap Size.
 
 Whatever your Host (e.g AWS EC2, Azure, DigitalOcean, or on-premise server), once you expose your host to the network, ELK component will be accessible on their respective ports.
 
@@ -117,11 +117,17 @@ Whatever your Host (e.g AWS EC2, Azure, DigitalOcean, or on-premise server), onc
 
 Elastdocker can be deployed to Docker Swarm using `make swarm-deploy`
 
+<details><summary>Expand</summary>
+<p>
+
 However it is not recommended to [depend on Docker Swarm](https://boxboat.com/2019/12/10/migrate-docker-swarm-to-kubernetes/); if your scale needs a multi-host cluster to host your ELK then Kubernetes is the recommended next step.
 
 Elastdocker should be used for small production workloads enough to fit on a single host.
 
 > Docker Swarm lacks some features such as `ulimits` used to disable swapping in Elasticsearch container, please change `bootstrap.memory_lock` to `false` in docker-compose.yml and find an [alternative way](https://www.elastic.co/guide/en/elasticsearch/reference/master/setup-configuration-memory.html) to disable swapping in your swarm cluster.
+
+</p>
+</details>
 
 ## Additional Commands
 
