@@ -5,7 +5,7 @@
 <h4 align="center">With tools like Curator, Rubban, ElastAlert for Alerting.</h4>
 <p align="center">
    <a>
-      <img src="https://img.shields.io/badge/Elastic%20Stack-7.10.1-blue?style=flat&logo=elasticsearch" alt="Elastic Stack Version 7^^">
+      <img src="https://img.shields.io/badge/Elastic%20Stack-7.11.1-blue?style=flat&logo=elasticsearch" alt="Elastic Stack Version 7^^">
    </a>
    <a>
       <img src="https://img.shields.io/github/v/tag/sherifabdlnaby/elastdocker?label=release&amp;sort=semver">
@@ -29,7 +29,7 @@ Elastic Stack (**ELK**) Docker Composition, preconfigured with **Security**, **M
 
 Based on [Official Elastic Docker Images](https://www.docker.elastic.co/)
 
-Stack Version: [7.10.1](https://www.elastic.co/blog/elastic-stack-7-10-1-released)
+Stack Version: [7.11.1](https://www.elastic.co/blog/elastic-stack-7-11-1-released)
 > You can change Elastic Stack version by setting `ELK_VERSION` in `.env` file and rebuild your images. Any version >= 7.0.0 is compatible with this template.
 
 ### Main Features 📜
@@ -171,7 +171,7 @@ $ make prune
 
 * Some Configuration are parameterized in the `.env` file.
   * `ELASTIC_PASSWORD`, user `elastic`'s password (default: `changeme` _pls_).
-  * `ELK_VERSION` Elastic Stack Version (default: `7.10.1`)
+  * `ELK_VERSION` Elastic Stack Version (default: `7.11.1`)
   * `ELASTICSEARCH_HEAP`, how much Elasticsearch allocate from memory (default: 1GB -good for development only-)
   * `LOGSTASH_HEAP`, how much Logstash allocate from memory.
   * Other configurations which their such as cluster name, and node name, etc.
