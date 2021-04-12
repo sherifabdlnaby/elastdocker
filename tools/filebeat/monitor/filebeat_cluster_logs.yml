@@ -73,10 +73,8 @@ processors:
   - add_cloud_metadata: ~
 
 # Output to ES directly.
-output.elasticsearch:
-  hosts: '${ELASTICSEARCH_HOST_PORT}'
-  username: '${ELASTIC_USERNAME}'
-  password: '${ELASTIC_PASSWORD}'
+output.logstash:
+  hosts: ["logstash:5044"]
 
 #=================================== Kibana ==========================================
 # Enable setting up Kibana
@@ -96,7 +94,7 @@ setup:
 # Use deprecated option to avoid current UX bug in 7.3.0 where filebeat creates a
 # standalone monitoring cluster in the monitoring UI.
 # see: https://github.com/elastic/beats/pull/13182
-xpack.monitoring.enabled: true
+xpack.monitoring.enabled: false
 
 #monitoring:
 #  enabled: true

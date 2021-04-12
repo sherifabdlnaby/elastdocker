@@ -35,6 +35,9 @@ all:		    ## Start Elk and all its component (ELK, Monitoring, and Tools).
 elk:		    ## Start ELK.
 	docker-compose up -d --build
 
+up:
+	@make elk
+
 monitoring:		## Start ELK Monitoring.
 	@docker-compose ${COMPOSE_MONITORING} up -d --build ${ELK_MONITORING}
 
