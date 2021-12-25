@@ -1,36 +1,6 @@
 version: '3.5'
 
 services:
-  curator:
-    image: curator:elastdocker-${ELK_VERSION}
-    build:
-      context: tools/curator/.
-    restart: unless-stopped
-    environment:
-      ELASTICSEARCH_HOST_PORT: ${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT}
-      ELASTICSEARCH_HTTP_AUTH: ${ELASTIC_USERNAME}:${ELASTIC_PASSWORD}
-    volumes:
-      - ./tools/curator/curator.yml:/root/.curator/curator.yml:ro
-      - ./tools/curator/crontab:/etc/crontab:ro
-      - ./tools/curator/actions/:/actions/:ro
-
-  elastalert:
-    image: sherifabdlnaby/elastalert:3.1.1
-    restart: unless-stopped
-    volumes:
-      - ./tools/elastalert/config/elastalert.yaml:/opt/config/config.yaml
-      - ./tools/elastalert/config/elastalert-test.yaml:/opt/config/config-test.yaml
-      - ./tools/elastalert/config/config.json:/opt/config/config.json
-      - ./tools/elastalert/rules:/opt/elastalert/rules
-      - ./tools/elastalert/rule_templates:/opt/elastalert/rule_templates
-    environment:
-      ELASTICSEARCH_HOST: ${ELASTICSEARCH_HOST}
-      ELASTICSEARCH_PORT: ${ELASTICSEARCH_PORT}
-      ELASTIC_USERNAME: ${ELASTIC_USERNAME}
-      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
-    ports:
-      - 3030:3030
-
   rubban:
     image: sherifabdlnaby/rubban:latest
     restart: unless-stopped
@@ -41,3 +11,6 @@ services:
       RUBBAN_REFRESHINDEXPATTERN_ENABLED: 'true'
       RUBBAN_REFRESHINDEXPATTERN_SCHEDULE: '*/5 * * * *'
       RUBBAN_REFRESHINDEXPATTERN_PATTERNS: '*'
+      RUBBAN_AUTOINDEXPATTERN_ENABLED: true
+      RUBBAN_AUTOINDEXPATTERN_SCHEDULE: '*/5 * * * *'
+      RUBBAN_AUTOINDEXPATTERN_GENERALPATTERNS: '[{"pattern":"filebeat?","timeFieldName":"@timestamp"},{"pattern":"logstash?","timeFieldName":"@timestamp"}]'

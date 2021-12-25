@@ -6,7 +6,7 @@ server.name: kibana
 server.host: "0.0.0.0"
 
 # Elasticsearch Connection
-elasticsearch.hosts: [ "http://${ELASTICSEARCH_HOST_PORT}" ]
+elasticsearch.hosts: [ "${ELASTICSEARCH_HOST_PORT}" ]
 
 # SSL settings
 server.ssl.enabled: true

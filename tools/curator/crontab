@@ -1,3 +1,0 @@
-# Snapshot Every 1 hour
-* * * * * curator /actions/snapshot.yml
-

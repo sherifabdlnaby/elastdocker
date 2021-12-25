@@ -1,15 +1,17 @@
 .DEFAULT_GOAL:=help
 
-COMPOSE_ALL_FILES := -f docker-compose.yml -f docker-compose.monitor.yml -f docker-compose.tools.yml -f docker-compose.nodes.yml
+COMPOSE_ALL_FILES := -f docker-compose.yml -f docker-compose.monitor.yml -f docker-compose.tools.yml -f docker-compose.nodes.yml -f docker-compose.logs.yml
 COMPOSE_MONITORING := -f docker-compose.yml -f docker-compose.monitor.yml
+COMPOSE_LOGGING := -f docker-compose.yml -f docker-compose.logs.yml
 COMPOSE_TOOLS := -f docker-compose.yml -f docker-compose.tools.yml
 COMPOSE_NODES := -f docker-compose.yml -f docker-compose.nodes.yml
 ELK_SERVICES   := elasticsearch logstash kibana
+ELK_LOG_COLLECTION := filebeat
 ELK_MONITORING := elasticsearch-exporter logstash-exporter filebeat-cluster-logs
-ELK_TOOLS  := curator elastalert rubban
+ELK_TOOLS  := rubban
 ELK_NODES := elasticsearch-1 elasticsearch-2
 ELK_MAIN_SERVICES := ${ELK_SERVICES} ${ELK_MONITORING} ${ELK_TOOLS}
-ELK_ALL_SERVICES := ${ELK_MAIN_SERVICES} ${ELK_NODES}
+ELK_ALL_SERVICES := ${ELK_MAIN_SERVICES} ${ELK_NODES} ${ELK_LOG_COLLECTION}
 # --------------------------
 
 # load .env so that Docker Swarm Commands has .env values too. (https://github.com/moby/moby/issues/29133)
@@ -41,6 +43,9 @@ up:
 monitoring:		## Start ELK Monitoring.
 	@docker-compose ${COMPOSE_MONITORING} up -d --build ${ELK_MONITORING}
 
+collect-docker-logs:		## Start Filebeat that collects all Host Docker Logs and ship it to ELK
+	@docker-compose ${COMPOSE_LOGGING} up -d --build ${ELK_LOG_COLLECTION}
+
 tools:		    ## Start ELK Tools (ElastAlert, Curator).
 	@docker-compose ${COMPOSE_TOOLS} up -d --build ${ELK_TOOLS}
 
@@ -49,6 +54,8 @@ nodes:		    ## Start Two Extra Elasticsearch Nodes
 
 build:			## Build ELK and all its extra components.
 	@docker-compose ${COMPOSE_ALL_FILES} build ${ELK_ALL_SERVICES}
+ps:				## Show all running containers.
+	@docker-compose ${COMPOSE_ALL_FILES} ps
 
 down:			## Down ELK and all its extra components.
 	@docker-compose ${COMPOSE_ALL_FILES} down

@@ -5,7 +5,7 @@
 <h4 align="center">With tools like Curator, Rubban, ElastAlert for Alerting.</h4>
 <p align="center">
    <a>
-      <img src="https://img.shields.io/badge/Elastic%20Stack-7.12.0-blue?style=flat&logo=elasticsearch" alt="Elastic Stack Version 7^^">
+      <img src="https://img.shields.io/badge/Elastic%20Stack-7.16.2-blue?style=flat&logo=elasticsearch" alt="Elastic Stack Version 7^^">
    </a>
    <a>
       <img src="https://img.shields.io/github/v/tag/sherifabdlnaby/elastdocker?label=release&amp;sort=semver">
@@ -29,7 +29,7 @@ Elastic Stack (**ELK**) Docker Composition, preconfigured with **Security**, **M
 
 Based on [Official Elastic Docker Images](https://www.docker.elastic.co/)
 
-Stack Version: [7.12.0](https://www.elastic.co/blog/elastic-stack-7-12-0-released)
+Stack Version: [7.16.2](https://www.elastic.co/blog/elastic-stack-7-16-2-released)
 > You can change Elastic Stack version by setting `ELK_VERSION` in `.env` file and rebuild your images. Any version >= 7.0.0 is compatible with this template.
 
 ### Main Features 📜
@@ -171,7 +171,7 @@ $ make prune
 
 * Some Configuration are parameterized in the `.env` file.
   * `ELASTIC_PASSWORD`, user `elastic`'s password (default: `changeme` _pls_).
-  * `ELK_VERSION` Elastic Stack Version (default: `7.12.0`)
+  * `ELK_VERSION` Elastic Stack Version (default: `7.16.2`)
   * `ELASTICSEARCH_HEAP`, how much Elasticsearch allocate from memory (default: 1GB -good for development only-)
   * `LOGSTASH_HEAP`, how much Logstash allocate from memory.
   * Other configurations which their such as cluster name, and node name, etc.
@@ -193,22 +193,10 @@ To Re-generate Keystore:
 make keystore
 ```
 
-### Enable SSL on HTTP
-
-By default, only Transport Layer has SSL Enabled, to enable SSL on HTTP layer, add the following lines to `elasticsearch.yml`
-```yaml
-## - http
-xpack.security.http.ssl.enabled: true
-xpack.security.http.ssl.key: certs/elasticsearch.key
-xpack.security.http.ssl.certificate: certs/elasticsearch.crt
-xpack.security.http.ssl.certificate_authorities: certs/ca.crt
-xpack.security.http.ssl.client_authentication: optional
-```
-
-> ⚠️ Enabling SSL on HTTP layer will require all clients that connect to Elasticsearch to configure SSL connection for HTTP, this includes all the current configured parts of the stack (e.g Logstash, Kibana, Curator, etc) plus any library/binding that connects to Elasticsearch from your application code.
-
-
 ### Notes
+
+
+- ⚠️ Elasticsearch HTTP layer is using SSL, thus mean you need to configure your elasticsearch clients with the `CA` in `secrets/certs/ca/ca.crt`, or configure client to ignore SSL Certificate Verification (e.g `--insecure` in `curl`).
 
 - Adding Two Extra Nodes to the cluster will make the cluster depending on them and won't start without them again.
 

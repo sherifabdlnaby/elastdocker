@@ -2,7 +2,7 @@
 # Filebeat Config to send Elasticsearch/Logstash/Kibana in a docker host to Elasticsea-
 # sh cluster.
 
-name: filebeat-elasticsearch-logs-shipper
+name: filebeat-docker-logs-shipper
 
 filebeat.config:
   modules:
@@ -17,62 +17,22 @@ filebeat.autodiscover:
     - type: docker
       templates:
         - condition:
-            contains:
-              docker.container.image: elasticsearch
+            and:
+             - not.contains:
+                docker.container.image: elasticsearch
+             - not.contains:
+                docker.container.image: logstash
+             - not.contains:
+                docker.container.image: kibana
           config:
-            - module: elasticsearch
-              server:
-                input:
-                  type: container
-                  paths: '/var/lib/docker/containers/${data.docker.container.id}/*.log'
-              gc:
-                input:
-                  type: container
-                  paths: '/var/lib/docker/containers/${data.docker.container.id}/*.log'
-              audit:
-                input:
-                  type: container
-                  paths: '/var/lib/docker/containers/${data.docker.container.id}/*.log'
-              slowlog:
-                input:
-                  type: container
-                  paths: '/var/lib/docker/containers/${data.docker.container.id}/*.log'
-              deprecation:
-                input:
-                  type: container
-                  paths: '/var/lib/docker/containers/${data.docker.container.id}/*.log'
-    - type: docker
-      templates:
-        - condition:
-            contains:
-              docker.container.image: kibana
-          config:
-            - module: kibana
-              log:
-                input:
-                  type: container
-                  paths: '/var/lib/docker/containers/${data.docker.container.id}/*.log'
-    - type: docker
-      templates:
-        - condition:
-            contains:
-              docker.container.image: logstash
-          config:
-            - module: logstash
-              log:
-                input:
-                  type: container
-                  paths: '/var/lib/docker/containers/${data.docker.container.id}/*.log'
-              slowlog:
-                input:
-                  type: container
-                  paths: '/var/lib/docker/containers/${data.docker.container.id}/*.log'
-
+            - type: container
+              paths:
+                - /var/lib/docker/containers/${data.docker.container.id}/*.log
 
 processors:
   - add_cloud_metadata: ~
 
-# Output to ES directly.
+# Output to Logstash
 output.logstash:
   hosts: ["logstash:5044"]
 
@@ -94,7 +54,13 @@ setup:
 # Use deprecated option to avoid current UX bug in 7.3.0 where filebeat creates a
 # standalone monitoring cluster in the monitoring UI.
 # see: https://github.com/elastic/beats/pull/13182
-xpack.monitoring.enabled: false
+xpack.monitoring:
+  enabled: true
+  elasticsearch:
+    hosts: '${ELASTICSEARCH_HOST_PORT}'
+    username: '${ELASTIC_USERNAME}'
+    password: '${ELASTIC_PASSWORD}'
+
 
 #monitoring:
 #  enabled: true

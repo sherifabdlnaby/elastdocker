@@ -24,11 +24,11 @@ xpack.security.transport.ssl.certificate: certs/elasticsearch.crt
 xpack.security.transport.ssl.certificate_authorities: certs/ca.crt
 
 ## - http
-#xpack.security.http.ssl.enabled: true
-#xpack.security.http.ssl.key: certs/elasticsearch.key
-#xpack.security.http.ssl.certificate: certs/elasticsearch.crt
-#xpack.security.http.ssl.certificate_authorities: certs/ca.crt
-#xpack.security.http.ssl.client_authentication: optional
+xpack.security.http.ssl.enabled: true
+xpack.security.http.ssl.key: certs/elasticsearch.key
+xpack.security.http.ssl.certificate: certs/elasticsearch.crt
+xpack.security.http.ssl.certificate_authorities: certs/ca.crt
+xpack.security.http.ssl.client_authentication: optional
 
 # Monitoring
 xpack.monitoring.collection.enabled: true
