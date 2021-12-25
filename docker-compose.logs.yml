@@ -1,0 +1,24 @@
+version: '3.5'
+
+# will contain all elasticsearch data.
+volumes:
+  filebeat-data:
+
+services:
+  # Docker Logs Shipper ------------------------------
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:${ELK_VERSION}
+    restart: always
+    # -e flag to log to stderr and disable syslog/file output
+    command: -e --strict.perms=false
+    user: root
+    environment:
+      ELASTIC_USERNAME: ${ELASTIC_USERNAME}
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+      KIBANA_HOST_PORT: ${KIBANA_HOST}:${KIBANA_PORT}
+      ELASTICSEARCH_HOST_PORT: https://${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT}
+    volumes:
+      - ./filebeat/filebeat.docker.logs.yml:/usr/share/filebeat/filebeat.yml:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - filebeat-data:/var/lib/filebeat/data

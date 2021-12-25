@@ -6,7 +6,7 @@ services:
   elasticsearch-exporter:
     image: justwatch/elasticsearch_exporter:1.1.0
     restart: always
-    command: ["--es.uri", "http://${ELASTIC_USERNAME}:${ELASTIC_PASSWORD}@${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT}",
+    command: ["--es.uri", "https://${ELASTIC_USERNAME}:${ELASTIC_PASSWORD}@${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT}",
               "--es.all",
               "--es.snapshots",
               "--es.indices"]
@@ -22,11 +22,7 @@ services:
 
   # Cluster Logs Shipper ------------------------------
   filebeat-cluster-logs:
-    image: filebeat:elastdocker-${ELK_VERSION}
-    build:
-      context: tools/filebeat/
-      args:
-        ELK_VERSION: $ELK_VERSION
+    image: docker.elastic.co/beats/filebeat:${ELK_VERSION}
     restart: always
     # -e flag to log to stderr and disable syslog/file output
     command: -e --strict.perms=false
@@ -35,8 +31,8 @@ services:
       ELASTIC_USERNAME: ${ELASTIC_USERNAME}
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
       KIBANA_HOST_PORT: ${KIBANA_HOST}:${KIBANA_PORT}
-      ELASTICSEARCH_HOST_PORT: ${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT}
+      ELASTICSEARCH_HOST_PORT: https://${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT}
     volumes:
-      - ./tools/filebeat/monitor/filebeat_cluster_logs.yml:/usr/share/filebeat/filebeat.yml:ro
+      - ./filebeat/filebeat.monitoring.yml:/usr/share/filebeat/filebeat.yml:ro
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
