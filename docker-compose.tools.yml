@@ -11,6 +11,6 @@ services:
       RUBBAN_REFRESHINDEXPATTERN_ENABLED: 'true'
       RUBBAN_REFRESHINDEXPATTERN_SCHEDULE: '*/5 * * * *'
       RUBBAN_REFRESHINDEXPATTERN_PATTERNS: '*'
-      RUBBAN_AUTOINDEXPATTERN_ENABLED: true
+      RUBBAN_AUTOINDEXPATTERN_ENABLED: 'true'
       RUBBAN_AUTOINDEXPATTERN_SCHEDULE: '*/5 * * * *'
       RUBBAN_AUTOINDEXPATTERN_GENERALPATTERNS: '[{"pattern":"filebeat?","timeFieldName":"@timestamp"},{"pattern":"logstash?","timeFieldName":"@timestamp"}]'
