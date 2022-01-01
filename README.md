@@ -10,7 +10,10 @@
    </a>
    <a>
       <img src="https://img.shields.io/github/v/tag/sherifabdlnaby/elastdocker?label=release&amp;sort=semver">
-    </a>
+   </a>
+   <a>
+      <img src="https://img.shields.io/badge/Log4Shell-mitigated-brightgreen?style=flat&logo=java">
+   </a>
    <a>
       <img src="https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat" alt="contributions welcome">
    </a>
