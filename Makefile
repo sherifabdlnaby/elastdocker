@@ -39,6 +39,7 @@ elk:		    ## Start ELK.
 
 up:
 	@make elk
+	@echo "Visit Kibana: https://localhost:5601"
 
 monitoring:		## Start ELK Monitoring.
 	@docker-compose ${COMPOSE_MONITORING} up -d --build ${ELK_MONITORING}
