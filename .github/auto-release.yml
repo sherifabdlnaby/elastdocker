@@ -28,9 +28,9 @@ categories:
       - 'enhancement'
       - 'feature'
       - 'patch'
-  - title: '⬆️ Updates'
+  - title: '⬆️ Upgrades'
     labels:
-      - 'dependency-update'
+      - 'upgrades'
   - title: '🐛 Bug Fixes'
     labels:
       - 'fix'
@@ -42,16 +42,16 @@ categories:
       - 'auto-update'
   - title: '📝 Documentation'
     labels:
-      - 'chore'
+      - 'docs'
 
 autolabeler:
-  - label: 'chore'
+  - label: 'docs'
     files:
       - '*.md'
   - label: 'enhancement'
     title: '/enhancement|fixes/i'
 
-  - label: 'dependency-update'
+  - label: 'upgrades'
     title: '/⬆️/i'
 
   - label: 'bugfix'
