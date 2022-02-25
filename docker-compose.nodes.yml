@@ -7,7 +7,11 @@ volumes:
 
 services:
   elasticsearch-1:
-    image: docker.elastic.co/elasticsearch/elasticsearch:${ELK_VERSION}
+    image: elastdocker/elasticsearch:${ELK_VERSION}
+    build:
+      context: elasticsearch/
+      args:
+        ELK_VERSION: ${ELK_VERSION}
     restart: unless-stopped
     environment:
       ELASTIC_USERNAME: ${ELASTIC_USERNAME}
@@ -39,7 +43,11 @@ services:
         soft: 200000
         hard: 200000
   elasticsearch-2:
-    image: docker.elastic.co/elasticsearch/elasticsearch:${ELK_VERSION}
+    image: elastdocker/elasticsearch:${ELK_VERSION}
+    build:
+      context: elasticsearch/
+      args:
+        ELK_VERSION: ${ELK_VERSION}
     restart: unless-stopped
     environment:
       ELASTIC_USERNAME: ${ELASTIC_USERNAME}
