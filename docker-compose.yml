@@ -26,7 +26,11 @@ secrets:
 
 services:
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:${ELK_VERSION}
+    image: elastdocker/elasticsearch:${ELK_VERSION}
+    build:
+      context: elasticsearch/
+      args:
+        ELK_VERSION: ${ELK_VERSION}
     restart: unless-stopped
     environment:
       ELASTIC_USERNAME: ${ELASTIC_USERNAME}
@@ -64,7 +68,11 @@ services:
       test: ["CMD", "sh", "-c", "curl -sf --insecure https://$ELASTIC_USERNAME:$ELASTIC_PASSWORD@localhost:9200/_cat/health | grep -ioE 'green|yellow' || echo 'not green/yellow cluster status'"]
 
   logstash:
-    image: docker.elastic.co/logstash/logstash:${ELK_VERSION}
+    image: elastdocker/logstash:${ELK_VERSION}
+    build:
+      context: logstash/
+      args:
+        ELK_VERSION: $ELK_VERSION
     restart: unless-stopped
     volumes:
       - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
@@ -85,7 +93,11 @@ services:
       test: ["CMD", "curl", "-s" ,"-XGET", "http://127.0.0.1:9600"]
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:${ELK_VERSION}
+    image: elastdocker/kibana:${ELK_VERSION}
+    build:
+      context: kibana/
+      args:
+        ELK_VERSION: $ELK_VERSION
     restart: unless-stopped
     volumes:
       - ./kibana/config/:/usr/share/kibana/config:ro
