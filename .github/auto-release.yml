@@ -77,11 +77,3 @@ template: |
   ## Changes
 
   $CHANGES
-
-replacers:
-  # Remove irrelevant information from Renovate bot
-  - search: '/(?<=---\s+)+^#.*(Renovate configuration|Configuration)(?:.|\n)*?This PR has been generated .*/gm'
-    replace: ''
-  # Remove Renovate bot banner image
-  - search: '/\[!\[[^\]]*Renovate\][^\]]*\](\([^)]*\))?\s*\n+/gm'
-    replace: ''
