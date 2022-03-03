@@ -18,8 +18,7 @@ xpack.encryptedSavedObjects.encryptionKey: D12GTfrlfxSPxPlGRBlgPB5qM5GOPDV5
 xpack.reporting.encryptionKey: RSCueeHKzrqzOVTJhkjt17EMnzM96LlN
 
 ## X-Pack security credentials
-elasticsearch.username: ${ELASTIC_USERNAME}
-elasticsearch.password: ${ELASTIC_PASSWORD}
+elasticsearch.serviceAccountToken: "${KIBANA_SERVICE_ACCOUNT_TOKEN}"
 elasticsearch.ssl.certificateAuthorities: [ "/certs/ca.crt" ]
 
 

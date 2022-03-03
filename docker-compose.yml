@@ -13,6 +13,8 @@ volumes:
 secrets:
   elasticsearch.keystore:
     file: ./secrets/keystore/elasticsearch.keystore
+  elasticsearch.service_tokens:
+    file: ./secrets/service_tokens
   elastic.ca:
     file: ./secrets/certs/ca/ca.crt
   elasticsearch.certificate:
@@ -48,6 +50,8 @@ services:
     secrets:
       - source: elasticsearch.keystore
         target: /usr/share/elasticsearch/config/elasticsearch.keystore
+      - source: elasticsearch.service_tokens
+        target: /usr/share/elasticsearch/config/service_tokens
       - source: elastic.ca
         target: /usr/share/elasticsearch/config/certs/ca.crt
       - source: elasticsearch.certificate
@@ -105,6 +109,8 @@ services:
       ELASTIC_USERNAME: ${ELASTIC_USERNAME}
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
       ELASTICSEARCH_HOST_PORT: https://${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT}
+    env_file:
+      - ./secrets/.env.kibana.token
     secrets:
       - source: elastic.ca
         target: /certs/ca.crt

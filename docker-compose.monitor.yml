@@ -7,6 +7,7 @@ services:
     image: justwatch/elasticsearch_exporter:1.1.0
     restart: always
     command: ["--es.uri", "https://${ELASTIC_USERNAME}:${ELASTIC_PASSWORD}@${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT}",
+              "--es.ssl-skip-verify",
               "--es.all",
               "--es.snapshots",
               "--es.indices"]
