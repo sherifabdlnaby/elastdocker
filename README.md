@@ -96,8 +96,8 @@ Elastdocker differs from `deviantony/docker-elk` in the following points.
 
 # Requirements
 
-- [Docker 17.05 or higher](https://docs.docker.com/install/)
-- [Docker-Compose 3 or higher](https://docs.docker.com/compose/install/)
+- [Docker 20.05 or higher](https://docs.docker.com/install/)
+- [Docker-Compose 1.29 or higher](https://docs.docker.com/compose/install/)
 - 4GB RAM (For Windows and MacOS make sure Docker's VM has more than 4GB+ memory.)
 
 # Setup
