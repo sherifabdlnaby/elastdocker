@@ -12,11 +12,6 @@ ELK_TOOLS  := rubban
 ELK_NODES := elasticsearch-1 elasticsearch-2
 ELK_MAIN_SERVICES := ${ELK_SERVICES} ${ELK_MONITORING} ${ELK_TOOLS}
 ELK_ALL_SERVICES := ${ELK_MAIN_SERVICES} ${ELK_NODES} ${ELK_LOG_COLLECTION}
-# --------------------------
-
-# load .env so that Docker Swarm Commands has .env values too. (https://github.com/moby/moby/issues/29133)
-include .env
-export
 
 # --------------------------
 .PHONY: setup keystore certs all elk monitoring tools build down stop restart rm logs
@@ -77,25 +72,8 @@ images:			## Show all Images of ELK and all its extra components.
 	@docker-compose $(COMPOSE_ALL_FILES) images ${ELK_ALL_SERVICES}
 
 prune:			## Remove ELK Containers and Delete Volume Data
-	@make swarm-rm || echo ""
 	@make stop && make rm
 	@docker volume prune -f
-
-swarm-deploy-elk:
-	@make build
-	docker stack deploy -c docker-compose.yml elastic
-
-swarm-deploy-monitoring:
-	@make build
-	@docker stack deploy -c docker-compose.yml -c docker-compose.monitor.yml elastic
-
-swarm-deploy-tools:
-	@make build
-	@docker stack deploy -c docker-compose.yml -c docker-compose.tools.yml elastic
-
-swarm-rm:
-	docker stack rm elastic
-
 
 help:       	## Show this help.
 	@echo "Make Application Docker Images and Containers using Docker-Compose files in 'docker' Dir."

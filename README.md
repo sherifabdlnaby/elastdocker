@@ -6,7 +6,7 @@
 <h4 align="center">Configured to be ready to be used for Log, Metrics, APM, Alerting, Machine Learning, and Security (SIEM) usecases.</h4>
 <p align="center">
    <a>
-      <img src="https://img.shields.io/badge/Elastic%20Stack-7.17.0-blue?style=flat&logo=elasticsearch" alt="Elastic Stack Version 7^^">
+      <img src="https://img.shields.io/badge/Elastic%20Stack-8.0.1-blue?style=flat&logo=elasticsearch" alt="Elastic Stack Version 7^^">
    </a>
    <a>
       <img src="https://img.shields.io/github/v/tag/sherifabdlnaby/elastdocker?label=release&amp;sort=semver">
@@ -36,24 +36,27 @@ Elastic Stack (**ELK**) Docker Composition, preconfigured with **Security**, **M
 
 Suitable for Demoing, MVPs and small production deployments.
 
-Based on [Official Elastic Docker Images](https://www.docker.elastic.co/)
-
-Stack Version: [7.17.0](https://www.elastic.co/blog/elastic-stack-7-17-0-released)
-> You can change Elastic Stack version by setting `ELK_VERSION` in `.env` file and rebuild your images. Any version >= 7.0.0 is compatible with this template.
+Stack Version: [8.0.1](https://www.elastic.co/blog/whats-new-elastic-8-0-0) 🎉  - Based on [Official Elastic Docker Images](https://www.docker.elastic.co/)
+> You can change Elastic Stack version by setting `ELK_VERSION` in `.env` file and rebuild your images. Any version >= 8.0.0 is compatible with this template.
 
 ### Main Features 📜
 
-- Configured as Production Single Node Cluster. (With a multi-node cluster option for experimenting).
-- Deployed on a Single Docker Host or a Docker Swarm Cluster.
-- Security Enabled (under basic license).
-- SSL Enabled (enables Alerting, SIEM, and ML features).
+- Configured as a Production Single Node Cluster. (With a multi-node cluster option for experimenting).
+- Security Enabled By Default.
+- Configured to Enable:
+  - Logging & Metrics Ingestion
+  - APM
+  - Alerting
+  - Machine Learning
+  - SIEM
+  - Enabling Trial License
 - Use Docker-Compose and `.env` to configure your entire stack parameters.
 - Persist Elasticsearch's Keystore and SSL Certifications.
 - Self-Monitoring Metrics Enabled.
 - Prometheus Exporters for Stack Metrics.
+- Collect Docker Host Logs to ELK via `make collect-docker-logs`.
 - Embedded Container Healthchecks for Stack Images.
 - [Rubban](https://github.com/sherifabdlnaby/rubban) for Kibana curating tasks.
-- A command to ship your host Docker Images to the ELK.
 
 #### More points
 And comparing Elastdocker and the popular [deviantony/docker-elk](https://github.com/deviantony/docker-elk)
@@ -93,8 +96,8 @@ Elastdocker differs from `deviantony/docker-elk` in the following points.
 
 # Requirements
 
-- [Docker 17.05 or higher](https://docs.docker.com/install/)
-- [Docker-Compose 3 or higher](https://docs.docker.com/compose/install/)
+- [Docker 20.05 or higher](https://docs.docker.com/install/)
+- [Docker-Compose 1.29 or higher](https://docs.docker.com/compose/install/)
 - 4GB RAM (For Windows and MacOS make sure Docker's VM has more than 4GB+ memory.)
 
 # Setup
@@ -118,24 +121,10 @@ Elastdocker differs from `deviantony/docker-elk` in the following points.
 
     > - Notice that Kibana is configured to use HTTPS, so you'll need to write `https://` before `localhost:5601` in the browser.
     > - Modify `.env` file for your needs, most importantly `ELASTIC_PASSWORD` that setup your superuser `elastic`'s password, `ELASTICSEARCH_HEAP` & `LOGSTASH_HEAP` for Elasticsearch & Logstash Heap Size.
+    
+> Whatever your Host (e.g AWS EC2, Azure, DigitalOcean, or on-premise server), once you expose your host to the network, ELK component will be accessible on their respective ports. Since the enabled TLS uses a self-signed certificate, it is recommended to SSL-Terminate public traffic using your signed certificates. 
 
-Whatever your Host (e.g AWS EC2, Azure, DigitalOcean, or on-premise server), once you expose your host to the network, ELK component will be accessible on their respective ports. Since the enabled TLS uses a self-signed certificate, it is recommended to SSL-Terminate public traffic using your signed certificates. 
-
-### Docker Swarm Support
-
-Elastdocker can be deployed to Docker Swarm using `make swarm-deploy`
-
-<details><summary>Expand</summary>
-<p>
-
-However it is not recommended to [depend on Docker Swarm](https://boxboat.com/2019/12/10/migrate-docker-swarm-to-kubernetes/); if your scale needs a multi-host cluster to host your ELK then Kubernetes is the recommended next step.
-
-Elastdocker should be used for small production workloads enough to fit on a single host.
-
-> Docker Swarm lacks some features such as `ulimits` used to disable swapping in Elasticsearch container, please change `bootstrap.memory_lock` to `false` in docker-compose.yml and find an [alternative way](https://www.elastic.co/guide/en/elasticsearch/reference/master/setup-configuration-memory.html) to disable swapping in your swarm cluster.
-
-</p>
-</details>
+> 🏃🏻‍♂️ To start ingesting logs, you can start by running `make collect-docker-logs` which will collect your host's container logs.
 
 ## Additional Commands
 
@@ -183,7 +172,7 @@ $ make prune
 
 * Some Configuration are parameterized in the `.env` file.
   * `ELASTIC_PASSWORD`, user `elastic`'s password (default: `changeme` _pls_).
-  * `ELK_VERSION` Elastic Stack Version (default: `7.17.0`)
+  * `ELK_VERSION` Elastic Stack Version (default: `8.0.1`)
   * `ELASTICSEARCH_HEAP`, how much Elasticsearch allocate from memory (default: 1GB -good for development only-)
   * `LOGSTASH_HEAP`, how much Logstash allocate from memory.
   * Other configurations which their such as cluster name, and node name, etc.
@@ -225,7 +214,22 @@ make keystore
 
 ---------------------------
 
+![Intro](https://user-images.githubusercontent.com/16992394/156664447-c24c49f4-4282-4d6a-81a7-10743cfa384e.png)
+![Alerting](https://user-images.githubusercontent.com/16992394/156664848-d14f5e58-8f80-497d-a841-914c05a4b69c.png)
+![Maps](https://user-images.githubusercontent.com/16992394/156664562-d38e11ee-b033-4b91-80bd-3a866ad65f56.png)
+![ML](https://user-images.githubusercontent.com/16992394/156664695-5c1ed4a7-82f3-47a6-ab5c-b0ce41cc0fbe.png)
+
+
 # Monitoring The Cluster
+
+### Via Self-Monitoring
+
+Head to Stack Monitoring tab in Kibana to see cluster metrics for all stack components.
+
+![Overview](https://user-images.githubusercontent.com/16992394/156664539-cc7e1a69-f1aa-4aca-93f6-7aedaabedd2c.png)
+![Moniroting](https://user-images.githubusercontent.com/16992394/156664647-78cfe2af-489d-4c35-8963-9b0a46904cf7.png)
+
+> In Production, cluster metrics should be shipped to another dedicated monitoring cluster.
 
 ### Via Prometheus Exporters
 If you started Prometheus Exporters using `make monitoring` command. Prometheus Exporters will expose metrics at the following ports.
@@ -237,14 +241,6 @@ If you started Prometheus Exporters using `make monitoring` command. Prometheus 
 
 ![Metrics](https://user-images.githubusercontent.com/16992394/78685076-89a58900-78f1-11ea-959b-ce374fe51500.jpg)
 
-### Via Self-Monitoring
-
-Head to Stack Monitoring tab in Kibana to see cluster metrics for all stack components.
-
-![Metrics](https://user-images.githubusercontent.com/16992394/65841358-b0bb4680-e321-11e9-9a71-36a1d6fb2a41.png)
-![Metrics](https://user-images.githubusercontent.com/16992394/65841362-b6189100-e321-11e9-93e4-b7b2caa5a37d.jpg)
-
-> In Production, cluster metrics should be shipped to another dedicated monitoring cluster.
 
 # License
 [MIT License](https://raw.githubusercontent.com/sherifabdlnaby/elastdocker/master/LICENSE)
