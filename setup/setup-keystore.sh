@@ -31,7 +31,7 @@ echo "Generating Kibana Service Token..."
 # Generate new token
 TOKEN=$(/usr/share/elasticsearch/bin/elasticsearch-service-tokens create elastic/kibana default | cut -d '=' -f2 | tr -d ' ')
 echo "Kibana Service Token is: $TOKEN"
-echo "KIBANA_SERVICE_ACCOUNT_TOKEN: $TOKEN" > $OUTPUT_KIBANA_TOKEN
+echo "KIBANA_SERVICE_ACCOUNT_TOKEN=$TOKEN" > $OUTPUT_KIBANA_TOKEN
 
 # Replace current Keystore
 if [ -f "$OUTPUT_KEYSTORE" ]; then
