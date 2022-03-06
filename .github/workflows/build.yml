@@ -28,4 +28,6 @@ jobs:
         run: make setup && make up
       - name: Test Elasticsearch
         run: timeout 240s sh -c "until curl https://elastic:changeme@localhost:9200 --insecure --silent; do echo 'Elasticsearch Not Up, Retrying...'; sleep 3; done" && echo 'Elasticsearch is up'
+      - name: Test Kibana
+        run: timeout 240s sh -c "until curl https://localhost:5601 --insecure --silent -I; do echo 'Kibana Not Ready, Retrying...'; sleep 3; done" && echo 'Kibana is up'
 
