@@ -71,9 +71,9 @@ logs:			## Tail all logs with -n 1000.
 images:			## Show all Images of ELK and all its extra components.
 	@docker-compose $(COMPOSE_ALL_FILES) images ${ELK_ALL_SERVICES}
 
-prune:			## Remove ELK Containers and Delete Volume Data
+prune:			## Remove ELK Containers and Delete ELK-related Volume Data (the elastic_elasticsearch-data volume)
 	@make stop && make rm
-	@docker volume prune -f
+	@docker volume prune -f --filter label=com.docker.compose.project=elastic
 
 help:       	## Show this help.
 	@echo "Make Application Docker Images and Containers using Docker-Compose files in 'docker' Dir."
