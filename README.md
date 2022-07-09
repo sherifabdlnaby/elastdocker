@@ -177,8 +177,8 @@ $ make prune
   * `LOGSTASH_HEAP`, how much Logstash allocate from memory.
   * Other configurations which their such as cluster name, and node name, etc.
 * Elasticsearch Configuration in `elasticsearch.yml` at `./elasticsearch/config`.
-* Logstash Configuration in `logstash.yml` at `./elasticsearch/config/logstash.yml`.
-* Logstash Pipeline in `main.conf` at `./elasticsearch/pipeline/main.conf`.
+* Logstash Configuration in `logstash.yml` at `./logstash/config/logstash.yml`.
+* Logstash Pipeline in `main.conf` at `./logstash/pipeline/main.conf`.
 * Kibana Configuration in `kibana.yml` at `./kibana/config`.
 * Rubban Configuration using Docker-Compose passed Environment Variables.
 
