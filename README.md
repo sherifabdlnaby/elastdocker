@@ -113,7 +113,7 @@ Elastdocker differs from `deviantony/docker-elk` in the following points.
     > **For Linux's docker hosts only**. By default virtual memory [is not enough](https://www.elastic.co/guide/en/elasticsearch/reference/current/vm-max-map-count.html) so run the next command as root `sysctl -w vm.max_map_count=262144`
 3. Start Elastic Stack
     ```bash
-    $ make elk           <OR>         $ docker-compose up -d
+    $ make elk           <OR>         $ docker-compose up -d		<OR>		$ docker compose up -d
     ```
 4. Visit Kibana at [https://localhost:5601](https://localhost:5601) or `https://<your_public_ip>:5601`
 
