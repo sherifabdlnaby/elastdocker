@@ -25,6 +25,10 @@ secrets:
     file: ./secrets/certs/kibana/kibana.crt
   kibana.key:
     file: ./secrets/certs/kibana/kibana.key
+  apm-server.certificate:
+    file: ./secrets/certs/apm-server/apm-server.crt
+  apm-server.key:
+    file: ./secrets/certs/apm-server/apm-server.key
 
 services:
   elasticsearch:
@@ -120,3 +124,27 @@ services:
         target: /certs/kibana.key
     ports:
       - "5601:5601"
+
+  apm-server:
+    image: elastdocker/apm-server:${ELK_VERSION}
+    build:
+      context: apm-server/
+      args:
+        ELK_VERSION: $ELK_VERSION
+    restart: unless-stopped
+    ports:
+      - "8200:8200"
+    volumes:
+      - ./apm-server/config/apm-server.yml:/usr/share/apm-server/apm-server.yml:ro
+    environment:
+      ELASTIC_USERNAME: ${ELASTIC_USERNAME}
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+      ELASTICSEARCH_HOST_PORT: https://${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT}
+      ELASTIC_APM_SECRET_TOKEN: ${ELASTIC_APM_SECRET_TOKEN}
+    secrets:
+      - source: elastic.ca
+        target: /certs/ca.crt
+      - source: apm-server.certificate
+        target: /certs/apm-server.crt
+      - source: apm-server.key
+        target: /certs/apm-server.key

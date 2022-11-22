@@ -241,7 +241,32 @@ If you started Prometheus Exporters using `make monitoring` command. Prometheus 
 
 ![Metrics](https://user-images.githubusercontent.com/16992394/78685076-89a58900-78f1-11ea-959b-ce374fe51500.jpg)
 
+# Working with Elastic APM
 
+After completing the setup step, you will notice a container named apm-server which gives you deeper visibility into your applications and can help you to identify and resolve root cause issues with correlated traces, logs, and metrics.
+
+## Authenticating with Elastic APM
+
+In order to authenticate with Elastic APM, you will need the following:
+
+- The value of `ELASTIC_APM_SECRET_TOKEN` defined in `.env` file as we have [secret token](https://www.elastic.co/guide/en/apm/guide/master/secret-token.html) enabled by default
+- The ability to reach port `8200`
+- Install elastic apm client in your application e.g. for NodeJS based applications you need to install [elastic-apm-node](https://www.elastic.co/guide/en/apm/agent/nodejs/master/typescript.html)
+- Import the package in your application and call the start function, In case of NodeJS based application you can do the following:
+
+```
+const apm = require('elastic-apm-node').start({
+  serviceName: 'foobar',
+  secretToken: process.env.ELASTIC_APM_SECRET_TOKEN,
+  
+  // https is enabled by default as per elastdocker configuration
+  serverUrl: 'https://localhost:8200',
+})
+```
+> Make sure that the agent is started before you require any other modules in your Node.js application - i.e. before express, http, etc. as mentioned in [Elastic APM Agent - NodeJS initialization](https://www.elastic.co/guide/en/apm/agent/nodejs/master/express.html#express-initialization)
+
+For more details or other languages you can check the following:
+- [APM Agents in different languages](https://www.elastic.co/guide/en/apm/agent/index.html)
 # License
 [MIT License](https://raw.githubusercontent.com/sherifabdlnaby/elastdocker/master/LICENSE)
 Copyright (c) 2020 Sherif Abdel-Naby

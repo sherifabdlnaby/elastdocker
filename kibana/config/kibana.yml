@@ -21,6 +21,22 @@ xpack.reporting.encryptionKey: RSCueeHKzrqzOVTJhkjt17EMnzM96LlN
 elasticsearch.serviceAccountToken: "${KIBANA_SERVICE_ACCOUNT_TOKEN}"
 elasticsearch.ssl.certificateAuthorities: [ "/certs/ca.crt" ]
 
+## Add policy for apm-server integration
+xpack.fleet.packages:
+  - name: apm
+    version: latest
+xpack.fleet.agentPolicies:
+  - name: Agent policy 1
+    id: agent-policy-1
+    namespace: default
+    monitoring_enabled:
+      - logs
+      - metrics
+    package_policies:
+      - name: apm-1
+        id: default-apm
+        package:
+          name: apm
 
 ## Misc
 elasticsearch.requestTimeout: 90000
