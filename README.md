@@ -219,28 +219,6 @@ make keystore
 ![Maps](https://user-images.githubusercontent.com/16992394/156664562-d38e11ee-b033-4b91-80bd-3a866ad65f56.png)
 ![ML](https://user-images.githubusercontent.com/16992394/156664695-5c1ed4a7-82f3-47a6-ab5c-b0ce41cc0fbe.png)
 
-
-# Monitoring The Cluster
-
-### Via Self-Monitoring
-
-Head to Stack Monitoring tab in Kibana to see cluster metrics for all stack components.
-
-![Overview](https://user-images.githubusercontent.com/16992394/156664539-cc7e1a69-f1aa-4aca-93f6-7aedaabedd2c.png)
-![Moniroting](https://user-images.githubusercontent.com/16992394/156664647-78cfe2af-489d-4c35-8963-9b0a46904cf7.png)
-
-> In Production, cluster metrics should be shipped to another dedicated monitoring cluster.
-
-### Via Prometheus Exporters
-If you started Prometheus Exporters using `make monitoring` command. Prometheus Exporters will expose metrics at the following ports.
-
-| **Prometheus Exporter**      | **Port**     | **Recommended Grafana Dashboard**                                         |
-|--------------------------    |----------    |------------------------------------------------  |
-| `elasticsearch-exporter`     | `9114`       | [Elasticsearch by Kristian Jensen](https://grafana.com/grafana/dashboards/4358)                                                |
-| `logstash-exporter`          | `9304`       | [logstash-monitoring by dpavlos](https://github.com/dpavlos/logstash-monitoring)                                               |
-
-![Metrics](https://user-images.githubusercontent.com/16992394/78685076-89a58900-78f1-11ea-959b-ce374fe51500.jpg)
-
 # Working with Elastic APM
 
 After completing the setup step, you will notice a container named apm-server which gives you deeper visibility into your applications and can help you to identify and resolve root cause issues with correlated traces, logs, and metrics.
@@ -267,6 +245,28 @@ const apm = require('elastic-apm-node').start({
 
 For more details or other languages you can check the following:
 - [APM Agents in different languages](https://www.elastic.co/guide/en/apm/agent/index.html)
+
+# Monitoring The Cluster
+
+### Via Self-Monitoring
+
+Head to Stack Monitoring tab in Kibana to see cluster metrics for all stack components.
+
+![Overview](https://user-images.githubusercontent.com/16992394/156664539-cc7e1a69-f1aa-4aca-93f6-7aedaabedd2c.png)
+![Moniroting](https://user-images.githubusercontent.com/16992394/156664647-78cfe2af-489d-4c35-8963-9b0a46904cf7.png)
+
+> In Production, cluster metrics should be shipped to another dedicated monitoring cluster.
+
+### Via Prometheus Exporters
+If you started Prometheus Exporters using `make monitoring` command. Prometheus Exporters will expose metrics at the following ports.
+
+| **Prometheus Exporter**      | **Port**     | **Recommended Grafana Dashboard**                                         |
+|--------------------------    |----------    |------------------------------------------------  |
+| `elasticsearch-exporter`     | `9114`       | [Elasticsearch by Kristian Jensen](https://grafana.com/grafana/dashboards/4358)                                                |
+| `logstash-exporter`          | `9304`       | [logstash-monitoring by dpavlos](https://github.com/dpavlos/logstash-monitoring)                                               |
+
+![Metrics](https://user-images.githubusercontent.com/16992394/78685076-89a58900-78f1-11ea-959b-ce374fe51500.jpg)
+
 # License
 [MIT License](https://raw.githubusercontent.com/sherifabdlnaby/elastdocker/master/LICENSE)
 Copyright (c) 2020 Sherif Abdel-Naby
