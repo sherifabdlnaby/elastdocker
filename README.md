@@ -269,7 +269,7 @@ If you started Prometheus Exporters using `make monitoring` command. Prometheus 
 
 # License
 [MIT License](https://raw.githubusercontent.com/sherifabdlnaby/elastdocker/master/LICENSE)
-Copyright (c) 2020 Sherif Abdel-Naby
+Copyright (c) 2022 Sherif Abdel-Naby
 
 # Contribution
 
