@@ -200,7 +200,7 @@ make keystore
 
 - Makefile is a wrapper around `Docker-Compose` commands, use `make help` to know every command.
 
-- Elasticsearch will save its data to a volume named `elasticsearch-data`
+- Elasticsearch will save its data to a volume named `elasticsearch-data`. ⚠️ You may encounter Lucene mismatch issues (visible on elasticsearch docker logs) on indexing the data on volume during downgrade/upgrade during setup, you may want to delete indexed volumes as the volume is not pointing to a folder!
 
 - Elasticsearch Keystore (that contains passwords and credentials) and SSL Certificate are generated in the `./secrets` directory by the setup command.
 
