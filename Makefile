@@ -41,7 +41,7 @@ elk:		    ## Start ELK.
 
 up:
 	@make elk
-	@echo "Visit Kibana: https://localhost:5601"
+	@echo "Visit Kibana: https://localhost:5601 (user: elastic, password: changeme) [Unless you changed values in .env]"
 
 monitoring:		## Start ELK Monitoring.
 	$(DOCKER_COMPOSE_COMMAND) ${COMPOSE_MONITORING} up -d --build ${ELK_MONITORING}
