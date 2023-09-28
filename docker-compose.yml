@@ -45,6 +45,7 @@ services:
       ELASTIC_NODE_NAME: ${ELASTIC_NODE_NAME}
       ELASTIC_INIT_MASTER_NODE: ${ELASTIC_INIT_MASTER_NODE}
       ELASTIC_DISCOVERY_SEEDS: ${ELASTIC_DISCOVERY_SEEDS}
+      ELASTICSEARCH_PORT: ${ELASTICSEARCH_PORT}
       ES_JAVA_OPTS: "-Xmx${ELASTICSEARCH_HEAP} -Xms${ELASTICSEARCH_HEAP} -Des.enforce.bootstrap.checks=true -Dlog4j2.formatMsgNoLookups=true"
       bootstrap.memory_lock: "true"
     volumes:
@@ -63,7 +64,7 @@ services:
       - source: elasticsearch.key
         target: /usr/share/elasticsearch/config/certs/elasticsearch.key
     ports:
-      - "9200:9200"
+      - "${ELASTICSEARCH_PORT}:${ELASTICSEARCH_PORT}"
       - "9300:9300"
     ulimits:
       memlock:
@@ -73,7 +74,7 @@ services:
         soft: 200000
         hard: 200000
     healthcheck:
-      test: ["CMD", "sh", "-c", "curl -sf --insecure https://$ELASTIC_USERNAME:$ELASTIC_PASSWORD@localhost:9200/_cat/health | grep -ioE 'green|yellow' || echo 'not green/yellow cluster status'"]
+      test: ["CMD", "sh", "-c", "curl -sf --insecure https://$ELASTIC_USERNAME:$ELASTIC_PASSWORD@localhost:$ELASTICSEARCH_PORT/_cat/health | grep -ioE 'green|yellow' || echo 'not green/yellow cluster status'"]
 
   logstash:
     image: elastdocker/logstash:${ELK_VERSION}
@@ -113,6 +114,7 @@ services:
       ELASTIC_USERNAME: ${ELASTIC_USERNAME}
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
       ELASTICSEARCH_HOST_PORT: https://${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT}
+      KIBANA_PORT: ${KIBANA_PORT}
     env_file:
       - ./secrets/.env.kibana.token
     secrets:
@@ -123,7 +125,7 @@ services:
       - source: kibana.key
         target: /certs/kibana.key
     ports:
-      - "5601:5601"
+      - "${KIBANA_PORT}:${KIBANA_PORT}"
 
   apm-server:
     image: elastdocker/apm-server:${ELK_VERSION}

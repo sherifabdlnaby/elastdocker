@@ -1,16 +1,14 @@
 .DEFAULT_GOAL:=help
 
-COMPOSE_ALL_FILES := -f docker-compose.yml -f docker-compose.monitor.yml -f docker-compose.tools.yml -f docker-compose.nodes.yml -f docker-compose.logs.yml
+COMPOSE_ALL_FILES := -f docker-compose.yml -f docker-compose.monitor.yml -f docker-compose.nodes.yml -f docker-compose.logs.yml
 COMPOSE_MONITORING := -f docker-compose.yml -f docker-compose.monitor.yml
 COMPOSE_LOGGING := -f docker-compose.yml -f docker-compose.logs.yml
-COMPOSE_TOOLS := -f docker-compose.yml -f docker-compose.tools.yml
 COMPOSE_NODES := -f docker-compose.yml -f docker-compose.nodes.yml
 ELK_SERVICES   := elasticsearch logstash kibana apm-server
 ELK_LOG_COLLECTION := filebeat
 ELK_MONITORING := elasticsearch-exporter logstash-exporter filebeat-cluster-logs
-ELK_TOOLS  := rubban
 ELK_NODES := elasticsearch-1 elasticsearch-2
-ELK_MAIN_SERVICES := ${ELK_SERVICES} ${ELK_MONITORING} ${ELK_TOOLS}
+ELK_MAIN_SERVICES := ${ELK_SERVICES} ${ELK_MONITORING}
 ELK_ALL_SERVICES := ${ELK_MAIN_SERVICES} ${ELK_NODES} ${ELK_LOG_COLLECTION}
 
 compose_v2_not_supported = $(shell command docker compose 2> /dev/null)
@@ -21,7 +19,7 @@ else
 endif
 
 # --------------------------
-.PHONY: setup keystore certs all elk monitoring tools build down stop restart rm logs
+.PHONY: setup keystore certs all elk monitoring build down stop restart rm logs
 
 keystore:		## Setup Elasticsearch Keystore, by initializing passwords, and add credentials defined in `keystore.sh`.
 	$(DOCKER_COMPOSE_COMMAND) -f docker-compose.setup.yml run --rm keystore
@@ -41,16 +39,13 @@ elk:		    ## Start ELK.
 
 up:
 	@make elk
-	@echo "Visit Kibana: https://localhost:5601"
+	@echo "Visit Kibana: https://localhost:5601 (user: elastic, password: changeme) [Unless you changed values in .env]"
 
 monitoring:		## Start ELK Monitoring.
 	$(DOCKER_COMPOSE_COMMAND) ${COMPOSE_MONITORING} up -d --build ${ELK_MONITORING}
 
-collect-docker-logs:		## Start Filebeat that collects all Host Docker Logs and ship it to ELK
+collect-docker-logs: 		## Start Filebeat that collects all Host Docker Logs and ship it to ELK
 	$(DOCKER_COMPOSE_COMMAND) ${COMPOSE_LOGGING} up -d --build ${ELK_LOG_COLLECTION}
-
-tools:		    ## Start ELK Tools (ElastAlert, Curator).
-	$(DOCKER_COMPOSE_COMMAND) ${COMPOSE_TOOLS} up -d --build ${ELK_TOOLS}
 
 nodes:		    ## Start Two Extra Elasticsearch Nodes
 	$(DOCKER_COMPOSE_COMMAND) ${COMPOSE_NODES} up -d --build ${ELK_NODES}

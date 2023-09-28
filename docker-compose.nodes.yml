@@ -20,6 +20,7 @@ services:
       ELASTIC_NODE_NAME: ${ELASTIC_NODE_NAME_1}
       ELASTIC_INIT_MASTER_NODE: ${ELASTIC_INIT_MASTER_NODE}
       ELASTIC_DISCOVERY_SEEDS: ${ELASTIC_DISCOVERY_SEEDS}
+      ELASTICSEARCH_PORT: ${ELASTICSEARCH_PORT}
       ES_JAVA_OPTS: -Xmx${ELASTICSEARCH_HEAP} -Xms${ELASTICSEARCH_HEAP} -Des.enforce.bootstrap.checks=true
       bootstrap.memory_lock: "true"
     volumes:
@@ -56,6 +57,7 @@ services:
       ELASTIC_NODE_NAME: ${ELASTIC_NODE_NAME_2}
       ELASTIC_INIT_MASTER_NODE: ${ELASTIC_INIT_MASTER_NODE}
       ELASTIC_DISCOVERY_SEEDS: ${ELASTIC_DISCOVERY_SEEDS}
+      ELASTICSEARCH_PORT: ${ELASTICSEARCH_PORT}
       ES_JAVA_OPTS: -Xmx${ELASTICSEARCH_HEAP} -Xms${ELASTICSEARCH_HEAP} -Des.enforce.bootstrap.checks=true
       bootstrap.memory_lock: "true"
     volumes:
