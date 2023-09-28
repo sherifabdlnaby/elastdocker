@@ -45,18 +45,18 @@ Stack Version: [8.10.2](https://www.elastic.co/blog/whats-new-elastic-8-10-0) ðŸ
 - Security Enabled By Default.
 - Configured to Enable:
   - Logging & Metrics Ingestion
+    - Option to collect logs of all Docker Containers running on the host. via `make collect-docker-logs`.
   - APM
   - Alerting
   - Machine Learning
-  - SIEM
+  - Anomaly Detection
+  - SIEM (Security information and event management).
   - Enabling Trial License
 - Use Docker-Compose and `.env` to configure your entire stack parameters.
 - Persist Elasticsearch's Keystore and SSL Certifications.
 - Self-Monitoring Metrics Enabled.
 - Prometheus Exporters for Stack Metrics.
-- Collect Docker Host Logs to ELK via `make collect-docker-logs`.
 - Embedded Container Healthchecks for Stack Images.
-- [Rubban](https://github.com/sherifabdlnaby/rubban) for Kibana curating tasks.
 
 #### More points
 And comparing Elastdocker and the popular [deviantony/docker-elk](https://github.com/deviantony/docker-elk)
@@ -85,7 +85,7 @@ Elastdocker differs from `deviantony/docker-elk` in the following points.
 
 - Configuring the Self-Monitoring and the Filebeat agent that ship ELK logs to ELK itself. (as a step to shipping it to a monitoring cluster in the future).
 
-- Configured tools and Prometheus Exporters.
+- Configured Prometheus Exporters.
 
 - The Makefile that simplifies everything into some simple commands.
 
@@ -134,10 +134,6 @@ Elastdocker differs from `deviantony/docker-elk` in the following points.
 #### To Start Monitoring and Prometheus Exporters
 ```shell
 $ make monitoring
-```
-#### To Start Tools
-```shell
-$ make tools
 ```
 #### To Ship Docker Container Logs to ELK 
 ```shell
