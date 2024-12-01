@@ -1,5 +1,7 @@
 .DEFAULT_GOAL:=help
 
+include .env
+
 COMPOSE_ALL_FILES := -f docker-compose.yml -f docker-compose.monitor.yml -f docker-compose.nodes.yml -f docker-compose.logs.yml
 COMPOSE_MONITORING := -f docker-compose.yml -f docker-compose.monitor.yml
 COMPOSE_LOGGING := -f docker-compose.yml -f docker-compose.logs.yml
@@ -75,7 +77,7 @@ images:			## Show all Images of ELK and all its extra components.
 
 prune:			## Remove ELK Containers and Delete ELK-related Volume Data (the elastic_elasticsearch-data volume)
 	@make stop && make rm
-	@docker volume prune -f --filter label=com.docker.compose.project=elastic
+	@docker volume prune -f --filter label=com.docker.compose.project=${COMPOSE_PROJECT_NAME}
 
 help:       	## Show this help.
 	@echo "Make Application Docker Images and Containers using Docker-Compose files in 'docker' Dir."
