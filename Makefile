@@ -24,6 +24,13 @@ endif
 keystore:		## Setup Elasticsearch Keystore, by initializing passwords, and add credentials defined in `keystore.sh`.
 	$(DOCKER_COMPOSE_COMMAND) -f docker-compose.setup.yml run --rm keystore
 
+upgrade-keystore:	## Upgrade Elasticsearch Keystore, which is necessary when upgrading to an Elasticsearch version that uses a newer Java version.
+	@if [ -n "$$($(DOCKER_COMPOSE_COMMAND) ps -q)" ]; then \
+		echo "Please stop all running containers before upgrading the keystore."; \
+		exit 1; \
+	fi
+	$(DOCKER_COMPOSE_COMMAND) -f docker-compose.setup.yml run --rm upgrade-keystore
+
 certs:		    ## Generate Elasticsearch SSL Certs.
 	$(DOCKER_COMPOSE_COMMAND) -f docker-compose.setup.yml run --rm certs
 
