@@ -32,7 +32,7 @@ secrets:
 
 services:
   elasticsearch:
-    image: elastdocker/elasticsearch:${ELK_VERSION}
+    image: ${ELASTICSEARCH_IMAGE_NAME}:${ELK_VERSION}
     build:
       context: elasticsearch/
       args:
@@ -77,7 +77,7 @@ services:
       test: ["CMD", "sh", "-c", "curl -sf --insecure https://$ELASTIC_USERNAME:$ELASTIC_PASSWORD@localhost:$ELASTICSEARCH_PORT/_cat/health | grep -ioE 'green|yellow' || echo 'not green/yellow cluster status'"]
 
   logstash:
-    image: elastdocker/logstash:${ELK_VERSION}
+    image: ${LOGSTASH_IMAGE_NAME}:${ELK_VERSION}
     build:
       context: logstash/
       args:
@@ -102,7 +102,7 @@ services:
       test: ["CMD", "curl", "-s" ,"-XGET", "http://127.0.0.1:9600"]
 
   kibana:
-    image: elastdocker/kibana:${ELK_VERSION}
+    image: ${KIBANA_IMAGE_NAME}:${ELK_VERSION}
     build:
       context: kibana/
       args:
@@ -128,7 +128,7 @@ services:
       - "${KIBANA_PORT}:${KIBANA_PORT}"
 
   apm-server:
-    image: elastdocker/apm-server:${ELK_VERSION}
+    image: ${APM_SERVER_IMAGE_NAME}:${ELK_VERSION}
     build:
       context: apm-server/
       args:

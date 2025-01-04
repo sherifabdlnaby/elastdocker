@@ -4,7 +4,7 @@ services:
 
   # Prometheus Exporters ------------------------------
   elasticsearch-exporter:
-    image: justwatch/elasticsearch_exporter:1.1.0
+    image: ${ELASTICSEARCH_EXPORTER_IMAGE}
     restart: always
     command: ["--es.uri", "https://${ELASTIC_USERNAME}:${ELASTIC_PASSWORD}@${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT}",
               "--es.ssl-skip-verify",
@@ -15,7 +15,7 @@ services:
       - "9114:9114"
 
   logstash-exporter:
-    image: alxrem/prometheus-logstash-exporter
+    image: ${LOGSTASH_EXPORTER_IMAGE}
     restart: always
     ports:
       - "9304:9304"
@@ -23,7 +23,7 @@ services:
 
   # Cluster Logs Shipper ------------------------------
   filebeat-cluster-logs:
-    image: docker.elastic.co/beats/filebeat:${ELK_VERSION}
+    image: ${FILEBEAT_IMAGE_NAME}:${ELK_VERSION}
     restart: always
     # -e flag to log to stderr and disable syslog/file output
     command: -e --strict.perms=false

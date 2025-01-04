@@ -7,7 +7,7 @@ volumes:
 services:
   # Docker Logs Shipper ------------------------------
   filebeat:
-    image: docker.elastic.co/beats/filebeat:${ELK_VERSION}
+    image: ${FILEBEAT_IMAGE_NAME}:${ELK_VERSION}
     restart: always
     # -e flag to log to stderr and disable syslog/file output
     command: -e --strict.perms=false
