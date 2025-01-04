@@ -4,7 +4,7 @@
 
 apm-server:
   # Defines the host and port the server is listening on. Use "unix:/path/to.sock" to listen on a unix domain socket.
-  host: "0.0.0.0:8200"
+  host: "0.0.0.0:${APMSERVER_PORT}"
 
 
   #---------------------------- APM Server - Secure Communication with Agents ----------------------------

@@ -134,8 +134,6 @@ services:
       args:
         ELK_VERSION: $ELK_VERSION
     restart: unless-stopped
-    ports:
-      - "8200:8200"
     volumes:
       - ./apm-server/config/apm-server.yml:/usr/share/apm-server/apm-server.yml:ro
     environment:
@@ -143,6 +141,9 @@ services:
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
       ELASTICSEARCH_HOST_PORT: https://${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT}
       ELASTIC_APM_SECRET_TOKEN: ${ELASTIC_APM_SECRET_TOKEN}
+      APMSERVER_PORT: ${APMSERVER_PORT}
+    ports:
+      - "${APMSERVER_PORT}:${APMSERVER_PORT}"
     secrets:
       - source: elastic.ca
         target: /certs/ca.crt
