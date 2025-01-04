@@ -15,6 +15,11 @@ services:
     environment:
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
 
+  upgrade-keystore:
+    extends:
+      service: keystore
+    command: bash /setup/upgrade-keystore.sh
+
   certs:
     image: ${ELASTICSEARCH_IMAGE_NAME}:${ELK_VERSION}
     build:
