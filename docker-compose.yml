@@ -39,6 +39,7 @@ services:
         ELK_VERSION: ${ELK_VERSION}
     restart: unless-stopped
     environment:
+      TZ: ${TZ}
       ELASTIC_USERNAME: ${ELASTIC_USERNAME}
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
       ELASTIC_CLUSTER_NAME: ${ELASTIC_CLUSTER_NAME}
@@ -91,6 +92,7 @@ services:
       - source: elastic.ca
         target: /certs/ca.crt
     environment:
+      TZ: ${TZ}
       ELASTIC_USERNAME: ${ELASTIC_USERNAME}
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
       ELASTICSEARCH_HOST_PORT: https://${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT}
@@ -111,6 +113,7 @@ services:
     volumes:
       - ./kibana/config/:/usr/share/kibana/config:ro
     environment:
+      TZ: ${TZ}
       ELASTIC_USERNAME: ${ELASTIC_USERNAME}
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
       ELASTICSEARCH_HOST_PORT: https://${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT}
@@ -137,6 +140,7 @@ services:
     volumes:
       - ./apm-server/config/apm-server.yml:/usr/share/apm-server/apm-server.yml:ro
     environment:
+      TZ: ${TZ}
       ELASTIC_USERNAME: ${ELASTIC_USERNAME}
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
       ELASTICSEARCH_HOST_PORT: https://${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT}
