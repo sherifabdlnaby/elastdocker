@@ -11,6 +11,7 @@ services:
         - ./secrets:/secrets
         - ./setup/:/setup/
     environment:
+      TZ: ${TZ}
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
 
   upgrade-keystore:
@@ -29,3 +30,5 @@ services:
     volumes:
       - ./secrets:/secrets
       - ./setup/:/setup
+    environment:
+      TZ: ${TZ}

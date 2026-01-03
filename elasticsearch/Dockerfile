@@ -3,6 +3,13 @@ ARG ELK_VERSION
 # https://github.com/elastic/elasticsearch-docker
 FROM docker.elastic.co/elasticsearch/elasticsearch:${ELK_VERSION}
 
+USER root
+RUN apt-get -qq update -y \
+  && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends tzdata \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
+USER elasticsearch
+
 # Add healthcheck
 COPY scripts/docker-healthcheck .
 HEALTHCHECK CMD sh ./docker-healthcheck

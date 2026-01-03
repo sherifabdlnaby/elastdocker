@@ -12,6 +12,7 @@ services:
         ELK_VERSION: ${ELK_VERSION}
     restart: unless-stopped
     environment:
+      TZ: ${TZ}
       ELASTIC_USERNAME: ${ELASTIC_USERNAME}
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
       ELASTIC_CLUSTER_NAME: ${ELASTIC_CLUSTER_NAME}
@@ -49,6 +50,7 @@ services:
         ELK_VERSION: ${ELK_VERSION}
     restart: unless-stopped
     environment:
+      TZ: ${TZ}
       ELASTIC_USERNAME: ${ELASTIC_USERNAME}
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
       ELASTIC_CLUSTER_NAME: ${ELASTIC_CLUSTER_NAME}
