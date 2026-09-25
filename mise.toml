@@ -1,8 +1,8 @@
 # Tool, task, env, and git-hook config for this repo. Source of truth for local dev + CI.
 # Setup:  mise trust && mise run setup   (see README.md / AGENTS.md)
 
-# Oldest mise that supports everything in this file ([doctor.checks]); bump when relying on newer features.
-min_version = "2026.9.6"
+# At or above the mise that wrote mise.lock (a newer lock format is unreadable to older clients).
+min_version = "2026.9.13"
 
 # Mask credential values loaded from .env in task output.
 redactions = ["*_KEY", "*_KEY_ID", "*_PASSWORD", "*_TOKEN"]
@@ -10,14 +10,14 @@ redactions = ["*_KEY", "*_KEY_ID", "*_PASSWORD", "*_TOKEN"]
 # ── 🛠️ tools ──────────────────────────────────────────────────────────────────────────────────────
 [tools]
 
-# uv installs the Python-based linters (yamllint) via uvx — see pipx.uvx below
+# uv installs the Python-based linters (yamllint) via uvx — see pypi.uvx below
 uv = "0.11"
 
 # linters & formatters (managed by mise, run via hk — see hk.pkl)
 actionlint = "1"    # GitHub Actions linter
 betterleaks = "1"   # secret scanner (gitleaks-compatible)
 hadolint = "2"      # Dockerfile linter
-lychee = "0.24"     # dead-link checker (offline; see lychee.toml) — 0.x, pin minor
+lychee = "0.24"     # dead-link checker (offline; see .config/lychee.toml) — 0.x, pin minor
 pinact = "4"        # pin GitHub Actions to commit SHAs
 rumdl = "0.2"       # Markdown lint + format
 shellcheck = "0.11"
@@ -236,7 +236,7 @@ hint = "Install the Docker Compose v2 plugin (https://docs.docker.com/compose/in
 lockfile = true                     # write/commit mise.lock for reproducible installs
 minimum_release_age = "7d"          # ignore releases <7d old (supply-chain cooldown)
 disable_backends = ["asdf", "vfox"] # resolve only via verified backends
-pipx.uvx = true                     # install Python tools with uv (CI pip is too old for the cooldown's date filter)
+pypi.uvx = true                     # install Python tools with uv (CI pip is too old for the cooldown's date filter)
 
 # Use a gh/git token for tool installs to avoid GitHub API rate limits.
 github.gh_cli_tokens = true
