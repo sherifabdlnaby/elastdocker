@@ -30,7 +30,7 @@ Commits run the [hk](https://hk.jdx.dev) commit gates on staged files, and a pus
 
 Steps live in `.config/hk.pkl`, grouped into tiers by when they run (commit gates, push gates); the `check` hook mounts every tier. `mise run check --step <TAB>` completes step names, and `hk check --plan --all` lists them.
 
-Tunable linters keep their config file at the repo root. betterleaks reads its config only via `BETTERLEAKS_CONFIG` (set in `.config/hk.pkl`); `.env` (placeholder defaults) is allowlisted there, not a real secret store.
+Linter configs live beside `.config/hk.pkl` in `.config/`. Each step is routed to its file there (native discovery, an env var, or a `--config` flag spliced in by `withFlag`); a tool that cannot find its config falls back to defaults and still passes, so prove a new route by breaking the file once. betterleaks reads its config only via `BETTERLEAKS_CONFIG`; `.env` (placeholder defaults) is allowlisted there, not a real secret store.
 
 ## CI
 
@@ -44,7 +44,7 @@ Changing tools, tasks, env, or hooks? Edit the config, then run `mise run check`
 
 - **`mise.toml`**: `[tools]` (pinned linters + hk), `[tasks]`, `[env]` (loads `.env`), `[settings]`.
 - **`mise.lock`**: resolved versions + checksums. Commit it; regenerate with `mise lock` after a `[tools]` change.
-- **`.config/hk.pkl`**: the lint pipeline. Add a fast, file-scoped step to `commitGates`; a slower one to `pushGates` (route it to a mise task).
+- **`.config/hk.pkl`**: the lint pipeline, with linter configs beside it in `.config/`. Add a fast, file-scoped step to `commitGates`; a slower one to `pushGates` (route it to a mise task).
 - **`.config/mise/`**: project-local state (the setup stamp is gitignored) and the task completion script.
 
 For tool/task/hook syntax, see the [mise](https://mise.jdx.dev) and [hk](https://hk.jdx.dev) docs.

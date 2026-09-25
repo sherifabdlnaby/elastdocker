@@ -11,6 +11,14 @@ local commonIgnores =
     "**/*.min.*",
   )
 
+// Adds `flag` right after `bin` in a builtin command, keeping the builtin's own args.
+// Routes a tool with no config env var to its file under .config/.
+local function withFlag(spec: CommandSpec, bin: String, flag: String): CommandSpec = (spec) {
+  command =
+    if (spec.command is String) (spec.command as String).replaceAll(bin + " ", bin + " " + flag + " ")
+    else (spec.command as Command) { argv = List(bin, flag) + (spec.command as Command).argv.filter((a) -> a != bin) }
+}
+
 // Gates by moment; each step lives in exactly one tier, hooks below only compose tiers.
 // `check` mounts the union: the repo's full contract and the only hook CI runs.
 
@@ -37,7 +45,7 @@ local commitGates: Mapping<String, Step> = new Mapping<String, Step> {
   ["hadolint"] = Builtins.hadolint
 
   // config formats
-  ["yamllint"] = Builtins.yamllint
+  ["yamllint"] = (Builtins.yamllint) { env { ["YAMLLINT_CONFIG_FILE"] = ".config/yamllint.yml" } }
   ["taplo"] = Builtins.taplo
 
   // GitHub Actions
@@ -59,13 +67,17 @@ local commitGates: Mapping<String, Step> = new Mapping<String, Step> {
   }
 
   // markdown + links
-  ["rumdl"] = Builtins.rumdl
-  // dead links, offline (local/relative links and anchors only); see lychee.toml
-  ["lychee"] = Builtins.lychee
+  ["rumdl"] = Builtins.rumdl // auto-discovers .config/rumdl.toml
+  // dead links, offline (local/relative links and anchors only); see .config/lychee.toml
+  ["lychee"] = (Builtins.lychee) { check = withFlag(Builtins.lychee.check, "lychee", "--config=.config/lychee.toml") }
 
   // spelling & secrets
-  ["typos"] = Builtins.typos
-  ["betterleaks"] = (Builtins.betterleaks) { env { ["BETTERLEAKS_CONFIG"] = ".betterleaks.toml" } }
+  ["typos"] = (Builtins.typos) {
+    check_diff = withFlag(Builtins.typos.check_diff, "typos", "--config=.config/typos.toml")
+    fix = withFlag(Builtins.typos.fix, "typos", "--config=.config/typos.toml")
+  }
+  // betterleaks never auto-discovers its config; only BETTERLEAKS_CONFIG loads it
+  ["betterleaks"] = (Builtins.betterleaks) { env { ["BETTERLEAKS_CONFIG"] = ".config/betterleaks.toml" } }
 }
 
 // Push gates: run before a push. Slower or branch-scoped checks that would drag the commit loop.
