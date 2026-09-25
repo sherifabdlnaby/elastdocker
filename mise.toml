@@ -111,8 +111,12 @@ echo "Visit Kibana: https://localhost:${KIBANA_PORT:-5601} (user: ${ELASTIC_USER
 '''
 
 [tasks."elk:setup"]
-description = "Generate Elasticsearch SSL certs + keystore (run once before first start)"
-run = [{ task = "elk:certs" }, { task = "elk:keystore" }]
+description = "Check prerequisites, then generate Elasticsearch SSL certs + keystore (run once before first start)"
+run = [
+  "mise doctor project",     # stop with a fix hint on a missing prerequisite (see [doctor.checks])
+  { task = "elk:certs" },
+  { task = "elk:keystore" },
+]
 
 [tasks."elk:certs"]
 description = "Generate Elasticsearch SSL certificates"
@@ -217,16 +221,16 @@ enter = "MISE_OFFLINE=1 mise run setup:check" # nudge when setup is stale; MISE_
 postinstall = "hk install --mise"             # install git hooks after every `mise install` (idempotent)
 
 # ── 🩺 doctor checks ──────────────────────────────────────────────────────────────────────────────
-# Prerequisites mise can't install. `mise doctor project` runs them; setup runs it first.
+# Prerequisites mise can't install. `mise doctor project` runs them; setup and elk:setup run it first.
 [doctor.checks.docker]
 description = "Docker engine is running"
 run = "docker info >/dev/null 2>&1"
-hint = "Install and start a Docker engine (Docker Desktop, OrbStack, Colima), then re-run: mise run setup"
+hint = "Install and start a Docker engine (Docker Desktop, OrbStack, Colima), then re-run the command"
 
 [doctor.checks.compose]
 description = "Docker Compose v2 plugin is installed"
 run = "docker compose version >/dev/null 2>&1"
-hint = "Install the Docker Compose v2 plugin (https://docs.docker.com/compose/install/), then re-run: mise run setup"
+hint = "Install the Docker Compose v2 plugin (https://docs.docker.com/compose/install/), then re-run the command"
 
 # ── ⚙️ settings ───────────────────────────────────────────────────────────────────────────────────
 [settings]
