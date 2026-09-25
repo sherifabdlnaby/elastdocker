@@ -1,8 +1,11 @@
 # Tool, task, env, and git-hook config for this repo. Source of truth for local dev + CI.
 # Setup:  mise trust && mise run setup   (see README.md / AGENTS.md)
 
-# Floor clients past the config-trust bypass fix (CVE-2026-35533); bump when relying on newer features.
-min_version = "2026.6.6"
+# Oldest mise that supports everything in this file ([doctor.checks]); bump when relying on newer features.
+min_version = "2026.9.6"
+
+# Mask credential values loaded from .env in task output.
+redactions = ["*_KEY", "*_KEY_ID", "*_PASSWORD", "*_TOKEN"]
 
 # ── 🛠️ tools ──────────────────────────────────────────────────────────────────────────────────────
 [tools]
@@ -54,11 +57,11 @@ elk_all_services = "elasticsearch logstash kibana apm-server elasticsearch-expor
 
 # ── ▶️ tasks ──────────────────────────────────────────────────────────────────────────────────────
 [tasks.check]
-description = "Run all linters, formatters & validators (same as pre-commit and CI)"
+description = "Run all checks the repo enforces on uncommitted changes, the same suite CI runs"
 alias = ["lint"]
 usage = '''
     flag "--fix"              help="apply fixes instead of only reporting"
-    flag "--all"              help="run on all files (default: staged only)"
+    flag "--all"              help="run on all files (default: uncommitted changes)"
     flag "--pr"               help="only files changed vs the default branch (conflicts with --all)"
     flag "--fail-fast"        help="stop at the first failing step (default: run all, report every failure)"
     flag "--step <step>"      var=#true help="run only these step(s)"
@@ -78,9 +81,13 @@ depends = ["lint"]
 run = 'echo "No local unit tests. The ELK stack smoke test runs in CI (.github/workflows/smoke-test.yml)."'
 
 [tasks.setup] # one-time, idempotent bootstrap; re-run when `enter` warns it's stale
-description = "Install pinned tools and git hooks"
-depends_post = ["setup:stamp"]
-run = "mise install"                               # installs tools; hk hooks self-install via the postinstall hook
+description = "Check prerequisites, then install pinned tools and git hooks"
+# Stamp as a run step, not depends_post: depends_post also runs when this task fails.
+run = [
+  "mise doctor project",    # stop early on a missing prerequisite (see [doctor.checks])
+  "mise install",           # hk hooks self-install via the postinstall hook
+  { task = "setup:stamp" },
+]
 
 [tasks."setup:stamp"] # record the setup version in .config/mise/setup
 hide = true
@@ -93,7 +100,7 @@ quiet = true
 run = '[ "$(cat .config/mise/setup 2>/dev/null)" = "{{vars.setup_version}}" ] || echo "⚠️  Your setup is stale, run: mise run setup" >&2'
 
 # ── 🐳 ELK stack ──────────────────────────────────────────────────────────────────────────────────
-# Native docker-compose tasks (source of truth). The Makefile is a deprecated shim that forwards here.
+# Native docker-compose tasks. The Makefile keeps equivalent targets for users without mise.
 # Service args use dynamic completion: `mise run logs <TAB>` lists compose services.
 
 [tasks."stack:setup"]
@@ -212,9 +219,20 @@ echo "Removed all volumes for project: ${COMPOSE_PROJECT_NAME}"
 enter = "MISE_OFFLINE=1 mise run setup:check" # nudge when setup is stale; MISE_OFFLINE keeps cd offline-safe
 postinstall = "hk install --mise"             # install git hooks after every `mise install` (idempotent)
 
+# ── 🩺 doctor checks ──────────────────────────────────────────────────────────────────────────────
+# Prerequisites mise can't install. `mise doctor project` runs them; setup runs it first.
+[doctor.checks.docker]
+description = "Docker engine is running"
+run = "docker info >/dev/null 2>&1"
+hint = "Install and start a Docker engine (Docker Desktop, OrbStack, Colima), then re-run: mise run setup"
+
+[doctor.checks.compose]
+description = "Docker Compose v2 plugin is installed"
+run = "docker compose version >/dev/null 2>&1"
+hint = "Install the Docker Compose v2 plugin (https://docs.docker.com/compose/install/), then re-run: mise run setup"
+
 # ── ⚙️ settings ───────────────────────────────────────────────────────────────────────────────────
 [settings]
-experimental = true                 # required for [hooks]
 lockfile = true                     # write/commit mise.lock for reproducible installs
 minimum_release_age = "7d"          # ignore releases <7d old (supply-chain cooldown)
 disable_backends = ["asdf", "vfox"] # resolve only via verified backends
