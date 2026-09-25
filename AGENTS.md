@@ -4,7 +4,7 @@ Guide for AI agents working in this repo. Humans: see [README.md](README.md).
 
 ## What this is
 
-A Docker Compose distribution of the Elastic Stack (Elasticsearch, Logstash, Kibana, APM, Beats). The runtime is **Docker Compose v2**; the stack is driven by **mise tasks** (`mise run up`, `mise run stack:setup`, `mise run down`, … see `mise tasks`). The `Makefile` still has the equivalent raw docker commands for users without mise; it is deprecated but its targets are a public interface, so don't remove or rename them. There is no application source to build, the repo is compose files, service configs (YAML), Dockerfiles, and shell setup scripts.
+A Docker Compose distribution of the Elastic Stack (Elasticsearch, Logstash, Kibana, APM, Beats). The runtime is **Docker Compose v2**; the stack is driven by **mise tasks** under the `elk:` namespace (`mise run elk:setup`, `mise run elk`, `mise run elk:down`, … see `mise tasks`). mise is required to run the stack. The task names are the users' interface (README documents them), so a rename is a breaking change. There is no application source to build, the repo is compose files, service configs (YAML), Dockerfiles, and shell setup scripts.
 
 ## Toolchain (mise)
 
@@ -18,7 +18,7 @@ A Docker Compose distribution of the Elastic Stack (Elasticsearch, Logstash, Kib
 mise run check          # all linters/formatters/validators (alias: lint); add --fix to auto-fix
 mise run check --all    # whole tree (default scope is uncommitted changes; --pr = changed vs main)
 mise run check --step shellcheck  # one step, for a short feedback loop (--skip-step to exclude)
-mise tasks              # discover every task (up, down, logs, stack:setup, …)
+mise tasks              # discover every task (elk, elk:setup, elk:down, …)
 mise run <task> --help  # a task's flags
 ```
 
@@ -35,14 +35,14 @@ Linter configs live beside `.config/hk.pkl` in `.config/`. Each step is routed t
 ## CI
 
 - `.github/workflows/lint.yml` runs `mise run check` (`--pr` on PRs, `--all` on schedule/dispatch) and leaves one sticky comment pointing at `mise run check --fix`. Keep this green by running `mise run check --all` locally.
-- `.github/workflows/smoke-test.yml` spins up the full stack (`mise run stack:setup && mise run up`), smoke-tests Elasticsearch + Kibana, and Trivy-scans the built image to the Security tab. Changes to compose files or service configs are validated here.
+- `.github/workflows/smoke-test.yml` spins up the full stack (`mise run elk:setup && mise run elk`), smoke-tests Elasticsearch + Kibana, and Trivy-scans the built image to the Security tab. Changes to compose files or service configs are validated here.
 - `.github/workflows/auto-release.yml` drafts releases. GitHub Actions are pinned to commit SHAs (enforced by `pinact`); let `mise run check --fix` re-pin after bumping a version comment.
 
 ## Extending the setup
 
 Changing tools, tasks, env, or hooks? Edit the config, then run `mise run check`:
 
-- **`mise.toml`**: `[tools]` (pinned linters + hk), `[tasks]`, `[env]` (loads `.env`), `[settings]`.
+- **`mise.toml`**: `[tools]` (pinned linters + hk), `[tasks]` (stack tasks under `elk:`, compose file sets and service groups in `[vars]`), `[env]` (loads `.env`), `[settings]`.
 - **`mise.lock`**: resolved versions + checksums. Commit it; regenerate with `mise lock` after a `[tools]` change.
 - **`.config/hk.pkl`**: the lint pipeline, with linter configs beside it in `.config/`. Add a fast, file-scoped step to `commitGates`; a slower one to `pushGates` (route it to a mise task).
 - **`.config/mise/`**: project-local state (the setup stamp is gitignored) and the task completion script.

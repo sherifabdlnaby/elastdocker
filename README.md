@@ -46,7 +46,7 @@ Stack Version: [9.4.2](https://www.elastic.co/guide/en/elasticsearch/reference/9
 - Security Enabled By Default.
 - Configured to Enable:
   - Logging & Metrics Ingestion
-    - Option to collect logs of all Docker Containers running on the host. via `mise run collect-docker-logs`.
+    - Option to collect logs of all Docker Containers running on the host. via `mise run elk:collect-docker-logs`.
   - APM
   - Alerting
   - Machine Learning
@@ -89,7 +89,7 @@ Elastdocker differs from `deviantony/docker-elk` in the following points.
 
 - Configured Prometheus Exporters.
 
-- The Makefile that simplifies everything into some simple commands.
+- mise tasks that wrap every stack operation into one short command.
 
 </p>
 </details>
@@ -99,7 +99,7 @@ Elastdocker differs from `deviantony/docker-elk` in the following points.
 Collect logs from **all Docker containers** on your host with a single command:
 
 ```bash
-mise run collect-docker-logs
+mise run elk:collect-docker-logs
 ```
 
 Filebeat automatically discovers containers, parses logs, and ships them to Elasticsearch. View and analyze everything in Kibana with zero configuration.
@@ -110,27 +110,42 @@ Filebeat automatically discovers containers, parses logs, and ships them to Elas
 
 - [Docker 20.05 or higher](https://docs.docker.com/install/) with Docker Compose v2
 - 4GB RAM (For Windows and MacOS make sure Docker's VM has more than 4GB+ memory.)
-- [mise](https://mise.jdx.dev) for the `mise run` commands below (install steps in [Development](#development)). Without mise, the equivalent `make <target>` (e.g. `make setup`, `make up`) needs only Docker.
+- [mise](https://mise.jdx.dev) 2026.9.13 or newer. All stack commands are mise tasks.
+
+<details>
+<summary><b>Install mise (first time on this machine)</b></summary>
+
+```bash
+brew install mise                   # or: curl https://mise.run | sh
+echo 'eval "$(mise activate zsh)"' >> ~/.zshrc   # bash: mise activate bash
+mise doctor                         # confirm the install is healthy
+```
+
+See the [installation docs](https://mise.jdx.dev/installing-mise.html) for other shells and Windows.
+
+</details>
 
 ## Setup
 
-1. Clone the Repository
+1. Clone the Repository, and allow its mise config to load
 
      ```bash
      git clone https://github.com/sherifabdlnaby/elastdocker.git
+     cd elastdocker
+     mise trust
      ```
 
 2. Initialize Elasticsearch Keystore and TLS Self-Signed Certificates
 
     ```bash
-    mise run stack:setup
+    mise run elk:setup
     ```
 
    > **For Linux's docker hosts only**. By default virtual memory [is not enough](https://www.elastic.co/guide/en/elasticsearch/reference/current/vm-max-map-count.html) so run the next command as root `sysctl -w vm.max_map_count=262144`
 3. Start Elastic Stack
 
     ```bash
-    mise run up        # <OR>  docker compose up -d
+    mise run elk       # <OR>  docker compose up -d
     ```
 
 4. Visit Kibana at [https://localhost:5601](https://localhost:5601) or `https://<your_public_ip>:5601`
@@ -142,9 +157,11 @@ Filebeat automatically discovers containers, parses logs, and ships them to Elas
 
 > Whatever your Host (e.g AWS EC2, Azure, DigitalOcean, or on-premise server), once you expose your host to the network, ELK component will be accessible on their respective ports. Since the enabled TLS uses a self-signed certificate, it is recommended to SSL-Terminate public traffic using your signed certificates.
 >
-> 🏃🏻‍♂️ To start ingesting logs, you can start by running `mise run collect-docker-logs` which will collect your host's container logs.
+> 🏃🏻‍♂️ To start ingesting logs, you can start by running `mise run elk:collect-docker-logs` which will collect your host's container logs.
 
 ### Additional Commands
+
+All stack commands live under the `elk:` namespace. Run `mise tasks` to list them, and `mise run <task> --help` to see a task's arguments (e.g. `mise run elk:logs kibana` tails one service).
 
 <details><summary>Expand</summary>
 <p>
@@ -152,47 +169,75 @@ Filebeat automatically discovers containers, parses logs, and ships them to Elas
 #### To Start Monitoring and Prometheus Exporters
 
 ```shell
-mise run monitoring
+mise run elk:monitoring
 ```
 
 ##### To Ship Docker Container Logs to ELK
 
 ```shell
-mise run collect-docker-logs
+mise run elk:collect-docker-logs
 ```
 
 ##### To Start **Elastic Stack, Tools and Monitoring**
 
 ```text
-mise run all
+mise run elk:all
 ```
 
 ##### To Start 2 Extra Elasticsearch nodes (recommended for experimenting only)
 
 ```shell
-mise run nodes
+mise run elk:nodes
 ```
 
 ##### To Rebuild Images
 
 ```shell
-mise run build
+mise run elk:build
 ```
 
 ##### Bring down the stack
 
 ```shell
-mise run down
+mise run elk:down
 ```
 
 ##### Reset everything, Remove all containers, and delete **DATA**
 
 ```shell
-mise run prune
+mise run elk:prune
 ```
 
 </p>
 </details>
+
+### Moving from `make`
+
+The `Makefile` is gone; the stack now needs [mise](https://mise.jdx.dev) (see [Requirements](#requirements)). Each old command maps to a mise task with the same compose files, flags, and services:
+
+| Old command                                  | New command                        |
+|----------------------------------------------|------------------------------------|
+| `make setup` / `mise run stack:setup`        | `mise run elk:setup`               |
+| `make certs` / `mise run certs`              | `mise run elk:certs`               |
+| `make keystore` / `mise run keystore`        | `mise run elk:keystore`            |
+| `make upgrade-keystore` / `mise run upgrade-keystore` | `mise run elk:keystore:upgrade` |
+| `make elk`, `make up` / `mise run up`        | `mise run elk`                     |
+| `make all` / `mise run all`                  | `mise run elk:all`                 |
+| `make monitoring` / `mise run monitoring`    | `mise run elk:monitoring`          |
+| `make nodes` / `mise run nodes`              | `mise run elk:nodes`               |
+| `make collect-docker-logs` / `mise run collect-docker-logs` | `mise run elk:collect-docker-logs` |
+| `make build` / `mise run build`              | `mise run elk:build`               |
+| `make ps` / `mise run ps`                    | `mise run elk:ps`                  |
+| `make images` / `mise run images`            | `mise run elk:images`              |
+| `make logs` / `mise run logs`                | `mise run elk:logs`                |
+| `make stop` / `mise run stop`                | `mise run elk:stop`                |
+| `make restart` / `mise run restart`          | `mise run elk:restart`             |
+| `make down` / `mise run down`                | `mise run elk:down`                |
+| `make rm` / `mise run rm`                    | `mise run elk:rm`                  |
+| `make prune` / `mise run prune`              | `mise run elk:prune`               |
+| `make help`                                  | `mise tasks`                       |
+
+`elk:rm` and `elk:prune` ask for confirmation; pass `-y` before the task name to skip it (`mise run -y elk:prune`).
 
 ## Configuration
 
@@ -215,7 +260,7 @@ You can extend the Keystore generation script by adding keys to `./setup/keystor
 To Re-generate Keystore:
 
 ```text
-mise run keystore
+mise run elk:keystore
 ```
 
 #### Notes
@@ -224,13 +269,13 @@ mise run keystore
 
 - Adding Two Extra Nodes to the cluster will make the cluster depending on them and won't start without them again.
 
-- The stack is driven by mise tasks; run `mise tasks` to list them. The `Makefile` keeps the same commands but is deprecated.
+- The stack is driven by mise tasks; run `mise tasks` to list them.
 
 - Elasticsearch will save its data to a volume named `elasticsearch-data`
 
 - Elasticsearch Keystore (that contains passwords and credentials) and SSL Certificate are generated in the `./secrets` directory by the setup command.
 
-- Make sure to run `mise run stack:setup` if you changed `ELASTIC_PASSWORD` and to restart the stack afterwards.
+- Make sure to run `mise run elk:setup` if you changed `ELASTIC_PASSWORD` and to restart the stack afterwards.
 
 - For Linux Users it's recommended to set the following configuration (run as `root`)
 
@@ -280,7 +325,7 @@ For more details or other languages you can check the following:
 
 ### Via Stack Monitoring (Metricbeat)
 
-**Elasticsearch 9+** uses Metricbeat for Stack Monitoring (the recommended approach). When you start monitoring with `mise run monitoring`, Metricbeat will collect metrics from all stack components and send them to Elasticsearch.
+**Elasticsearch 9+** uses Metricbeat for Stack Monitoring (the recommended approach). When you start monitoring with `mise run elk:monitoring`, Metricbeat will collect metrics from all stack components and send them to Elasticsearch.
 
 Head to **Stack Monitoring** tab in Kibana to see cluster metrics for all stack components.
 
@@ -296,7 +341,7 @@ Head to **Stack Monitoring** tab in Kibana to see cluster metrics for all stack 
 
 #### Via Prometheus Exporters
 
-If you started Prometheus Exporters using `mise run monitoring` command. Prometheus Exporters will expose metrics at the following ports.
+If you started Prometheus Exporters using `mise run elk:monitoring` command. Prometheus Exporters will expose metrics at the following ports.
 
 | **Prometheus Exporter**      | **Port**     | **Recommended Grafana Dashboard**                                         |
 |--------------------------    |----------    |------------------------------------------------  |
@@ -413,8 +458,8 @@ These warnings don't affect functionality and are logged to the deprecation data
 For a clean installation on ES 9, simply:
 
 1. Set `ELK_VERSION=9.4.2` in `.env`
-2. Run `mise run stack:setup`
-3. Run `mise run up` (or `mise run all` for full stack with monitoring)
+2. Run `mise run elk:setup`
+3. Run `mise run elk` (or `mise run elk:all` for full stack with monitoring)
 
 </p>
 </details>
@@ -423,20 +468,7 @@ For a clean installation on ES 9, simply:
 
 ## Development
 
-The repo uses [**mise**](https://mise.jdx.dev) to pin the linters/formatters, expose tasks, and wire git hooks, so everyone lints with the same tool versions as CI.
-
-<details>
-<summary><b>Install mise (first time on this machine)</b></summary>
-
-```bash
-brew install mise                   # or: curl https://mise.run | sh
-echo 'eval "$(mise activate zsh)"' >> ~/.zshrc   # bash: mise activate bash
-mise doctor                         # confirm the install is healthy
-```
-
-See the [installation docs](https://mise.jdx.dev/installing-mise.html) for other shells and Windows.
-
-</details>
+The repo uses [**mise**](https://mise.jdx.dev) to run the stack, pin the linters/formatters, and wire git hooks, so everyone lints with the same tool versions as CI. Install it per [Requirements](#requirements).
 
 Set up the toolchain once:
 
@@ -452,7 +484,7 @@ Everyday commands:
 | Command                            | What it does                                                       |
 |------------------------------------|-------------------------------------------------------------------|
 | `mise run check` (alias `lint`)    | Run every linter/formatter/validator. Add `--fix` to auto-fix.    |
-| `mise tasks`                       | List all tasks (`up`, `down`, `logs`, `stack:setup`, …).          |
+| `mise tasks`                       | List all tasks (`elk`, `elk:down`, `elk:logs`, …).                |
 | `mise run <task> --help`           | Show a task's flags.                                              |
 
 On commit, [hk](https://hk.jdx.dev) formats and lints your staged files; a push runs the slower gates. CI runs both as `mise run check`, so lint problems surface before review. Need to bypass it for a WIP commit? `git commit --no-verify`. Tools and tasks live in `mise.toml`, the hook pipeline in `.config/hk.pkl`.

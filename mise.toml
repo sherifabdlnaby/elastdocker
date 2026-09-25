@@ -32,7 +32,7 @@ hk = "2.0.1" # full MAJOR.MINOR.PATCH pin, must match .config/hk.pkl's amends/im
 
 # ── 🌳 environment ────────────────────────────────────────────────────────────────────────────────
 [env]
-# Load the same vars the Makefile `include`s, so `mise run`/`docker compose` see them too.
+# Load the stack settings so tasks see them too (docker compose reads .env on its own).
 _.file = ".env"
 HK_MISE = "1"   # default every hk run to mise's env (`--mise`); hooks resolve tools via `mise x`
 
@@ -52,8 +52,8 @@ elk_services = "elasticsearch logstash kibana apm-server"
 elk_log_collection = "filebeat"
 elk_monitoring = "elasticsearch-exporter logstash-exporter filebeat-cluster-logs metricbeat"
 elk_nodes = "elasticsearch-1 elasticsearch-2"
-elk_main_services = "elasticsearch logstash kibana apm-server elasticsearch-exporter logstash-exporter filebeat-cluster-logs metricbeat"
-elk_all_services = "elasticsearch logstash kibana apm-server elasticsearch-exporter logstash-exporter filebeat-cluster-logs metricbeat elasticsearch-1 elasticsearch-2 filebeat"
+elk_main_services = "{{vars.elk_services}} {{vars.elk_monitoring}}"
+elk_all_services = "{{vars.elk_main_services}} {{vars.elk_nodes}} {{vars.elk_log_collection}}"
 
 # ── ▶️ tasks ──────────────────────────────────────────────────────────────────────────────────────
 [tasks.check]
@@ -100,26 +100,34 @@ quiet = true
 run = '[ "$(cat .config/mise/setup 2>/dev/null)" = "{{vars.setup_version}}" ] || echo "⚠️  Your setup is stale, run: mise run setup" >&2'
 
 # ── 🐳 ELK stack ──────────────────────────────────────────────────────────────────────────────────
-# Native docker-compose tasks. The Makefile keeps equivalent targets for users without mise.
-# Service args use dynamic completion: `mise run logs <TAB>` lists compose services.
+# The stack's commands live under `elk:`; the bare `elk` starts the core stack.
+# Service args use dynamic completion: `mise run elk:logs <TAB>` lists compose services.
 
-[tasks."stack:setup"]
-description = "Generate Elasticsearch SSL certs + keystore (run once before first start)"
+[tasks.elk]
+description = "Build & start the core ELK stack"
 run = '''
-docker compose {{vars.compose_setup}} run --rm certs
-docker compose {{vars.compose_setup}} run --rm keystore
+docker compose up -d --build
+echo "Visit Kibana: https://localhost:${KIBANA_PORT:-5601} (user: ${ELASTIC_USERNAME:-elastic}, password from .env)"
 '''
 
-[tasks.certs]
+[tasks."elk:setup"]
+description = "Check prerequisites, then generate Elasticsearch SSL certs + keystore (run once before first start)"
+run = [
+  "mise doctor project",     # stop with a fix hint on a missing prerequisite (see [doctor.checks])
+  { task = "elk:certs" },
+  { task = "elk:keystore" },
+]
+
+[tasks."elk:certs"]
 description = "Generate Elasticsearch SSL certificates"
 run = "docker compose {{vars.compose_setup}} run --rm certs"
 
-[tasks.keystore]
+[tasks."elk:keystore"]
 description = "Initialize the Elasticsearch keystore and credentials"
 run = "docker compose {{vars.compose_setup}} run --rm keystore"
 
-[tasks."upgrade-keystore"]
-description = "Upgrade the Elasticsearch keystore (stop the stack first)"
+[tasks."elk:keystore:upgrade"]
+description = "Upgrade the Elasticsearch keystore when Elasticsearch moves to a newer Java (stop the stack first)"
 run = '''
 if [ -n "$(docker compose ps -q)" ]; then
   echo "Please stop all running containers before upgrading the keystore." >&2
@@ -128,30 +136,23 @@ fi
 docker compose {{vars.compose_setup}} run --rm upgrade-keystore
 '''
 
-[tasks.up]
-description = "Build & start the core ELK stack (elasticsearch, logstash, kibana, apm-server)"
-run = '''
-docker compose up -d --build
-echo "Visit Kibana: https://localhost:${KIBANA_PORT:-5601} (user: ${ELASTIC_USERNAME:-elastic}, password from .env)"
-'''
-
-[tasks.all]
-description = "Build & start ELK plus the monitoring exporters"
+[tasks."elk:all"]
+description = "Build & start ELK plus the monitoring services"
 run = "docker compose {{vars.compose_all}} up -d --build {{vars.elk_main_services}}"
 
-[tasks.monitoring]
+[tasks."elk:monitoring"]
 description = "Start the monitoring services (Prometheus exporters + Metricbeat)"
 run = "docker compose {{vars.compose_monitoring}} up -d --build {{vars.elk_monitoring}}"
 
-[tasks.nodes]
+[tasks."elk:nodes"]
 description = "Start two extra Elasticsearch nodes"
 run = "docker compose {{vars.compose_nodes}} up -d --build {{vars.elk_nodes}}"
 
-[tasks."collect-docker-logs"]
+[tasks."elk:collect-docker-logs"]
 description = "Start Filebeat to ship host Docker logs into ELK"
 run = "docker compose {{vars.compose_logging}} up -d --build {{vars.elk_log_collection}}"
 
-[tasks.build]
+[tasks."elk:build"]
 description = "Build stack images (default: all services)"
 usage = '''
 arg "[service]" var=#true help="service(s) to build (default: all)"
@@ -159,15 +160,15 @@ complete "service" run="./.config/mise/completion/services.sh"
 '''
 run = "docker compose {{vars.compose_all}} build ${usage_service:-{{vars.elk_all_services}}}"
 
-[tasks.ps]
+[tasks."elk:ps"]
 description = "Show running stack containers"
 run = "docker compose {{vars.compose_all}} ps"
 
-[tasks.images]
+[tasks."elk:images"]
 description = "Show stack images"
 run = "docker compose {{vars.compose_all}} images {{vars.elk_all_services}}"
 
-[tasks.logs]
+[tasks."elk:logs"]
 description = "Tail stack logs (default: all services)"
 usage = '''
 arg "[service]" var=#true help="service(s) to tail (default: all)"
@@ -175,7 +176,7 @@ complete "service" run="./.config/mise/completion/services.sh"
 '''
 run = "docker compose {{vars.compose_all}} logs --follow --tail=1000 ${usage_service:-{{vars.elk_all_services}}}"
 
-[tasks.stop]
+[tasks."elk:stop"]
 description = "Stop stack containers (default: all services)"
 usage = '''
 arg "[service]" var=#true help="service(s) to stop (default: all)"
@@ -183,7 +184,7 @@ complete "service" run="./.config/mise/completion/services.sh"
 '''
 run = "docker compose {{vars.compose_all}} stop ${usage_service:-{{vars.elk_all_services}}}"
 
-[tasks.restart]
+[tasks."elk:restart"]
 description = "Restart stack containers (default: all services)"
 usage = '''
 arg "[service]" var=#true help="service(s) to restart (default: all)"
@@ -191,11 +192,11 @@ complete "service" run="./.config/mise/completion/services.sh"
 '''
 run = "docker compose {{vars.compose_all}} restart ${usage_service:-{{vars.elk_all_services}}}"
 
-[tasks.down]
+[tasks."elk:down"]
 description = "Stop and remove stack containers (keeps volume data)"
 run = "docker compose {{vars.compose_all}} down"
 
-[tasks.rm]
+[tasks."elk:rm"]
 description = "Remove stack containers (default: all services)"
 confirm = "Remove the ELK stack containers?"
 usage = '''
@@ -204,7 +205,7 @@ complete "service" run="./.config/mise/completion/services.sh"
 '''
 run = "docker compose {{vars.compose_all}} rm -f ${usage_service:-{{vars.elk_all_services}}}"
 
-[tasks.prune]
+[tasks."elk:prune"]
 description = "Remove containers AND delete the stack's volume data (irreversible)"
 confirm = "Delete ALL ELK containers and volume data? This cannot be undone."
 run = '''
@@ -220,16 +221,16 @@ enter = "MISE_OFFLINE=1 mise run setup:check" # nudge when setup is stale; MISE_
 postinstall = "hk install --mise"             # install git hooks after every `mise install` (idempotent)
 
 # ── 🩺 doctor checks ──────────────────────────────────────────────────────────────────────────────
-# Prerequisites mise can't install. `mise doctor project` runs them; setup runs it first.
+# Prerequisites mise can't install. `mise doctor project` runs them; setup and elk:setup run it first.
 [doctor.checks.docker]
 description = "Docker engine is running"
 run = "docker info >/dev/null 2>&1"
-hint = "Install and start a Docker engine (Docker Desktop, OrbStack, Colima), then re-run: mise run setup"
+hint = "Install and start a Docker engine (Docker Desktop, OrbStack, Colima), then re-run the command"
 
 [doctor.checks.compose]
 description = "Docker Compose v2 plugin is installed"
 run = "docker compose version >/dev/null 2>&1"
-hint = "Install the Docker Compose v2 plugin (https://docs.docker.com/compose/install/), then re-run: mise run setup"
+hint = "Install the Docker Compose v2 plugin (https://docs.docker.com/compose/install/), then re-run the command"
 
 # ── ⚙️ settings ───────────────────────────────────────────────────────────────────────────────────
 [settings]
