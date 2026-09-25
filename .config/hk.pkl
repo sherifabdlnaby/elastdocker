@@ -1,0 +1,103 @@
+// Git hooks for hk. Tools come from mise (mise.toml); `mise run check` drives this.
+// Both URLs pin the hk version; keep them equal to the hk in mise.toml [tools] and bump them together.
+amends "package://github.com/jdx/hk/releases/download/v2.0.1/hk@2.0.1#/Config.pkl"
+import "package://github.com/jdx/hk/releases/download/v2.0.1/hk@2.0.1#/Builtins.pkl"
+
+// Repo-wide ignores: committed paths only (.gitignore is already honored). Per-step `exclude` stacks on top.
+local commonIgnores =
+  List(
+    "**/vendor/**",
+    "**/generated/**",
+    "**/*.min.*",
+  )
+
+// Gates by moment; each step lives in exactly one tier, hooks below only compose tiers.
+// `check` mounts the union: the repo's full contract and the only hook CI runs.
+
+// Commit gates: run on every commit. File-scoped, fast, auto-fixable.
+local commitGates: Mapping<String, Step> = new Mapping<String, Step> {
+  // mise + repo hygiene
+  ["mise"] = Builtins.mise
+  ["newlines"] = Builtins.newlines
+  ["trailing_whitespace"] = Builtins.trailing_whitespace
+  ["mixed_line_ending"] = Builtins.mixed_line_ending
+  ["check_added_large_files"] = Builtins.check_added_large_files
+  ["check_executables_have_shebangs"] = Builtins.check_executables_have_shebangs
+  ["check_merge_conflict"] = Builtins.check_merge_conflict
+  ["check_case_conflict"] = Builtins.check_case_conflict
+  ["byte_order_marker"] = Builtins.byte_order_marker
+  ["check_symlinks"] = Builtins.check_symlinks
+  ["detect_private_key"] = Builtins.detect_private_key
+
+  // shell
+  ["shfmt"] = Builtins.shfmt
+  ["shellcheck"] = Builtins.shellcheck
+
+  // docker
+  ["hadolint"] = Builtins.hadolint
+
+  // config formats
+  ["yamllint"] = Builtins.yamllint
+  ["taplo"] = Builtins.taplo
+
+  // GitHub Actions
+  ["actionlint"] = Builtins.actionlint
+  ["zizmor"] = Builtins.zizmor
+  // pinact resolves Action tags to SHAs via the GitHub API, so it needs a token or it hits the
+  // anonymous rate limit. Prefer $GITHUB_TOKEN (CI injects it); locally fall back to the dev's `gh`
+  // login. gh missing/not-logged-in -> empty token, so pinact runs unauthenticated (rate-limited)
+  // instead of failing the commit. hk `env` values are static, so a `sh -c` prefix resolves the token
+  // at run time and `exec`s the builtin's own argv unchanged. Needs `gh` on PATH (system or [tools]).
+  ["pinact"] = (Builtins.pinact) {
+    prefix =
+      List(
+        "sh",
+        "-c",
+        #"PINACT_GITHUB_TOKEN="${GITHUB_TOKEN:-$(gh auth token 2>/dev/null || true)}" exec "$@""#,
+        "sh",
+      )
+  }
+
+  // markdown + links
+  ["rumdl"] = Builtins.rumdl
+  // dead links, offline (local/relative links and anchors only); see lychee.toml
+  ["lychee"] = Builtins.lychee
+
+  // spelling & secrets
+  ["typos"] = Builtins.typos
+  ["betterleaks"] = (Builtins.betterleaks) { env { ["BETTERLEAKS_CONFIG"] = ".betterleaks.toml" } }
+}
+
+// Push gates: run before a push. Slower or branch-scoped checks that would drag the commit loop.
+// Logic lives in mise tasks (runnable standalone, identical in CI); steps here only route to them.
+local pushGates: Mapping<String, Step> = new Mapping<String, Step> {
+// ["test"] { check = "mise run test" }
+}
+
+exclude = commonIgnores
+
+hooks {
+  // `hk check` / `mise run check`: the union, everything this repo enforces, and the only
+  // hook CI runs. Read-only; `--fix` applies to the tree and never stages. No `fix` hook:
+  // `hk check --fix` is the one write entry point, so there is no second mapping to keep in sync.
+  ["check"] {
+    steps {
+      ...commitGates
+      ...pushGates
+    }
+  }
+
+  // `git commit` (staged): commit gates only; fix inline. `stash` makes tools judge (and fix)
+  // the staged snapshot, not the working tree, so unstaged hunks are never re-staged.
+  ["pre-commit"] {
+    fix = true
+    stash = "git"
+    steps = commitGates
+  }
+
+  // `git push`: push gates only (every commit already passed the commit gates). Best-effort
+  // locally (`--no-verify` skips); CI's union run is the authoritative gate.
+  ["pre-push"] {
+    steps = pushGates
+  }
+}

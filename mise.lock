@@ -132,47 +132,47 @@ url = "https://github.com/hadolint/hadolint/releases/download/v2.14.0/hadolint-w
 url_api = "https://api.github.com/repos/hadolint/hadolint/releases/assets/295944079"
 
 [[tools.hk]]
-version = "1.48.0"
+version = "2.0.1"
 backend = "aqua:jdx/hk"
 
 [tools.hk."platforms.linux-arm64"]
-checksum = "sha256:d72463103d9682094e9b1fb2f20ef8824d1ec7a9b23f79163921bac7785fcd51"
-url = "https://github.com/jdx/hk/releases/download/v1.48.0/hk-aarch64-unknown-linux-gnu.tar.gz"
-url_api = "https://api.github.com/repos/jdx/hk/releases/assets/445033855"
+checksum = "sha256:8a28f2737914bbffa8dd16f39a2fc65d85e9a52261789cf6a1affd6c6762fbc1"
+url = "https://github.com/jdx/hk/releases/download/v2.0.1/hk-aarch64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/jdx/hk/releases/assets/566307878"
 
 [tools.hk."platforms.linux-arm64-musl"]
-checksum = "sha256:c6ba1ed78e6d205f442e013ffb20e815ff6498ae12aac0705fd3132a9a9b92a0"
-url = "https://github.com/jdx/hk/releases/download/v1.48.0/hk-aarch64-unknown-linux-musl.tar.gz"
-url_api = "https://api.github.com/repos/jdx/hk/releases/assets/445033852"
+checksum = "sha256:b75f54bf8a3679a13a01d250959ae77fab033ca5025eb557b76442c59efa8eb8"
+url = "https://github.com/jdx/hk/releases/download/v2.0.1/hk-aarch64-unknown-linux-musl.tar.gz"
+url_api = "https://api.github.com/repos/jdx/hk/releases/assets/566307875"
 
 [tools.hk."platforms.linux-x64"]
-checksum = "sha256:6b7f9a28391a8b13b88208d723cbde7b945d095cbb03455c7dd5f8df551ed380"
-url = "https://github.com/jdx/hk/releases/download/v1.48.0/hk-x86_64-unknown-linux-gnu.tar.gz"
-url_api = "https://api.github.com/repos/jdx/hk/releases/assets/445033857"
+checksum = "sha256:f14d0290a07f82911f32ea5e4a91dd80d90abb852488912b1ade9b240f70d615"
+url = "https://github.com/jdx/hk/releases/download/v2.0.1/hk-x86_64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/jdx/hk/releases/assets/566307905"
 
 [tools.hk."platforms.linux-x64-musl"]
-checksum = "sha256:bde5bcaab4035488520ab977f23bfe0b1b639152c6ed7200c9592724e2afe88d"
-url = "https://github.com/jdx/hk/releases/download/v1.48.0/hk-x86_64-unknown-linux-musl.tar.gz"
-url_api = "https://api.github.com/repos/jdx/hk/releases/assets/445033859"
+checksum = "sha256:76269248e27114f361d533551ffca757e58a1d4abe880fd008df16d19128ea97"
+url = "https://github.com/jdx/hk/releases/download/v2.0.1/hk-x86_64-unknown-linux-musl.tar.gz"
+url_api = "https://api.github.com/repos/jdx/hk/releases/assets/566307913"
 
 [tools.hk."platforms.macos-arm64"]
-checksum = "sha256:e3985a14f41ba5eb849bf79502ad19201d0a582114a5ebe35a9afff16742024b"
-url = "https://github.com/jdx/hk/releases/download/v1.48.0/hk-aarch64-apple-darwin.tar.gz"
-url_api = "https://api.github.com/repos/jdx/hk/releases/assets/445033853"
+checksum = "sha256:6ec393f898f562f76c4839a910356b4afec6740eff23f18ebdf8cf41c793a461"
+url = "https://github.com/jdx/hk/releases/download/v2.0.1/hk-aarch64-apple-darwin.tar.gz"
+url_api = "https://api.github.com/repos/jdx/hk/releases/assets/566307879"
 
 [tools.hk."platforms.windows-x64"]
-checksum = "sha256:6349ab27cd7a9c07e68edc7c2af0859c8a540482e97a5b7306e9e88460a5ca43"
-url = "https://github.com/jdx/hk/releases/download/v1.48.0/hk-x86_64-pc-windows-msvc.zip"
-url_api = "https://api.github.com/repos/jdx/hk/releases/assets/445033856"
+checksum = "sha256:b3cb8ab5958393faacefabfb3a402060eb256b1fda8e1f83c74c3fc877ebff8f"
+url = "https://github.com/jdx/hk/releases/download/v2.0.1/hk-x86_64-pc-windows-msvc.zip"
+url_api = "https://api.github.com/repos/jdx/hk/releases/assets/566307877"
 
 [[tools.lychee]]
 version = "0.24.2"
 backend = "aqua:lycheeverse/lychee"
 
 [tools.lychee."platforms.linux-arm64"]
-checksum = "sha256:5d0b0e3aeab240f41920c633a6eaf97599be6eedda034b36e858ede7dba5e535"
-url = "https://github.com/lycheeverse/lychee/releases/download/lychee-v0.24.2/lychee-aarch64-unknown-linux-musl.tar.gz"
-url_api = "https://api.github.com/repos/lycheeverse/lychee/releases/assets/409958602"
+checksum = "sha256:91a7bd65685da41b90ccb9bc867a3d649a7818042dae04ff405e55a25bddee4c"
+url = "https://github.com/lycheeverse/lychee/releases/download/lychee-v0.24.2/lychee-aarch64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/lycheeverse/lychee/releases/assets/409959442"
 
 [tools.lychee."platforms.linux-arm64-musl"]
 checksum = "sha256:5d0b0e3aeab240f41920c633a6eaf97599be6eedda034b36e858ede7dba5e535"
@@ -180,9 +180,9 @@ url = "https://github.com/lycheeverse/lychee/releases/download/lychee-v0.24.2/ly
 url_api = "https://api.github.com/repos/lycheeverse/lychee/releases/assets/409958602"
 
 [tools.lychee."platforms.linux-x64"]
-checksum = "sha256:73657a111819a30c47c08352896796f23d64e4eb2b3ed39b6d32149241566fc5"
-url = "https://github.com/lycheeverse/lychee/releases/download/lychee-v0.24.2/lychee-x86_64-unknown-linux-musl.tar.gz"
-url_api = "https://api.github.com/repos/lycheeverse/lychee/releases/assets/409959271"
+checksum = "sha256:1f4e0ef7f6554a6ed33dd7ac144fb2e1bbed98598e7af973042fc5cd43951c9a"
+url = "https://github.com/lycheeverse/lychee/releases/download/lychee-v0.24.2/lychee-x86_64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/lycheeverse/lychee/releases/assets/409959156"
 
 [tools.lychee."platforms.linux-x64-musl"]
 checksum = "sha256:73657a111819a30c47c08352896796f23d64e4eb2b3ed39b6d32149241566fc5"
@@ -255,9 +255,9 @@ version = "0.2.16"
 backend = "aqua:rvben/rumdl"
 
 [tools.rumdl."platforms.linux-arm64"]
-checksum = "sha256:2cb6b59ac7bad391d6da04e961587784a9d1d41220c5d42878794fe606499e9f"
-url = "https://github.com/rvben/rumdl/releases/download/v0.2.16/rumdl-v0.2.16-aarch64-unknown-linux-musl.tar.gz"
-url_api = "https://api.github.com/repos/rvben/rumdl/releases/assets/446488885"
+checksum = "sha256:7b696d0a0b37268fa6507d1d5f5a6a56b1fb7c3761a5ad1c3e4bf119fd7dc3c8"
+url = "https://github.com/rvben/rumdl/releases/download/v0.2.16/rumdl-v0.2.16-aarch64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/rvben/rumdl/releases/assets/446488895"
 provenance = "github-attestations"
 
 [tools.rumdl."platforms.linux-arm64-musl"]
@@ -267,9 +267,9 @@ url_api = "https://api.github.com/repos/rvben/rumdl/releases/assets/446488885"
 provenance = "github-attestations"
 
 [tools.rumdl."platforms.linux-x64"]
-checksum = "sha256:1cd2328d17c773387ccbf39068fb4a3689d4a4fa68c75406ba42f66d3a6db0f9"
-url = "https://github.com/rvben/rumdl/releases/download/v0.2.16/rumdl-v0.2.16-x86_64-unknown-linux-musl.tar.gz"
-url_api = "https://api.github.com/repos/rvben/rumdl/releases/assets/446488892"
+checksum = "sha256:ec37482746df05bd8ddbe70c37defafe0d22d262f7c78400c1b25fa7c766db91"
+url = "https://github.com/rvben/rumdl/releases/download/v0.2.16/rumdl-v0.2.16-x86_64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/rvben/rumdl/releases/assets/446488883"
 provenance = "github-attestations"
 
 [tools.rumdl."platforms.linux-x64-musl"]
@@ -450,9 +450,9 @@ version = "0.11.21"
 backend = "aqua:astral-sh/uv"
 
 [tools.uv."platforms.linux-arm64"]
-checksum = "sha256:e71badaed2a2c3a404a0a00974b51c7ed5f5bc7be947916846005b739c68a5a2"
-url = "https://github.com/astral-sh/uv/releases/download/0.11.21/uv-aarch64-unknown-linux-musl.tar.gz"
-url_api = "https://api.github.com/repos/astral-sh/uv/releases/assets/444940456"
+checksum = "sha256:88e800834007cc5efd4675f166eb2a51e7e3ad19876d85fa8805a6fb5c922397"
+url = "https://github.com/astral-sh/uv/releases/download/0.11.21/uv-aarch64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/astral-sh/uv/releases/assets/444940443"
 provenance = "github-attestations"
 
 [tools.uv."platforms.linux-arm64-musl"]
@@ -462,9 +462,9 @@ url_api = "https://api.github.com/repos/astral-sh/uv/releases/assets/444940456"
 provenance = "github-attestations"
 
 [tools.uv."platforms.linux-x64"]
-checksum = "sha256:9dadff5b9e7b1d2d011e41852a1cbca713d9d5d88194f2eb6bd240fa4fb0a719"
-url = "https://github.com/astral-sh/uv/releases/download/0.11.21/uv-x86_64-unknown-linux-musl.tar.gz"
-url_api = "https://api.github.com/repos/astral-sh/uv/releases/assets/444940559"
+checksum = "sha256:8c88519b0ef0af9801fcdee419bbb12116bd9e6b18e162ae093c932d8b264050"
+url = "https://github.com/astral-sh/uv/releases/download/0.11.21/uv-x86_64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/astral-sh/uv/releases/assets/444940548"
 provenance = "github-attestations"
 
 [tools.uv."platforms.linux-x64-musl"]

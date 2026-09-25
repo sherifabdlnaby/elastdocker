@@ -25,7 +25,7 @@ yamllint = "1"
 zizmor = "1"        # GitHub Actions security linter
 
 # pre-commit
-hk = "1.48.0" # keep in sync with the pin in hk.pkl
+hk = "2.0.1" # full MAJOR.MINOR.PATCH pin, must match .config/hk.pkl's amends/import URLs
 
 # ── 🌳 environment ────────────────────────────────────────────────────────────────────────────────
 [env]
@@ -35,7 +35,7 @@ HK_MISE = "1"   # default every hk run to mise's env (`--mise`); hooks resolve t
 
 # ── 📏 vars ───────────────────────────────────────────────────────────────────────────────────────
 [vars]
-setup_version = "1" # bump to nudge contributors (via the enter hook) to re-run `mise run setup`
+setup_version = "2" # bump to nudge contributors (via the enter hook) to re-run `mise run setup`
 
 # docker compose file sets (used by the stack tasks below)
 compose_all = "-f docker-compose.yml -f docker-compose.monitor.yml -f docker-compose.nodes.yml -f docker-compose.logs.yml"
@@ -82,15 +82,15 @@ description = "Install pinned tools and git hooks"
 depends_post = ["setup:stamp"]
 run = "mise install"                               # installs tools; hk hooks self-install via the postinstall hook
 
-[tasks."setup:stamp"] # record the setup version in .mise/setup
+[tasks."setup:stamp"] # record the setup version in .config/mise/setup
 hide = true
 quiet = true
-run = 'printf %s "{{vars.setup_version}}" > .mise/setup && echo "✅ Setup v{{vars.setup_version}} stamped"'
+run = 'printf %s "{{vars.setup_version}}" > .config/mise/setup && echo "✅ Setup v{{vars.setup_version}} stamped"'
 
 [tasks."setup:check"] # fast probe (runs on `enter`); warns if setup is stale, never fails
 hide = true
 quiet = true
-run = '[ "$(cat .mise/setup 2>/dev/null)" = "{{vars.setup_version}}" ] || echo "⚠️  Your setup is stale, run: mise run setup" >&2'
+run = '[ "$(cat .config/mise/setup 2>/dev/null)" = "{{vars.setup_version}}" ] || echo "⚠️  Your setup is stale, run: mise run setup" >&2'
 
 # ── 🐳 ELK stack ──────────────────────────────────────────────────────────────────────────────────
 # Native docker-compose tasks (source of truth). The Makefile is a deprecated shim that forwards here.
@@ -148,7 +148,7 @@ run = "docker compose {{vars.compose_logging}} up -d --build {{vars.elk_log_coll
 description = "Build stack images (default: all services)"
 usage = '''
 arg "[service]" var=#true help="service(s) to build (default: all)"
-complete "service" run="./.mise/completion/services.sh"
+complete "service" run="./.config/mise/completion/services.sh"
 '''
 run = "docker compose {{vars.compose_all}} build ${usage_service:-{{vars.elk_all_services}}}"
 
@@ -164,7 +164,7 @@ run = "docker compose {{vars.compose_all}} images {{vars.elk_all_services}}"
 description = "Tail stack logs (default: all services)"
 usage = '''
 arg "[service]" var=#true help="service(s) to tail (default: all)"
-complete "service" run="./.mise/completion/services.sh"
+complete "service" run="./.config/mise/completion/services.sh"
 '''
 run = "docker compose {{vars.compose_all}} logs --follow --tail=1000 ${usage_service:-{{vars.elk_all_services}}}"
 
@@ -172,7 +172,7 @@ run = "docker compose {{vars.compose_all}} logs --follow --tail=1000 ${usage_ser
 description = "Stop stack containers (default: all services)"
 usage = '''
 arg "[service]" var=#true help="service(s) to stop (default: all)"
-complete "service" run="./.mise/completion/services.sh"
+complete "service" run="./.config/mise/completion/services.sh"
 '''
 run = "docker compose {{vars.compose_all}} stop ${usage_service:-{{vars.elk_all_services}}}"
 
@@ -180,7 +180,7 @@ run = "docker compose {{vars.compose_all}} stop ${usage_service:-{{vars.elk_all_
 description = "Restart stack containers (default: all services)"
 usage = '''
 arg "[service]" var=#true help="service(s) to restart (default: all)"
-complete "service" run="./.mise/completion/services.sh"
+complete "service" run="./.config/mise/completion/services.sh"
 '''
 run = "docker compose {{vars.compose_all}} restart ${usage_service:-{{vars.elk_all_services}}}"
 
@@ -193,7 +193,7 @@ description = "Remove stack containers (default: all services)"
 confirm = "Remove the ELK stack containers?"
 usage = '''
 arg "[service]" var=#true help="service(s) to remove (default: all)"
-complete "service" run="./.mise/completion/services.sh"
+complete "service" run="./.config/mise/completion/services.sh"
 '''
 run = "docker compose {{vars.compose_all}} rm -f ${usage_service:-{{vars.elk_all_services}}}"
 
