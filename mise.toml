@@ -52,8 +52,8 @@ elk_services = "elasticsearch logstash kibana apm-server"
 elk_log_collection = "filebeat"
 elk_monitoring = "elasticsearch-exporter logstash-exporter filebeat-cluster-logs metricbeat"
 elk_nodes = "elasticsearch-1 elasticsearch-2"
-elk_main_services = "elasticsearch logstash kibana apm-server elasticsearch-exporter logstash-exporter filebeat-cluster-logs metricbeat"
-elk_all_services = "elasticsearch logstash kibana apm-server elasticsearch-exporter logstash-exporter filebeat-cluster-logs metricbeat elasticsearch-1 elasticsearch-2 filebeat"
+elk_main_services = "{{vars.elk_services}} {{vars.elk_monitoring}}"
+elk_all_services = "{{vars.elk_main_services}} {{vars.elk_nodes}} {{vars.elk_log_collection}}"
 
 # ── ▶️ tasks ──────────────────────────────────────────────────────────────────────────────────────
 [tasks.check]
