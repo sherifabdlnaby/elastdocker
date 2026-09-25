@@ -110,6 +110,7 @@ Filebeat automatically discovers containers, parses logs, and ships them to Elas
 
 - [Docker 20.05 or higher](https://docs.docker.com/install/) with Docker Compose v2
 - 4GB RAM (For Windows and MacOS make sure Docker's VM has more than 4GB+ memory.)
+- [mise](https://mise.jdx.dev) for the `mise run` commands below (install steps in [Development](#development)). Without mise, the equivalent `make <target>` (e.g. `make setup`, `make up`) needs only Docker.
 
 ## Setup
 
@@ -422,13 +423,13 @@ For a clean installation on ES 9, simply:
 
 ## Development
 
-Running the stack only needs Docker (see [Setup](#setup)). Contributing to the repo additionally uses [**mise**](https://mise.jdx.dev) to pin the linters/formatters, expose tasks, and wire git hooks, so everyone lints with the same tool versions as CI.
+The repo uses [**mise**](https://mise.jdx.dev) to pin the linters/formatters, expose tasks, and wire git hooks, so everyone lints with the same tool versions as CI.
 
 <details>
 <summary><b>Install mise (first time on this machine)</b></summary>
 
 ```bash
-curl https://mise.run | sh          # or: brew install mise
+brew install mise                   # or: curl https://mise.run | sh
 echo 'eval "$(mise activate zsh)"' >> ~/.zshrc   # bash: mise activate bash
 mise doctor                         # confirm the install is healthy
 ```
@@ -441,8 +442,10 @@ Set up the toolchain once:
 
 ```bash
 mise trust      # allow this repo's mise config to load
-mise run setup  # install the pinned tools; git hooks self-install
+mise run setup  # check prerequisites, install the pinned tools; git hooks self-install
 ```
+
+Setup first runs `mise doctor project`, which checks the prerequisites mise can't install (e.g. a running Docker engine) and prints how to fix any that fail. Run it again anytime to diagnose your machine.
 
 Everyday commands:
 
@@ -452,7 +455,7 @@ Everyday commands:
 | `mise tasks`                       | List all tasks (`up`, `down`, `logs`, `stack:setup`, …).          |
 | `mise run <task> --help`           | Show a task's flags.                                              |
 
-On commit, [hk](https://hk.jdx.dev) runs the same `check` on your staged files, so lint problems surface before CI. Need to bypass it for a WIP commit? `git commit --no-verify`. Tools, tasks, and hooks all live in `mise.toml` and `hk.pkl`.
+On commit, [hk](https://hk.jdx.dev) formats and lints your staged files; a push runs the slower gates. CI runs both as `mise run check`, so lint problems surface before review. Need to bypass it for a WIP commit? `git commit --no-verify`. Tools and tasks live in `mise.toml`, the hook pipeline in `.config/hk.pkl`.
 
 ## License
 
