@@ -1,4 +1,4 @@
-# Boots the full Elastic Stack the same way local dev does (`mise run stack:setup && mise run up`),
+# Boots the full Elastic Stack the same way local dev does (`mise run elk:setup && mise run elk`),
 # then smoke-tests that Elasticsearch and Kibana come up. Also scans the locally-built Elasticsearch
 # image with Trivy and uploads the findings to the Security tab.
 name: Smoke Test
@@ -48,7 +48,7 @@ jobs:
 
       # Same tasks local dev runs: generate certs + keystore, then build & start the core stack.
       - name: Build & Deploy
-        run: mise run stack:setup && mise run up
+        run: mise run elk:setup && mise run elk
 
       - name: Test Elasticsearch
         run: timeout 240s sh -c "until curl https://elastic:changeme@localhost:9200 --insecure --silent; do echo 'Elasticsearch Not Up, Retrying...'; sleep 3; done" && echo 'Elasticsearch is up'

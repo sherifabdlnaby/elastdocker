@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Emit compose service names (one per line) for mise task completion.
-# Used by the `complete "service"` specs in mise.toml (logs/stop/restart/build/rm).
+# Used by the `complete "service"` specs of the elk:* tasks in mise.toml.
 set -euo pipefail
 
 docker compose \
