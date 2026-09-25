@@ -4,32 +4,33 @@ Guide for AI agents working in this repo. Humans: see [README.md](README.md).
 
 ## What this is
 
-A Docker Compose distribution of the Elastic Stack (Elasticsearch, Logstash, Kibana, APM, Beats). The runtime is **Docker Compose v2**; the stack is driven by **mise tasks** (`mise run up`, `mise run stack:setup`, `mise run down`, … see `mise tasks`). The `Makefile` still has the equivalent raw docker commands but is **deprecated**. There is no application source to build, the repo is compose files, service configs (YAML), Dockerfiles, and shell setup scripts.
+A Docker Compose distribution of the Elastic Stack (Elasticsearch, Logstash, Kibana, APM, Beats). The runtime is **Docker Compose v2**; the stack is driven by **mise tasks** (`mise run up`, `mise run stack:setup`, `mise run down`, … see `mise tasks`). The `Makefile` still has the equivalent raw docker commands for users without mise; it is deprecated but its targets are a public interface, so don't remove or rename them. There is no application source to build, the repo is compose files, service configs (YAML), Dockerfiles, and shell setup scripts.
 
 ## Toolchain (mise)
 
 [**mise**](https://mise.jdx.dev) pins the linters/formatters, exposes tasks, and wires git hooks. `mise.toml` is the source of truth for `[tools]`, `[tasks]`, `[env]`, `[hooks]`, and `[settings]`. Don't install a linter by hand or bolt on an ad-hoc script, add a mise tool or task instead.
 
-**Setup** (once, and per new worktree): `mise trust && mise run setup`.
+**Setup** (once, and per new worktree): `mise trust && mise run setup`. Setup first runs `mise doctor project`, which fails fast when a prerequisite mise can't install (e.g. a running Docker engine) is missing; those checks are `[doctor.checks]` in `mise.toml`.
 
 **Run via mise** before calling work done:
 
 ```sh
 mise run check          # all linters/formatters/validators (alias: lint); add --fix to auto-fix
-mise run check --all    # whole tree (default scope is staged files; --pr = changed vs main)
+mise run check --all    # whole tree (default scope is uncommitted changes; --pr = changed vs main)
+mise run check --step shellcheck  # one step, for a short feedback loop (--skip-step to exclude)
 mise tasks              # discover every task (up, down, logs, stack:setup, …)
 mise run <task> --help  # a task's flags
 ```
 
 ## Git hooks (hk)
 
-Commits run [hk](https://hk.jdx.dev) (config in `hk.pkl`), the same `check` CI runs, to lint/format staged files. Fix failures with `mise run check --fix`; don't disable steps to push a commit through. `git commit --no-verify` skips hooks for a WIP commit.
+Commits run the [hk](https://hk.jdx.dev) commit gates on staged files, and a push runs the push gates; CI runs both as `mise run check`, so a green commit is not yet a green CI. Fix failures with `mise run check --fix`; don't disable steps to push a commit through. `git commit --no-verify` skips hooks for a WIP commit. `mise run setup` installs the hooks; on Git 2.54+ they live in git config, so an empty `.git/hooks/` does not mean no hooks.
 
 ## Linters
 
-Defined once in `hk.pkl` and shared by the `check` and `pre-commit` hooks: `shellcheck` + `shfmt` (shell), `hadolint` (Dockerfiles), `yamllint` (YAML), `taplo` (TOML), `actionlint` + `zizmor` + `pinact` (GitHub Actions lint / security / SHA-pinning), `rumdl` (Markdown), `lychee` (local/relative links, offline), `typos` (spelling), `betterleaks` (secrets), plus repo-hygiene checks (newlines, trailing whitespace, merge-conflict markers, large files, private keys, …) and `mise` self-lint.
+Steps live in `.config/hk.pkl`, grouped into tiers by when they run (commit gates, push gates); the `check` hook mounts every tier. `mise run check --step <TAB>` completes step names, and `hk check --plan --all` lists them.
 
-Tunable linters keep a root config file: `.yamllint`, `rumdl.toml`, `typos.toml`, `.betterleaks.toml`, `lychee.toml`. The betterleaks step is routed to its config via `BETTERLEAKS_CONFIG` in `hk.pkl`. `.env` (placeholder defaults) is allowlisted there, not a real secret store.
+Linter configs live beside `.config/hk.pkl` in `.config/`. Each step is routed to its file there (native discovery, an env var, or a `--config` flag spliced in by `withFlag`); a tool that cannot find its config falls back to defaults and still passes, so prove a new route by breaking the file once. betterleaks reads its config only via `BETTERLEAKS_CONFIG`; `.env` (placeholder defaults) is allowlisted there, not a real secret store.
 
 ## CI
 
@@ -43,7 +44,7 @@ Changing tools, tasks, env, or hooks? Edit the config, then run `mise run check`
 
 - **`mise.toml`**: `[tools]` (pinned linters + hk), `[tasks]`, `[env]` (loads `.env`), `[settings]`.
 - **`mise.lock`**: resolved versions + checksums. Commit it; regenerate with `mise lock` after a `[tools]` change.
-- **`hk.pkl`**: the lint pipeline (add/edit a step in the shared `linters` mapping).
-- **`.mise/`**: project-local state (the setup stamp is gitignored).
+- **`.config/hk.pkl`**: the lint pipeline, with linter configs beside it in `.config/`. Add a fast, file-scoped step to `commitGates`; a slower one to `pushGates` (route it to a mise task).
+- **`.config/mise/`**: project-local state (the setup stamp is gitignored) and the task completion script.
 
 For tool/task/hook syntax, see the [mise](https://mise.jdx.dev) and [hk](https://hk.jdx.dev) docs.

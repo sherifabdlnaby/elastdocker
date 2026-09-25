@@ -1,20 +1,23 @@
 # Tool, task, env, and git-hook config for this repo. Source of truth for local dev + CI.
 # Setup:  mise trust && mise run setup   (see README.md / AGENTS.md)
 
-# Floor clients past the config-trust bypass fix (CVE-2026-35533); bump when relying on newer features.
-min_version = "2026.6.6"
+# At or above the mise that wrote mise.lock (a newer lock format is unreadable to older clients).
+min_version = "2026.9.13"
+
+# Mask credential values loaded from .env in task output.
+redactions = ["*_KEY", "*_KEY_ID", "*_PASSWORD", "*_TOKEN"]
 
 # ── 🛠️ tools ──────────────────────────────────────────────────────────────────────────────────────
 [tools]
 
-# uv installs the Python-based linters (yamllint) via uvx — see pipx.uvx below
+# uv installs the Python-based linters (yamllint) via uvx — see pypi.uvx below
 uv = "0.11"
 
 # linters & formatters (managed by mise, run via hk — see hk.pkl)
 actionlint = "1"    # GitHub Actions linter
 betterleaks = "1"   # secret scanner (gitleaks-compatible)
 hadolint = "2"      # Dockerfile linter
-lychee = "0.24"     # dead-link checker (offline; see lychee.toml) — 0.x, pin minor
+lychee = "0.24"     # dead-link checker (offline; see .config/lychee.toml) — 0.x, pin minor
 pinact = "4"        # pin GitHub Actions to commit SHAs
 rumdl = "0.2"       # Markdown lint + format
 shellcheck = "0.11"
@@ -25,7 +28,7 @@ yamllint = "1"
 zizmor = "1"        # GitHub Actions security linter
 
 # pre-commit
-hk = "1.48.0" # keep in sync with the pin in hk.pkl
+hk = "2.0.1" # full MAJOR.MINOR.PATCH pin, must match .config/hk.pkl's amends/import URLs
 
 # ── 🌳 environment ────────────────────────────────────────────────────────────────────────────────
 [env]
@@ -35,7 +38,7 @@ HK_MISE = "1"   # default every hk run to mise's env (`--mise`); hooks resolve t
 
 # ── 📏 vars ───────────────────────────────────────────────────────────────────────────────────────
 [vars]
-setup_version = "1" # bump to nudge contributors (via the enter hook) to re-run `mise run setup`
+setup_version = "2" # bump to nudge contributors (via the enter hook) to re-run `mise run setup`
 
 # docker compose file sets (used by the stack tasks below)
 compose_all = "-f docker-compose.yml -f docker-compose.monitor.yml -f docker-compose.nodes.yml -f docker-compose.logs.yml"
@@ -54,11 +57,11 @@ elk_all_services = "elasticsearch logstash kibana apm-server elasticsearch-expor
 
 # ── ▶️ tasks ──────────────────────────────────────────────────────────────────────────────────────
 [tasks.check]
-description = "Run all linters, formatters & validators (same as pre-commit and CI)"
+description = "Run all checks the repo enforces on uncommitted changes, the same suite CI runs"
 alias = ["lint"]
 usage = '''
     flag "--fix"              help="apply fixes instead of only reporting"
-    flag "--all"              help="run on all files (default: staged only)"
+    flag "--all"              help="run on all files (default: uncommitted changes)"
     flag "--pr"               help="only files changed vs the default branch (conflicts with --all)"
     flag "--fail-fast"        help="stop at the first failing step (default: run all, report every failure)"
     flag "--step <step>"      var=#true help="run only these step(s)"
@@ -78,22 +81,26 @@ depends = ["lint"]
 run = 'echo "No local unit tests. The ELK stack smoke test runs in CI (.github/workflows/smoke-test.yml)."'
 
 [tasks.setup] # one-time, idempotent bootstrap; re-run when `enter` warns it's stale
-description = "Install pinned tools and git hooks"
-depends_post = ["setup:stamp"]
-run = "mise install"                               # installs tools; hk hooks self-install via the postinstall hook
+description = "Check prerequisites, then install pinned tools and git hooks"
+# Stamp as a run step, not depends_post: depends_post also runs when this task fails.
+run = [
+  "mise doctor project",    # stop early on a missing prerequisite (see [doctor.checks])
+  "mise install",           # hk hooks self-install via the postinstall hook
+  { task = "setup:stamp" },
+]
 
-[tasks."setup:stamp"] # record the setup version in .mise/setup
+[tasks."setup:stamp"] # record the setup version in .config/mise/setup
 hide = true
 quiet = true
-run = 'printf %s "{{vars.setup_version}}" > .mise/setup && echo "✅ Setup v{{vars.setup_version}} stamped"'
+run = 'printf %s "{{vars.setup_version}}" > .config/mise/setup && echo "✅ Setup v{{vars.setup_version}} stamped"'
 
 [tasks."setup:check"] # fast probe (runs on `enter`); warns if setup is stale, never fails
 hide = true
 quiet = true
-run = '[ "$(cat .mise/setup 2>/dev/null)" = "{{vars.setup_version}}" ] || echo "⚠️  Your setup is stale, run: mise run setup" >&2'
+run = '[ "$(cat .config/mise/setup 2>/dev/null)" = "{{vars.setup_version}}" ] || echo "⚠️  Your setup is stale, run: mise run setup" >&2'
 
 # ── 🐳 ELK stack ──────────────────────────────────────────────────────────────────────────────────
-# Native docker-compose tasks (source of truth). The Makefile is a deprecated shim that forwards here.
+# Native docker-compose tasks. The Makefile keeps equivalent targets for users without mise.
 # Service args use dynamic completion: `mise run logs <TAB>` lists compose services.
 
 [tasks."stack:setup"]
@@ -148,7 +155,7 @@ run = "docker compose {{vars.compose_logging}} up -d --build {{vars.elk_log_coll
 description = "Build stack images (default: all services)"
 usage = '''
 arg "[service]" var=#true help="service(s) to build (default: all)"
-complete "service" run="./.mise/completion/services.sh"
+complete "service" run="./.config/mise/completion/services.sh"
 '''
 run = "docker compose {{vars.compose_all}} build ${usage_service:-{{vars.elk_all_services}}}"
 
@@ -164,7 +171,7 @@ run = "docker compose {{vars.compose_all}} images {{vars.elk_all_services}}"
 description = "Tail stack logs (default: all services)"
 usage = '''
 arg "[service]" var=#true help="service(s) to tail (default: all)"
-complete "service" run="./.mise/completion/services.sh"
+complete "service" run="./.config/mise/completion/services.sh"
 '''
 run = "docker compose {{vars.compose_all}} logs --follow --tail=1000 ${usage_service:-{{vars.elk_all_services}}}"
 
@@ -172,7 +179,7 @@ run = "docker compose {{vars.compose_all}} logs --follow --tail=1000 ${usage_ser
 description = "Stop stack containers (default: all services)"
 usage = '''
 arg "[service]" var=#true help="service(s) to stop (default: all)"
-complete "service" run="./.mise/completion/services.sh"
+complete "service" run="./.config/mise/completion/services.sh"
 '''
 run = "docker compose {{vars.compose_all}} stop ${usage_service:-{{vars.elk_all_services}}}"
 
@@ -180,7 +187,7 @@ run = "docker compose {{vars.compose_all}} stop ${usage_service:-{{vars.elk_all_
 description = "Restart stack containers (default: all services)"
 usage = '''
 arg "[service]" var=#true help="service(s) to restart (default: all)"
-complete "service" run="./.mise/completion/services.sh"
+complete "service" run="./.config/mise/completion/services.sh"
 '''
 run = "docker compose {{vars.compose_all}} restart ${usage_service:-{{vars.elk_all_services}}}"
 
@@ -193,7 +200,7 @@ description = "Remove stack containers (default: all services)"
 confirm = "Remove the ELK stack containers?"
 usage = '''
 arg "[service]" var=#true help="service(s) to remove (default: all)"
-complete "service" run="./.mise/completion/services.sh"
+complete "service" run="./.config/mise/completion/services.sh"
 '''
 run = "docker compose {{vars.compose_all}} rm -f ${usage_service:-{{vars.elk_all_services}}}"
 
@@ -212,13 +219,24 @@ echo "Removed all volumes for project: ${COMPOSE_PROJECT_NAME}"
 enter = "MISE_OFFLINE=1 mise run setup:check" # nudge when setup is stale; MISE_OFFLINE keeps cd offline-safe
 postinstall = "hk install --mise"             # install git hooks after every `mise install` (idempotent)
 
+# ── 🩺 doctor checks ──────────────────────────────────────────────────────────────────────────────
+# Prerequisites mise can't install. `mise doctor project` runs them; setup runs it first.
+[doctor.checks.docker]
+description = "Docker engine is running"
+run = "docker info >/dev/null 2>&1"
+hint = "Install and start a Docker engine (Docker Desktop, OrbStack, Colima), then re-run: mise run setup"
+
+[doctor.checks.compose]
+description = "Docker Compose v2 plugin is installed"
+run = "docker compose version >/dev/null 2>&1"
+hint = "Install the Docker Compose v2 plugin (https://docs.docker.com/compose/install/), then re-run: mise run setup"
+
 # ── ⚙️ settings ───────────────────────────────────────────────────────────────────────────────────
 [settings]
-experimental = true                 # required for [hooks]
 lockfile = true                     # write/commit mise.lock for reproducible installs
 minimum_release_age = "7d"          # ignore releases <7d old (supply-chain cooldown)
 disable_backends = ["asdf", "vfox"] # resolve only via verified backends
-pipx.uvx = true                     # install Python tools with uv (CI pip is too old for the cooldown's date filter)
+pypi.uvx = true                     # install Python tools with uv (CI pip is too old for the cooldown's date filter)
 
 # Use a gh/git token for tool installs to avoid GitHub API rate limits.
 github.gh_cli_tokens = true
