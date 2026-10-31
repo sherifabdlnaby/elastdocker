@@ -110,7 +110,7 @@ Filebeat automatically discovers containers, parses logs, and ships them to Elas
 
 - [Docker 20.05 or higher](https://docs.docker.com/install/) with Docker Compose v2
 - 4GB RAM (For Windows and MacOS make sure Docker's VM has more than 4GB+ memory.)
-- [mise](https://mise.jdx.dev) 2026.9.13 or newer. All stack commands are mise tasks.
+- [mise](https://mise.jdx.dev) 2026.10.18 or newer. All stack commands are mise tasks.
 
 <details>
 <summary><b>Install mise (first time on this machine)</b></summary>

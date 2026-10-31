@@ -10,9 +10,7 @@ on:
     # `edited` keeps title-based autolabels fresh when a PR is retitled.
     types: [opened, reopened, synchronize, edited]
 
-permissions:
-  contents: write # release-drafter creates/updates the draft release
-  pull-requests: write # autolabeler labels PRs
+permissions: {}
 
 # Serialize release drafting; never cancel a run mid-draft.
 concurrency:
@@ -22,8 +20,12 @@ concurrency:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write # release-drafter creates/updates the draft release
+      pull-requests: write # autolabeler labels PRs
     steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
       # Drafts your next Release notes as Pull Requests are merged into "main"

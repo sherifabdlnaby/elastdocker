@@ -14,8 +14,7 @@ on:
     - cron: "0 4 * * 1"
   workflow_dispatch: {}
 
-permissions:
-  contents: read
+permissions: {}
 
 # One run per PR (or ref) — newer pushes cancel stale runs.
 concurrency:
@@ -26,22 +25,32 @@ jobs:
   smoke:
     name: smoke
     runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      MISE_LOCKED: "1" # every install honors mise.lock, also tools `mise run` installs later
     permissions:
       contents: read
       security-events: write # upload Trivy SARIF to the Security tab
     steps:
       - name: Checkout
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
-      - name: Setup mise
-        uses: jdx/mise-action@e6a8b3978addb5a52f2b4cd9d91eafa7f0ab959d # v4.2.0
+      # Cache downloads, not installs: `--locked` re-checks each download against mise.lock.
+      - name: Cache mise downloads
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          version: "2026.9.13" # pin mise itself, not just the action
+          path: ~/.cache/mise/downloads-cas
+          key: mise-cas-${{ runner.os }}-${{ hashFiles('mise.lock') }}
+          restore-keys: mise-cas-${{ runner.os }}-
+
+      - name: Setup mise
+        uses: jdx/mise-action@6be3c7ed4c21d4f76b208d351d95aac273ebb76d # v5.2.4
+        with:
+          version: "2026.10.24" # pin mise itself, not just the action
           install: true
-          install_args: "--locked" # honor mise.lock
-          cache: true
+          cache: false # see the step above
           experimental: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # SO tool installs don't hit API rate limits
@@ -73,6 +82,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Trivy DB pulls, avoid anonymous rate limits
 
       - name: Upload SARIF
-        uses: github/codeql-action/upload-sarif@02c5e83432fe5497fd85b873b6c9f16a8578e1d9 # v3.37.0
+        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
         with:
           sarif_file: trivy-results.sarif
