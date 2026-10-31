@@ -20,10 +20,7 @@ on:
         options: [all, pr]
         default: all
 
-# Read the repo; comment on PRs to point the author at the fix command.
-permissions:
-  contents: read
-  pull-requests: write
+permissions: {}
 
 # One run per PR (or ref) — newer pushes cancel stale runs.
 concurrency:
@@ -34,26 +31,39 @@ jobs:
   check:
     name: check
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # Read the repo; comment on PRs to point the author at the fix command.
+    permissions:
+      contents: read
+      pull-requests: write
 
     env:
+      MISE_LOCKED: "1" # every install honors mise.lock, also tools `mise run` installs later
       # Pretty colors in the CI!
       CLICOLOR_FORCE: "1"
       FORCE_COLOR: "1"
 
     steps:
       - name: Checkout
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0 # full history so `check --pr` can diff against the default branch
           persist-credentials: false
 
-      - name: Setup mise
-        uses: jdx/mise-action@e6a8b3978addb5a52f2b4cd9d91eafa7f0ab959d # v4.2.0
+      # Cache downloads, not installs: `--locked` re-checks each download against mise.lock.
+      - name: Cache mise downloads
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          version: "2026.9.13" # pin mise itself, not just the action
+          path: ~/.cache/mise/downloads-cas
+          key: mise-cas-${{ runner.os }}-${{ hashFiles('mise.lock') }}
+          restore-keys: mise-cas-${{ runner.os }}-
+
+      - name: Setup mise
+        uses: jdx/mise-action@6be3c7ed4c21d4f76b208d351d95aac273ebb76d # v5.2.4
+        with:
+          version: "2026.10.24" # pin mise itself, not just the action
           install: true
-          install_args: "--locked" # honor mise.lock
-          cache: true
+          cache: false # see the step above
           experimental: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # SO tool installs don't hit API rate limits
@@ -83,7 +93,7 @@ jobs:
       # delete it once the check passes. No inline suggestions — the author runs the fixer.
       - name: Comment lint status
         if: always() && github.event_name == 'pull_request'
-        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         env:
           CHECK_OUTCOME: ${{ steps.check.outcome }}
         with:
