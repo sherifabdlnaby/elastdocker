@@ -1,8 +1,8 @@
 # Tool, task, env, and git-hook config for this repo. Source of truth for local dev + CI.
 # Setup:  mise trust && mise run setup   (see README.md / AGENTS.md)
 
-# At or above the mise that wrote mise.lock (a newer lock format is unreadable to older clients).
-min_version = "2026.9.13"
+# Oldest mise that supports everything in this file and reads mise.lock.
+min_version = "2026.10.13"
 
 # Mask credential values loaded from .env in task output.
 redactions = ["*_KEY", "*_KEY_ID", "*_PASSWORD", "*_TOKEN"]
@@ -11,16 +11,16 @@ redactions = ["*_KEY", "*_KEY_ID", "*_PASSWORD", "*_TOKEN"]
 [tools]
 
 # uv installs the Python-based linters (yamllint) via uvx — see pypi.uvx below
-uv = "0.11"
+uv = "0.13"
 
 # linters & formatters (managed by mise, run via hk — see hk.pkl)
-actionlint = "1"    # GitHub Actions linter
 betterleaks = "1"   # secret scanner (gitleaks-compatible)
 hadolint = "2"      # Dockerfile linter
+jactionlint = "2"   # GitHub Actions linter (maintained actionlint fork)
 lychee = "0.24"     # dead-link checker (offline; see .config/lychee.toml) — 0.x, pin minor
-pinact = "4"        # pin GitHub Actions to commit SHAs
-rumdl = "0.2"       # Markdown lint + format
-shellcheck = "0.11"
+pinact = "5"        # pin GitHub Actions to commit SHAs
+rumdl = "0.3"       # Markdown lint + format
+shellcheck = "0.11" # also lints workflow `run:` blocks for jactionlint
 shfmt = "3"         # shell formatter
 taplo = "0.10"      # TOML lint + format — 0.x, pin minor
 typos = "1"         # source spell-checker
@@ -28,7 +28,7 @@ yamllint = "1"
 zizmor = "1"        # GitHub Actions security linter
 
 # pre-commit
-hk = "2.0.1" # full MAJOR.MINOR.PATCH pin, must match .config/hk.pkl's amends/import URLs
+hk = "2.8.1" # full MAJOR.MINOR.PATCH pin, must match .config/hk.pkl's amends/import URLs
 
 # ── 🌳 environment ────────────────────────────────────────────────────────────────────────────────
 [env]
