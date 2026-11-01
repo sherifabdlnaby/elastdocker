@@ -66,13 +66,15 @@ usage = '''
     flag "--fail-fast"        help="stop at the first failing step (default: run all, report every failure)"
     flag "--step <step>"      var=#true help="run only these step(s)"
     flag "--skip-step <step>" var=#true help="skip these step(s)"
+    flag "--sarif <path>"     help="also write the findings as SARIF (e.g. for GitHub code scanning)"
     complete "step" run="hk check --plan --all --json --no-progress 2>/dev/null | jq -r '.steps[].name'"
 '''
 run = '''
 ff=${usage_fail_fast:+--fail-fast}; ff=${ff:---no-fail-fast}   # default to running every step
 hk check $ff ${usage_fix:+--fix} ${usage_all:+--all} ${usage_pr:+--pr} \
   ${usage_step:+$(printf -- '--step %s ' $usage_step)} \
-  ${usage_skip_step:+$(printf -- '--skip-step %s ' $usage_skip_step)}
+  ${usage_skip_step:+$(printf -- '--skip-step %s ' $usage_skip_step)} \
+  ${usage_sarif:+--sarif "$usage_sarif"}
 '''
 
 [tasks.test]
