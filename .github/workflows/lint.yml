@@ -1,6 +1,6 @@
 # Drives the project's own `mise run check` (the same task local dev + the pre-commit
-# hook use) and reports lint/format failures. On a PR it leaves one sticky comment
-# pointing the author at `mise run check --fix`.
+# hook use) and reports lint/format failures. On a PR it annotates findings on the diff
+# and leaves one sticky comment pointing the author at `mise run check --fix`.
 name: 🎨 Linters, Validators, and Formatters
 
 on:
@@ -84,10 +84,23 @@ jobs:
           # hk's --pr resolves the base via origin/HEAD, which the Actions checkout never sets; point it
           # at the PR base so hk diffs origin/<base>...HEAD (else it finds 0 files and passes green).
           [ "$scope" = pr ] && git remote set-head origin "$BASE_REF" >/dev/null 2>&1 || true
-          mise run check "--$scope" || {
+          mise run check "--$scope" --sarif hk.sarif || {
             echo "::error::Lint & format failed on $REF_NAME — fix locally with 'mise run check --fix --$scope', then push. ('mise run setup' installs the pre-commit hook so this happens on every commit.)"
             exit 1
           }
+
+      # One annotation per finding, on its line in the PR's "Files changed" tab. GitHub keeps 10 errors and
+      # 10 warnings per step and drops the rest; the check step's log has them all.
+      - name: Annotate findings
+        if: always() && hashFiles('hk.sarif') != ''
+        run: |
+          jq -r '.runs[].results[]
+            | .locations[0].physicalLocation as $l
+            | (.level // "error" | if . == "note" or . == "none" then "notice" else . end) as $lvl
+            | (.message.text | gsub("%"; "%25") | gsub("\r"; "%0D") | gsub("\n"; "%0A")) as $msg
+            | ([.properties.step, .ruleId] | map(select(.)) | join(" / ")
+               | gsub("%"; "%25") | gsub(":"; "%3A") | gsub(","; "%2C")) as $title
+            | "::\($lvl) file=\($l.artifactLocation.uri),line=\($l.region.startLine),col=\($l.region.startColumn // 1),title=\($title)::\($msg)"' hk.sarif
 
       # One sticky PR comment pointing at `--fix`: post/update it when the check fails,
       # delete it once the check passes. No inline suggestions — the author runs the fixer.

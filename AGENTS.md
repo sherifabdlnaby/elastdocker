@@ -34,7 +34,7 @@ Linter configs live beside `.config/hk.pkl` in `.config/`. Each step is routed t
 
 ## CI
 
-- `.github/workflows/lint.yml` runs `mise run check` (`--pr` on PRs, `--all` on schedule/dispatch) and leaves one sticky comment pointing at `mise run check --fix`. Keep this green by running `mise run check --all` locally.
+- `.github/workflows/lint.yml` runs `mise run check` (`--pr` on PRs, `--all` on schedule/dispatch), annotates findings on the PR diff, and leaves one sticky comment pointing at `mise run check --fix`. Keep this green by running `mise run check --all` locally.
 - `.github/workflows/smoke-test.yml` spins up the full stack (`mise run elk:setup && mise run elk`), smoke-tests Elasticsearch + Kibana, and Trivy-scans the built image to the Security tab. Changes to compose files or service configs are validated here.
 - `.github/workflows/auto-release.yml` drafts releases. GitHub Actions are pinned to commit SHAs (enforced by `pinact`); let `mise run check --fix` re-pin after bumping a version comment.
 
