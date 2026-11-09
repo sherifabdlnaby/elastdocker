@@ -1,0 +1,19 @@
+# Dependabot: version updates for Actions pins. Image versions come from build ARGs and
+# .env, which Dependabot cannot read.
+# Cooldown waits out the compromised-fresh-release window; the group collapses minor and
+# patch noise into one PR, and each major bump comes as its own PR.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      # Actions tags are not SemVer-typed; only default-days is valid here.
+      default-days: 7
+    groups:
+      github-actions:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+    commit-message:
+      prefix: "ci"
