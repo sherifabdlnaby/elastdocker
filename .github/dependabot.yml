@@ -15,5 +15,6 @@ updates:
       github-actions:
         patterns: ["*"]
         update-types: ["minor", "patch"]
+    labels: [auto-update]
     commit-message:
       prefix: "ci"
