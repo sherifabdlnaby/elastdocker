@@ -49,22 +49,28 @@ autolabeler:
     files:
       - '*.md'
   - label: 'enhancement'
-    title: '/enhancement|fixes/i'
+    title:
+      - '/enhancement|fixes/i'
 
   - label: 'upgrades'
-    title: '/⬆️/i'
+    title:
+      - '/⬆️/i'
 
   - label: 'bugfix'
-    title: '/bugfix/i'
+    title:
+      - '/bugfix/i'
 
   - label: 'bug'
-    title: '/🐛|🐞|bug/i'
+    title:
+      - '/🐛|🐞|bug/i'
 
   - label: 'auto-update'
-    title: '/🤖/i'
+    title:
+      - '/🤖/i'
 
   - label: 'feature'
-    title: '/🚀|🎉/i'
+    title:
+      - '/🚀|🎉/i'
 
 change-template: |
   <details>
