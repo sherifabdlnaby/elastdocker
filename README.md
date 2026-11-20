@@ -6,7 +6,7 @@
 <h4 align="center">Configured to be ready to be used for Log, Metrics, APM, Alerting, Machine Learning, and Security (SIEM) usecases.</h4>
 <p align="center">
    <a>
-      <img src="https://img.shields.io/badge/Elastic%20Stack-9.4.2-blue?style=flat&logo=elasticsearch" alt="Elastic Stack Version 9^^">
+      <img src="https://img.shields.io/badge/Elastic%20Stack-9.5.6-blue?style=flat&logo=elasticsearch" alt="Elastic Stack Version 9^^">
    </a>
    <a>
       <img src="https://img.shields.io/github/v/tag/sherifabdlnaby/elastdocker?label=release&amp;sort=semver">
@@ -34,7 +34,7 @@ Elastic Stack (**ELK**) Docker Composition, preconfigured with **Security**, **M
 
 Suitable for Demoing, MVPs and small production deployments.
 
-Stack Version: [9.4.2](https://www.elastic.co/guide/en/elasticsearch/reference/9.4/release-notes-9.4.2.html) 🎉 - Based on [Official Elastic Docker Images](https://www.docker.elastic.co/)
+Stack Version: [9.5.6](https://www.elastic.co/docs/release-notes/elasticsearch#elasticsearch-9.5.6-release-notes) 🎉 - Based on [Official Elastic Docker Images](https://www.docker.elastic.co/)
 > You can change Elastic Stack version by setting `ELK_VERSION` in `.env` file and rebuild your images. Any version >= 9.0.0 is compatible with this template.
 >
 > ⚠️ **Upgrading from 8.x?** See the [Upgrade Notes](#upgrade-notes-from-8x-to-9x) section below for breaking changes and migration steps.
@@ -243,7 +243,7 @@ The `Makefile` is gone; the stack now needs [mise](https://mise.jdx.dev) (see [R
 
 - Some Configuration are parameterized in the `.env` file.
   - `ELASTIC_PASSWORD`, user `elastic`'s password (default: `changeme` _pls_).
-  - `ELK_VERSION` Elastic Stack Version (default: `9.4.2`)
+  - `ELK_VERSION` Elastic Stack Version (default: `9.5.6`)
   - `ELASTICSEARCH_HEAP`, how much Elasticsearch allocate from memory (default: 1GB -good for development only-)
   - `LOGSTASH_HEAP`, how much Logstash allocate from memory.
   - Other configurations which their such as cluster name, and node name, etc.
@@ -457,7 +457,7 @@ These warnings don't affect functionality and are logged to the deprecation data
 
 For a clean installation on ES 9, simply:
 
-1. Set `ELK_VERSION=9.4.2` in `.env`
+1. Set `ELK_VERSION=9.5.6` in `.env`
 2. Run `mise run elk:setup`
 3. Run `mise run elk` (or `mise run elk:all` for full stack with monitoring)
 
